@@ -83,8 +83,8 @@ class BlueBatterySelect(BlueBatteryEntity, SelectEntity):
 
     @property
     def available(self) -> bool:
-        """Nur bedienbar, wenn die Heizung verbunden ist."""
-        return super().available and self.device.heater_alive(self.sub.key) == 2
+        """Verfügbar, wenn die Heizung verbunden ist – auch bei Störung."""
+        return super().available and self.device.heater_connected(self.sub.key) is True
 
     @property
     def current_option(self) -> str | None:

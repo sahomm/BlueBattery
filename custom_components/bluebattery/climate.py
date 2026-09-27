@@ -84,8 +84,8 @@ class _HeaterClimate(BlueBatteryEntity, ClimateEntity, RestoreEntity):
 
     @property
     def available(self) -> bool:
-        """Nur bedienbar, wenn Display sendet und die Heizung verbunden ist."""
-        return super().available and self.device.heater_alive(self.heater) == 2
+        """Verfügbar, solange Display sendet und die Heizung verbunden ist – auch bei Störung."""
+        return super().available and self.device.heater_connected(self.heater) is True
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

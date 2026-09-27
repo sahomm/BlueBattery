@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import issue_registry as ir
 from pytest_homeassistant_custom_component.common import (
@@ -132,6 +133,26 @@ async def test_heater_fault(hass: HomeAssistant, mqtt_mock, entry_data, info, st
     status["truma"]["error"] = 17
     await _setup(hass, mqtt_mock, entry_data, info, status)
     assert hass.states.get(_eid(hass, "binary_sensor", "truma", "heater_problem")).state == "on"
+
+
+async def test_heater_fault_keeps_entities_but_rejects_commands(
+    hass: HomeAssistant, mqtt_mock, entry_data, info, status
+) -> None:
+    """Störung (alive 3): verbunden bleibt an, Thermostat sichtbar, Befehle werden abgelehnt."""
+    status["truma"].update(error=2212, alive=3)
+    await _setup(hass, mqtt_mock, entry_data, info, status)
+    async_fire_mqtt_message(hass, f"{PREFIX}/truma/alive", "3")  # Nachbildung verwirft 2. retained
+    await hass.async_block_till_done()
+    climate = _eid(hass, "climate", "truma", "truma_heater")
+    assert hass.states.get(climate).state == "heat"
+    assert hass.states.get(_eid(hass, "select", "truma", "boiler")).state != STATE_UNAVAILABLE
+    assert hass.states.get(_eid(hass, "binary_sensor", "truma", "heater_connected")).state == "on"
+    assert hass.states.get(_eid(hass, "binary_sensor", "truma", "heater_problem")).state == "on"
+    assert hass.states.get(_eid(hass, "sensor", "truma", "connection_state")).state == "error"
+    mqtt_mock.async_publish.reset_mock()
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call("climate", "set_temperature", {"entity_id": climate, "temperature": 18}, blocking=True)
+    mqtt_mock.async_publish.assert_not_called()
 
 
 async def test_new_device_issue(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:

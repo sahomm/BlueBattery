@@ -82,6 +82,9 @@
     }
   },
   "exceptions": {
+    "heater_fault": {
+      "message": "The heater reports a fault and does not accept commands. Reset it on the heater's control panel."
+    },
     "target_out_of_range": {
       "message": "Temperature must be between {min} and {max} °C."
     }

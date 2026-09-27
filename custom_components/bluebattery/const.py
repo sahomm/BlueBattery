@@ -35,6 +35,9 @@ MAX_TIMEOUT: Final = 900
 
 # Schonfrist nach Display-Neustart, in der ein Heizungs-`alive` != 2 kein Problem ist
 HEATER_GRACE_UPTIME: Final = 180
+# `alive` der Heizung: 0 offline, 1 nicht verbunden, 2 ok, 3 Störung (verbunden)
+HEATER_ALIVE_OK: Final = 2
+HEATER_ALIVE_FAULT: Final = 3
 # Zeit, nach der ein nicht bestätigter Befehl als „ohne Wirkung“ gilt
 COMMAND_TIMEOUT: Final = 90
 # Gleicher Befehl wird innerhalb dieser Zeit nicht erneut gesendet

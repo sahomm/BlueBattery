@@ -151,7 +151,9 @@ OPTIONS = {"abort": {
 ISSUES = {"new_devices": {"title": T("New BlueBattery device found", "Neues BlueBattery-Gerät gefunden"),
           "description": T("{title} provides new devices (newly paired with the BB-Display): {devices}.\n\nTo add them: **Settings → Devices & services → BlueBattery → Configure**.",
                            "{title} liefert neue Geräte (neu im BB-Display gekoppelt): {devices}.\n\nHinzufügen: **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren**.")}}
-EXCEPTIONS = {"target_out_of_range": {"message": T("Temperature must be between {min} and {max} °C.",
+EXCEPTIONS = {"heater_fault": {"message": T("The heater reports a fault and does not accept commands. Reset it on the heater's control panel.",
+                                            "Die Heizung meldet eine Störung und nimmt keine Befehle an. Bitte am Bedienteil der Heizung zurücksetzen.")},
+              "target_out_of_range": {"message": T("Temperature must be between {min} and {max} °C.",
                                                    "Die Temperatur muss zwischen {min} und {max} °C liegen.")}}
 
 

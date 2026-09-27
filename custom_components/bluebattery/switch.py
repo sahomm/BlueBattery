@@ -33,8 +33,8 @@ class AldeGasSwitch(BlueBatteryEntity, SwitchEntity):
 
     @property
     def available(self) -> bool:
-        """Nur bedienbar, wenn die Heizung verbunden ist."""
-        return super().available and self.device.heater_alive(KEY_ALDE) == 2
+        """Verfügbar, wenn die Heizung verbunden ist – auch bei Störung."""
+        return super().available and self.device.heater_connected(KEY_ALDE) is True
 
     @property
     def is_on(self) -> bool | None:

@@ -82,6 +82,9 @@
     }
   },
   "exceptions": {
+    "heater_fault": {
+      "message": "Die Heizung meldet eine Störung und nimmt keine Befehle an. Bitte am Bedienteil der Heizung zurücksetzen."
+    },
     "target_out_of_range": {
       "message": "Die Temperatur muss zwischen {min} und {max} °C liegen."
     }

@@ -236,6 +236,7 @@ Entitäten, die es in der Integration als andere Art gibt (z. B. „Booster-Limi
 - Die Heizung reagiert **nicht sofort**: Änderungen erscheinen je nach Heizung erst nach einigen Sekunden bis ca. 30 Sekunden. Bitte nicht mehrfach tippen – die Integration zeigt an, dass ein Befehl unterwegs ist.
 - Das BB-Display meldet nicht zurück, ob ein Befehl angenommen wurde. Die Integration prüft das am nachfolgenden Status.
 - **Truma-Boiler-Boost** schaltet die Raumheizung vorübergehend ab; die Integration zeigt das als *„Raumheizung pausiert“*.
+- **Störung** (z. B. E212H bei fehlendem Gas): Die Integration meldet sie sofort mit Fehlercode und -text (Störungsmelder), die Heizung bleibt als *verbunden* angezeigt. Eine Störung lässt sich **nicht aus der Ferne zurücksetzen** – das ist von der Heizung so vorgesehen; zurücksetzen am Bedienteil (z. B. CP plus). Bis dahin nimmt die Heizung keine Befehle an.
 
 ## Gut zu wissen
 

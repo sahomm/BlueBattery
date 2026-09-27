@@ -14,12 +14,16 @@ from typing import Any
 from homeassistant.components import mqtt
 from homeassistant.components.mqtt.models import ReceiveMessage
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
     COMMAND_DEBOUNCE,
     COMMAND_TIMEOUT,
+    DOMAIN,
+    HEATER_ALIVE_FAULT,
+    HEATER_ALIVE_OK,
     HEATER_GRACE_UPTIME,
     KEY_ALDE,
     KEY_DISPLAY,
@@ -407,6 +411,11 @@ class BlueBatteryDevice:
         value = to_number(block.get("alive")) if block else None
         return None if value is None else int(value)
 
+    def heater_connected(self, heater: str) -> bool | None:
+        """Heizung ist verbunden – auch bei Störung (`alive` 3 = verbunden, Heizung meldet Fehler)."""
+        alive = self.heater_alive(heater)
+        return None if alive is None else alive in (HEATER_ALIVE_OK, HEATER_ALIVE_FAULT)
+
     def in_grace_period(self) -> bool:
         """Display ist frisch gestartet – Heizungsverbindung darf noch fehlen."""
         uptime = to_number(self.status.get("uptime_s"))
@@ -415,7 +424,13 @@ class BlueBatteryDevice:
     # --- Befehle ---------------------------------------------------------------
 
     async def async_send(self, heater: str, payload: dict[str, int]) -> None:
-        """Befehl an `set/<heater>` senden (nicht retained, Felder in Reihenfolge)."""
+        """Befehl an `set/<heater>` senden (nicht retained, Felder in Reihenfolge).
+
+        Bei einer Störung nimmt die Heizung keine Befehle an – sie muss am Bedienteil
+        zurückgesetzt werden (so von der Heizung vorgesehen).
+        """
+        if self.heater_alive(heater) == HEATER_ALIVE_FAULT:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="heater_fault")
         current = self.pending.get(heater)
         if (
             current is not None

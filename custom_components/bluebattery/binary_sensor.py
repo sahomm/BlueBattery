@@ -22,8 +22,7 @@ from .entity import BlueBatteryEntity
 
 def _heater_connected(heater: str) -> Callable[[dict[str, Any] | None, BlueBatteryDevice], bool | None]:
     def get(_block: dict[str, Any] | None, device: BlueBatteryDevice) -> bool | None:
-        alive = device.heater_alive(heater)
-        return None if alive is None else alive == 2
+        return device.heater_connected(heater)
 
     return get
 

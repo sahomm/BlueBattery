@@ -234,6 +234,7 @@ Entities that exist as a different type in the integration (e.g. "Booster limit"
 - The heater does **not react instantly**: changes show up after a few seconds up to about 30 seconds. Please don't tap repeatedly – the integration shows that a command is pending.
 - The BB-Display does not report whether a command was accepted. The integration verifies it against the following status.
 - **Truma boiler boost** temporarily switches off room heating; the integration shows this as *"room heating paused"*.
+- **Fault** (e.g. E212H when gas is missing): the integration reports it immediately with error code and text (fault sensor); the heater is still shown as *connected*. A fault **cannot be reset remotely** – this is intended by the heater; reset it on the control panel (e.g. CP plus). Until then the heater does not accept commands.
 
 ## Good to know
 
