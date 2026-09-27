@@ -100,10 +100,29 @@ class MigrationItem:
     domain: str
 
 
-def _target(unique_id: str, device: BlueBatteryDevice) -> tuple[str, str, str] | None:
+def _ble_name(device: BlueBatteryDevice, key: str, labels: dict[str, str]) -> str | None:
+    """BLE-Name eines Tanks – aus dem Live-Status, sonst aus dem gespeicherten Namen.
+
+    Nicht erreichbare Kanäle lässt die Firmware im Status weg; der Umstieg darf
+    davon nicht abhängen.
+    """
+    block = device.block(key)
+    if block and block.get("ble_name"):
+        return str(block["ble_name"])
+    label = labels.get(key, "")
+    if key.startswith(PREFIX_TANK_CTL) and label.startswith("BB-Tank "):
+        return label[len("BB-Tank "):]
+    if m := re.search(r"\((\S+) S(\d+)\)$", label):
+        return m.group(1) if m.group(2) == "1" else None
+    return None
+
+
+def _target(
+    unique_id: str, device: BlueBatteryDevice, keys: list[str], labels: dict[str, str]
+) -> tuple[str, str, str] | None:
     """(Domain, Untergeräte-Schlüssel, Feld) für eine alte Discovery-unique_id."""
     node_mac = device.node.split("_", 1)[1].upper()
-    subs = device.subdevices()
+    subs = keys
 
     if unique_id.upper() == f"TIN_TRUMA_HEATER_{node_mac}":
         return "climate", KEY_TRUMA, "truma_heater"
@@ -129,14 +148,16 @@ def _target(unique_id: str, device: BlueBatteryDevice) -> tuple[str, str, str] |
     if (m := _RE_BLUELEVEL.match(unique_id)) and m.group(1) in _TANK:
         ble_name = m.group(2)
         domain, field = _TANK[m.group(1)]
-        for key in subs:  # zuerst Tank-Controller (BB-Tank), sonst Kanal (BlueLevel+)
-            if key.startswith(PREFIX_TANK_CTL) and (device.block(key) or {}).get("ble_name") == ble_name:
+        for key in subs:  # zuerst Tank-Controller (BB-Tank), sonst Kanal (BlueLevel+, Slot 0)
+            if key.startswith(PREFIX_TANK_CTL) and _ble_name(device, key, labels) == ble_name:
                 return domain, key, field
         for key in subs:
-            if key.startswith(PREFIX_TANK) and not key.startswith(PREFIX_TANK_CTL):
-                block = device.block(key) or {}
-                if block.get("ble_name") == ble_name and int(block.get("slot", 0)) == 0:
-                    return domain, key, field
+            if (
+                key.startswith(PREFIX_TANK)
+                and key.endswith(":0")
+                and _ble_name(device, key, labels) == ble_name
+            ):
+                return domain, key, field
     if (m := _RE_BATTERY.match(unique_id)) and m.group(1) in _BATTERY:
         domain, field = _BATTERY[m.group(1)]
         return domain, f"{PREFIX_BATTERY}{m.group(2).upper()}", field
@@ -144,14 +165,21 @@ def _target(unique_id: str, device: BlueBatteryDevice) -> tuple[str, str, str] |
 
 
 @callback
-def async_plan(hass: HomeAssistant, device: BlueBatteryDevice, selected: list[str]) -> list[MigrationItem]:
+def async_plan(
+    hass: HomeAssistant,
+    device: BlueBatteryDevice,
+    selected: list[str],
+    labels: dict[str, str] | None = None,
+) -> list[MigrationItem]:
     """Zuordnung alt -> neu aus der Entity-Registry ermitteln."""
     ent_reg = er.async_get(hass)
+    labels = {**{k: s.label for k, s in device.subdevices().items()}, **(labels or {})}
+    keys = sorted(set(selected) | set(device.subdevices()))
     plan: dict[str, MigrationItem] = {}
     for entry in list(ent_reg.entities.values()):
         if entry.platform != "mqtt" or not entry.unique_id:
             continue
-        target = _target(entry.unique_id, device)
+        target = _target(entry.unique_id, device, keys, labels)
         if target is None:
             continue
         domain, key, field = target

@@ -295,7 +295,12 @@ class BlueBatteryOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         """Alte Entitäten der Firmware-Discovery finden und Zuordnung merken."""
         entry = self.config_entry
-        plan = async_plan(self.hass, entry.runtime_data.device, list(entry.options.get(OPT_SELECTED, [])))
+        plan = async_plan(
+            self.hass,
+            entry.runtime_data.device,
+            list(entry.options.get(OPT_SELECTED, [])),
+            dict(entry.options.get(OPT_LABELS, {})),
+        )
         if not plan:
             return self.async_abort(reason="nothing_to_migrate")
         if user_input is not None:

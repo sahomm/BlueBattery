@@ -118,3 +118,20 @@ async def test_migration_via_options_menu(hass: HomeAssistant, mqtt_mock, entry_
     await hass.async_block_till_done()
     assert ent_reg.async_get("sensor.alt_spannung").platform == DOMAIN
     assert "migration_plan" not in entry.options
+
+
+async def test_migration_when_channel_missing(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Nicht erreichbarer BlueLevel+ (fehlt im Status) wird über den gespeicherten Namen zugeordnet."""
+    ent_reg = er.async_get(hass)
+    ent_reg.async_get_or_create("sensor", "mqtt", "bluelevel_fill_SSBT0002", suggested_object_id="bl_fill_alt")
+    entry_data["options"]["labels"] = {"tank:F1E2D3C4B5A7:0": "Frischwasser (SSBT0002 S1)"}
+    del status["BlueLevel_2"]  # SSBT0002 gerade nicht erreichbar
+    entry = MockConfigEntry(**entry_data)
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status))
+    await hass.async_block_till_done()
+    plan = async_plan(hass, entry.runtime_data.device, entry.options["selected"], entry.options["labels"])
+    assert [(i.old_entity_id, i.new_unique_id) for i in plan] == [
+        ("sensor.bl_fill_alt", f"{NODE}|tank:F1E2D3C4B5A7:0|volume")
+    ]
