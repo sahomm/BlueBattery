@@ -38,8 +38,31 @@
     }
   },
   "options": {
+    "abort": {
+      "nothing_to_migrate": "No entities of the display's built-in Home Assistant discovery found – nothing to migrate.",
+      "migration_done": "Migration finished: {renamed} entities took over their previous IDs (history continues). Still blocked: {blocked} (old entity still exists – is discovery on the display switched off?). Not found: {missing}."
+    },
     "step": {
       "init": {
+        "title": "BlueBattery",
+        "menu_options": {
+          "settings": "Devices and settings",
+          "migrate_prepare": "Migration: prepare (take over IDs of the built-in discovery)",
+          "migrate_apply": "Migration: finish"
+        }
+      },
+      "migrate_prepare": {
+        "title": "Prepare migration",
+        "description": "{count} entities of the display's built-in Home Assistant discovery can be taken over. After finishing, the new entities use these IDs – dashboards, automations and history keep working:\n\n{list}\n\n**Next:** save, then switch off **Home Assistant** in the MQTT settings of the display, wait one minute and choose **Migration: finish**."
+      },
+      "migrate_apply": {
+        "title": "Finish migration",
+        "description": "{count} entities will take over their previous IDs. Old entities still present: {still_there} – if this is not 0, the built-in discovery on the display is probably still switched on.",
+        "data": {
+          "force_remove": "Remove remaining old entities (only if discovery is already off)"
+        }
+      },
+      "settings": {
         "title": "BlueBattery options",
         "description": "New devices found: {new}\n\nDeselected devices are disabled (history is kept) unless removal is selected.",
         "data": {

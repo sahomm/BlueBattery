@@ -122,7 +122,24 @@ CONFIG = {
     "abort": {"not_bluebattery": T("Not a BlueBattery device.", "Kein BlueBattery-Gerät."),
               "already_configured": T("This device is already set up.", "Dieses Gerät ist bereits eingerichtet.")},
 }
-OPTIONS = {"step": {"init": {
+OPTIONS = {"abort": {
+    "nothing_to_migrate": T("No entities of the display's built-in Home Assistant discovery found – nothing to migrate.",
+                            "Keine Entitäten der eingebauten Home-Assistant-Anbindung des Displays gefunden – nichts umzustellen."),
+    "migration_done": T("Migration finished: {renamed} entities took over their previous IDs (history continues). Still blocked: {blocked} (old entity still exists – is discovery on the display switched off?). Not found: {missing}.",
+                        "Umstieg abgeschlossen: {renamed} Entitäten haben ihre bisherigen IDs übernommen (Verlauf läuft weiter). Noch blockiert: {blocked} (alte Entität existiert noch – ist die Anbindung im Display abgeschaltet?). Nicht gefunden: {missing}.")},
+  "step": {
+  "init": {"title": T("BlueBattery", "BlueBattery"),
+           "menu_options": {"settings": T("Devices and settings", "Geräte und Einstellungen"),
+                            "migrate_prepare": T("Migration: prepare (take over IDs of the built-in discovery)", "Umstieg: vorbereiten (IDs der eingebauten Anbindung übernehmen)"),
+                            "migrate_apply": T("Migration: finish", "Umstieg: abschließen")}},
+  "migrate_prepare": {"title": T("Prepare migration", "Umstieg vorbereiten"),
+                      "description": T("{count} entities of the display's built-in Home Assistant discovery can be taken over. After finishing, the new entities use these IDs – dashboards, automations and history keep working:\n\n{list}\n\n**Next:** save, then switch off **Home Assistant** in the MQTT settings of the display, wait one minute and choose **Migration: finish**.",
+                                       "{count} Entitäten der eingebauten Home-Assistant-Anbindung des Displays können übernommen werden. Nach dem Abschluss tragen die neuen Entitäten diese IDs – Dashboards, Automationen und Verlauf laufen weiter:\n\n{list}\n\n**Danach:** speichern, im Display unter MQTT den Schalter **Home Assistant** ausschalten, eine Minute warten und **Umstieg: abschließen** wählen.")},
+  "migrate_apply": {"title": T("Finish migration", "Umstieg abschließen"),
+                    "description": T("{count} entities will take over their previous IDs. Old entities still present: {still_there} – if this is not 0, the built-in discovery on the display is probably still switched on.",
+                                     "{count} Entitäten übernehmen ihre bisherigen IDs. Noch vorhandene alte Entitäten: {still_there} – ist das nicht 0, ist die eingebaute Anbindung im Display vermutlich noch eingeschaltet."),
+                    "data": {"force_remove": T("Remove remaining old entities (only if discovery is already off)", "Verbliebene alte Entitäten entfernen (nur wenn die Anbindung bereits aus ist)")}},
+  "settings": {
     "title": T("BlueBattery options", "BlueBattery-Optionen"),
     "description": T("New devices found: {new}\n\nDeselected devices are disabled (history is kept) unless removal is selected.",
                      "Neu gefundene Geräte: {new}\n\nAbgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt."),

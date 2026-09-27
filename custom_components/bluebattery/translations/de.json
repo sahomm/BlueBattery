@@ -38,8 +38,31 @@
     }
   },
   "options": {
+    "abort": {
+      "nothing_to_migrate": "Keine Entitäten der eingebauten Home-Assistant-Anbindung des Displays gefunden – nichts umzustellen.",
+      "migration_done": "Umstieg abgeschlossen: {renamed} Entitäten haben ihre bisherigen IDs übernommen (Verlauf läuft weiter). Noch blockiert: {blocked} (alte Entität existiert noch – ist die Anbindung im Display abgeschaltet?). Nicht gefunden: {missing}."
+    },
     "step": {
       "init": {
+        "title": "BlueBattery",
+        "menu_options": {
+          "settings": "Geräte und Einstellungen",
+          "migrate_prepare": "Umstieg: vorbereiten (IDs der eingebauten Anbindung übernehmen)",
+          "migrate_apply": "Umstieg: abschließen"
+        }
+      },
+      "migrate_prepare": {
+        "title": "Umstieg vorbereiten",
+        "description": "{count} Entitäten der eingebauten Home-Assistant-Anbindung des Displays können übernommen werden. Nach dem Abschluss tragen die neuen Entitäten diese IDs – Dashboards, Automationen und Verlauf laufen weiter:\n\n{list}\n\n**Danach:** speichern, im Display unter MQTT den Schalter **Home Assistant** ausschalten, eine Minute warten und **Umstieg: abschließen** wählen."
+      },
+      "migrate_apply": {
+        "title": "Umstieg abschließen",
+        "description": "{count} Entitäten übernehmen ihre bisherigen IDs. Noch vorhandene alte Entitäten: {still_there} – ist das nicht 0, ist die eingebaute Anbindung im Display vermutlich noch eingeschaltet.",
+        "data": {
+          "force_remove": "Verbliebene alte Entitäten entfernen (nur wenn die Anbindung bereits aus ist)"
+        }
+      },
+      "settings": {
         "title": "BlueBattery-Optionen",
         "description": "Neu gefundene Geräte: {new}\n\nAbgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt.",
         "data": {

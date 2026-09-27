@@ -17,6 +17,7 @@ from homeassistant.config_entries import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.service_info.mqtt import MqttServiceInfo
 
 from .const import (
@@ -37,6 +38,7 @@ from .const import (
     PRODUCT_NODE_PATTERNS,
 )
 from .data import SubDevice, find_subdevices, parse_json, split_info_topic
+from .migrate import OPT_MIGRATION, async_apply, async_plan, plan_to_options
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -279,9 +281,68 @@ class BlueBatteryConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class BlueBatteryOptionsFlow(OptionsFlow):
-    """Neukonfiguration: Geräte hinzufügen/abwählen, Zeitlimit, Heizungsoptionen."""
+    """Neukonfiguration: Geräte, Einstellungen und Umstieg von der Firmware-Discovery."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Menü."""
+        options = ["settings", "migrate_prepare"]
+        if self.config_entry.options.get(OPT_MIGRATION):
+            options.append("migrate_apply")
+        return self.async_show_menu(step_id="init", menu_options=options)
+
+    async def async_step_migrate_prepare(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Alte Entitäten der Firmware-Discovery finden und Zuordnung merken."""
+        entry = self.config_entry
+        plan = async_plan(self.hass, entry.runtime_data.device, list(entry.options.get(OPT_SELECTED, [])))
+        if not plan:
+            return self.async_abort(reason="nothing_to_migrate")
+        if user_input is not None:
+            return self.async_create_entry(
+                data={**entry.options, OPT_MIGRATION: plan_to_options(plan)}
+            )
+        return self.async_show_form(
+            step_id="migrate_prepare",
+            description_placeholders={
+                "count": str(len(plan)),
+                "list": "\n".join(f"- `{i.old_entity_id}`" for i in plan),
+            },
+        )
+
+    async def async_step_migrate_apply(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Neue Entitäten auf die gemerkten alten IDs umbenennen."""
+        entry = self.config_entry
+        stored: list[dict[str, Any]] = list(entry.options.get(OPT_MIGRATION, []))
+        ent_reg = er.async_get(self.hass)
+        still_there = [i["old"] for i in stored if (e := ent_reg.async_get(i["old"])) and e.platform == "mqtt"]
+        if user_input is not None:
+            result = async_apply(self.hass, stored, bool(user_input.get("force_remove")))
+            options = {**entry.options}
+            if not result["blocked"]:
+                options.pop(OPT_MIGRATION, None)
+            # Optionen direkt speichern; Ergebnis als Meldung anzeigen
+            self.hass.config_entries.async_update_entry(entry, options=options)
+            return self.async_abort(
+                reason="migration_done",
+                description_placeholders={
+                    "renamed": str(len(result["renamed"])),
+                    "blocked": str(len(result["blocked"])),
+                    "missing": str(len(result["missing"])),
+                },
+            )
+        return self.async_show_form(
+            step_id="migrate_apply",
+            data_schema=vol.Schema({vol.Optional("force_remove", default=False): bool}),
+            description_placeholders={
+                "count": str(len(stored)),
+                "still_there": str(len(still_there)),
+            },
+        )
+
+    async def async_step_settings(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Formular."""
         entry = self.config_entry
         labels: dict[str, str] = dict(entry.options.get(OPT_LABELS, {}))
@@ -309,7 +370,7 @@ class BlueBatteryOptionsFlow(OptionsFlow):
 
         new = [k for k in current if k not in selected_before and k not in entry.options.get(OPT_IGNORED, [])]
         return self.async_show_form(
-            step_id="init",
+            step_id="settings",
             data_schema=vol.Schema(
                 {
                     vol.Optional(OPT_SELECTED, default=selected_before): cv.multi_select(choices),
