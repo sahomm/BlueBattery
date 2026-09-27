@@ -232,11 +232,10 @@ Entitäten, die es in der Integration als andere Art gibt (z. B. „Booster-Limi
 **Alde** (Compact 3020 HE / 3030) – 🧪 *experimentell*
 - Thermostat Zone 1 (und Zone 2, falls vorhanden), Warmwasser, Gas, Elektrostufe 1–3 kW, Priorität, Außentemperatur
 
-**Wichtig zu wissen**
-- Die Heizung reagiert **nicht sofort**: Änderungen erscheinen je nach Heizung erst nach einigen Sekunden bis ca. 30 Sekunden. Bitte nicht mehrfach tippen – die Integration zeigt an, dass ein Befehl unterwegs ist.
-- Das BB-Display meldet nicht zurück, ob ein Befehl angenommen wurde. Die Integration prüft das am nachfolgenden Status.
-- **Truma-Boiler-Boost** schaltet die Raumheizung vorübergehend ab; die Integration zeigt das als *„Raumheizung pausiert“*.
-- **Störung** (z. B. E212H bei fehlendem Gas): Die Integration meldet sie sofort mit Fehlercode und -text (Störungsmelder), die Heizung bleibt als *verbunden* angezeigt. Eine Störung lässt sich **nicht aus der Ferne zurücksetzen** – das ist von der Heizung so vorgesehen; zurücksetzen am Bedienteil (z. B. CP plus). Bis dahin nimmt die Heizung keine Befehle an.
+**So arbeitet die Steuerung**
+- **Befehle mit Kontrolle:** Die Integration prüft jeden Befehl am nächsten Status des BB-Displays und zeigt an, solange er unterwegs ist. Je nach Heizung ist er nach wenigen Sekunden bis etwa 30 Sekunden übernommen – mit der Truma Combi im Test nach rund 6 Sekunden.
+- **Boiler-Boost erkannt:** Beim Truma-Boiler-Boost stellt die Truma die Raumheizung kurz zurück, damit das Wasser schneller heiß wird. Die Integration zeigt das als *„Raumheizung pausiert“*.
+- **Störungen sofort im Blick:** Eine Störung (z. B. E212H bei fehlendem Gas) meldet die Integration innerhalb von Sekunden mit Fehlercode und -text – ideal für Benachrichtigungen, etwa zum Frostschutz. Die Heizung bleibt dabei als *verbunden* angezeigt. Zurückgesetzt wird die Störung, wie von der Heizung vorgesehen, direkt am Bedienteil (z. B. CP plus); danach läuft die Heizung mit den bisherigen Einstellungen weiter.
 
 ## Gut zu wissen
 

@@ -230,11 +230,10 @@ Entities that exist as a different type in the integration (e.g. "Booster limit"
 **Alde** (Compact 3020 HE / 3030) – 🧪 *experimental*
 - Thermostat zone 1 (and zone 2 if present), hot water, gas, electric level 1–3 kW, priority, outdoor temperature
 
-**Important**
-- The heater does **not react instantly**: changes show up after a few seconds up to about 30 seconds. Please don't tap repeatedly – the integration shows that a command is pending.
-- The BB-Display does not report whether a command was accepted. The integration verifies it against the following status.
-- **Truma boiler boost** temporarily switches off room heating; the integration shows this as *"room heating paused"*.
-- **Fault** (e.g. E212H when gas is missing): the integration reports it immediately with error code and text (fault sensor); the heater is still shown as *connected*. A fault **cannot be reset remotely** – this is intended by the heater; reset it on the control panel (e.g. CP plus). Until then the heater does not accept commands.
+**How control works**
+- **Commands with verification:** the integration checks every command against the next status of the BB-Display and shows while it is pending. Depending on the heater it is applied within a few seconds up to about 30 seconds – with the Truma Combi in our test after about 6 seconds.
+- **Boiler boost detected:** during Truma boiler boost the Truma briefly holds back room heating so the water heats up faster. The integration shows this as *"room heating paused"*.
+- **Faults at a glance:** a fault (e.g. E212H when gas is missing) is reported within seconds with error code and text – ideal for notifications, e.g. for frost protection. The heater is still shown as *connected*. As intended by the heater, the fault is reset directly on the control panel (e.g. CP plus); the heater then continues with its previous settings.
 
 ## Good to know
 
