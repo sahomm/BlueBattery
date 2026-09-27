@@ -21,7 +21,7 @@
       },
       "select": {
         "title": "Geräte auswählen",
-        "description": "{name} liefert {count} Geräte. Wähle aus, welche übernommen werden – später jederzeit über **Konfigurieren** änderbar.\n\n{warning} Eingebaute Home-Assistant-Anbindung im Display aktiv: {firmware_discovery}. Falls ja, erscheinen Entitäten doppelt, bis sie im Display abgeschaltet wird.",
+        "description": "{name} liefert {count} Geräte – alle im BB-Display gekoppelten Geräte. Wähle aus, welche übernommen werden – später jederzeit über **Konfigurieren** änderbar. Fehlt ein Gerät? Zuerst im BB-Display koppeln.\n\n{warning} Eingebaute Home-Assistant-Anbindung im Display aktiv: {firmware_discovery}. Falls ja, erscheinen Entitäten doppelt, bis sie im Display abgeschaltet wird.",
         "data": {
           "selected": "Geräte"
         }
@@ -64,7 +64,7 @@
       },
       "settings": {
         "title": "BlueBattery-Optionen",
-        "description": "Neu gefundene Geräte: {new}\n\nAbgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt.",
+        "description": "Neu gefundene Geräte: {new}\n\nAufgeführt sind die im BB-Display gekoppelten Geräte. Abgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt.",
         "data": {
           "selected": "Geräte",
           "remove_deselected": "Abgewählte Geräte entfernen statt deaktivieren",
@@ -78,7 +78,7 @@
   "issues": {
     "new_devices": {
       "title": "Neues BlueBattery-Gerät gefunden",
-      "description": "{title} liefert neue Geräte: {devices}.\n\nHinzufügen: **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren**."
+      "description": "{title} liefert neue Geräte (neu im BB-Display gekoppelt): {devices}.\n\nHinzufügen: **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren**."
     }
   },
   "exceptions": {

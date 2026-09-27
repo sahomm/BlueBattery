@@ -21,7 +21,7 @@
       },
       "select": {
         "title": "Select devices",
-        "description": "{name} provides {count} devices. Select which ones to add – you can change this later via **Configure**.\n\n{warning} Built-in Home Assistant discovery on the display active: {firmware_discovery}. If yes, entities will appear twice until it is switched off on the display.",
+        "description": "{name} provides {count} devices – all devices paired with the BB-Display. Select which ones to add – you can change this later via **Configure**. A device is missing? Pair it with the BB-Display first.\n\n{warning} Built-in Home Assistant discovery on the display active: {firmware_discovery}. If yes, entities will appear twice until it is switched off on the display.",
         "data": {
           "selected": "Devices"
         }
@@ -64,7 +64,7 @@
       },
       "settings": {
         "title": "BlueBattery options",
-        "description": "New devices found: {new}\n\nDeselected devices are disabled (history is kept) unless removal is selected.",
+        "description": "New devices found: {new}\n\nOnly devices paired with the BB-Display are listed. Deselected devices are disabled (history is kept) unless removal is selected.",
         "data": {
           "selected": "Devices",
           "remove_deselected": "Remove deselected devices instead of disabling them",
@@ -78,7 +78,7 @@
   "issues": {
     "new_devices": {
       "title": "New BlueBattery device found",
-      "description": "{title} provides new devices: {devices}.\n\nTo add them: **Settings → Devices & services → BlueBattery → Configure**."
+      "description": "{title} provides new devices (newly paired with the BB-Display): {devices}.\n\nTo add them: **Settings → Devices & services → BlueBattery → Configure**."
     }
   },
   "exceptions": {

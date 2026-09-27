@@ -10,7 +10,9 @@
 
 Home Assistant integration for **[BlueBattery](https://www.blue-battery.com)** devices – battery and solar computers, BB-Display, tank sensors and heater control (Truma/Alde via the TIN adapter) for motorhomes and caravans.
 
-The integration finds BlueBattery devices in your MQTT broker **automatically**, lets you choose which devices to add, and lets you add new devices later – without losing existing entities or their history.
+The integration finds your **BB-Display** in the MQTT broker **automatically** and takes over all devices paired with the display – you choose which ones, and you can add new devices later without losing existing entities or their history.
+
+> **Requirement: a BB-Display.** The integration connects BlueBattery devices exclusively **via the BB-Display**. It takes over all devices paired with the display – battery computer, BlueLevel/BB-Tank, temperature sensors and Truma/Alde via the TIN adapter. **Without a BB-Display the integration does not work (yet).**
 
 This project is developed by [sahomm](https://github.com/sahomm) in coordination with the BlueBattery developer and with support from Claude (Anthropic).
 
@@ -59,9 +61,9 @@ Xiaomi/RuuviTag ───┘                    ▲                           (M
 
 ## Features
 
-- **Automatic discovery** of BlueBattery devices in the MQTT broker – regardless of the MQTT topic configured on the device (fallback: manual entry).
-- **Device selection** during setup: battery computer, heater, each tank, each temperature sensor individually.
-- **New devices** are reported and added via reconfiguration – existing entities and their history stay untouched.
+- **Automatic discovery** of the BB-Display in the MQTT broker – regardless of the MQTT topic configured on the display (fallback: manual entry).
+- **Device selection** during setup: all devices paired with the display – battery computer, heater, each tank, each temperature sensor individually.
+- **New devices:** as soon as a device is newly paired with the display, Home Assistant reports it; it is added via reconfiguration – existing entities and their history stay untouched.
 - **Battery & energy:** state of charge, voltage, current, solar, booster, starter battery, energy counters (usable in the Energy dashboard).
 - **Tanks:** level in % and litres, tank type, tilt.
 - **Climate:** indoor temperature, humidity, dew point of the display; external temperature/humidity sensors (e.g. fridge, freezer).
@@ -71,32 +73,27 @@ Xiaomi/RuuviTag ───┘                    ▲                           (M
 
 ## Supported devices
 
-| Device | via | Status |
+All devices come **via the BB-Display** – they must be paired with or connected to it.
+
+| Device | Connection to the BB-Display | Status |
 |---|---|---|
-| BB-Display | direct (MQTT) | 🔜 first release |
-| Battery computers (BBX200/400 Pro, D1/D2, X200/X300, BBX400, Basic) | BB-Display | 🔜 first release |
-| BlueLevel / BlueLevel+, BB-Tank (channels) | BB-Display | 🔜 first release |
-| Xiaomi LYWSD03MMC, RuuviTag | BB-Display | 🔜 first release |
-| Truma Combi (CP plus iNet ready) | BB-Display + TIN adapter | 🔜 planned |
-| Alde Compact 3020 HE / 3030 | BB-Display + TIN adapter | 🧪 experimental |
-| BBX400 Pro, BBX200 Pro (Wi-Fi, direct) | direct (MQTT) | 📋 later |
-| BB-Tank, BlueLevel (Wi-Fi, direct) | direct (MQTT) | 📋 later |
+| BB-Display itself (indoor temperature, humidity, dew point, diagnostics) | – | ✅ supported |
+| Battery computers (BBX200/400 Pro, D1/D2, X200/X300, BBX400, Basic) | Bluetooth, selected on the display | ✅ supported |
+| BlueLevel / BlueLevel+, BB-Tank (channels) | Bluetooth, paired with the display | ✅ supported |
+| Xiaomi LYWSD03MMC, RuuviTag | Bluetooth, paired with the display | ✅ supported |
+| Truma Combi (CP plus iNet ready) | TIN adapter | ✅ supported |
+| Alde Compact 3020 HE / 3030 | TIN adapter | 🧪 experimental |
 
 ## How does the data reach Home Assistant?
 
-BlueBattery devices reach Home Assistant in **two ways**:
-
-| Path | How | Devices | Status |
-|---|---|---|---|
-| **Via the BB-Display** (default) | Devices send via Bluetooth to the BB-Display; the display forwards everything via Wi-Fi/MQTT | any BlueBattery battery computer, BlueLevel/BlueLevel+, BB-Tank, Xiaomi/Ruuvi sensors, Truma/Alde (TIN adapter) | ✅ supported |
-| **Directly via Wi-Fi** | Pro devices with their own Wi-Fi publish via MQTT themselves | BBX400 Pro, BBX200 Pro, BB-Tank, BlueLevel | 📋 planned |
+The devices send via Bluetooth to the BB-Display or are connected through the TIN adapter. The display forwards everything via Wi-Fi/MQTT to Home Assistant and receives heater commands from there.
 
 **The BB-Display is the hub – with limits:**
-- It forwards **exactly one** battery computer – the one selected on the display. A **second** battery computer (e.g. a BBX400 Pro for a second battery bank) only comes via the direct path.
-- It only forwards the tanks and sensors **selected on the display**.
-- For tanks it forwards level, volume, tilt and signal – **diagnostic values** of the tank sensors (e.g. distance to the water surface, memory) only come via the direct path.
+- It forwards **exactly one** battery computer – the one selected on the display. A **second** battery computer (e.g. a BBX400 Pro for a second battery bank) does not appear.
+- It only forwards the tanks and sensors **paired with the display**.
+- For tanks it forwards level, volume, tilt and signal – **diagnostic values** of the tank sensors (e.g. distance to the water surface, memory) are not included.
 
-**Avoid duplicate values:** Many BlueBattery devices have **built-in Home Assistant support** ("Home Assistant" / "MQTT Discovery" switch). Switch it off on every device whose values you get through this integration – always on the BB-Display, and on BB-Tank/BlueLevel if they are connected to the display. For devices that (so far) only come directly – e.g. a second battery computer – **leave it on** until this integration supports the direct path.
+**Avoid duplicate values:** Many BlueBattery devices have **built-in Home Assistant support** ("Home Assistant" / "MQTT Discovery" switch). Always switch it off on the BB-Display, and on BB-Tank/BlueLevel as well if they are paired with the display. For devices that do not come via the display – e.g. a second battery computer – **leave it on**.
 
 ## Prerequisites
 
@@ -105,12 +102,24 @@ BlueBattery devices reach Home Assistant in **two ways**:
 3. **An MQTT broker** – recommended: the **Mosquitto broker** app in Home Assistant (guide below).
 4. **The MQTT integration** in Home Assistant, connected to that broker.
 5. **HACS** to install this integration ([hacs.xyz](https://hacs.xyz)).
-6. **BB-Display** with current firmware, connected to Wi-Fi (see the [BB-Display product page](https://www.blue-battery.com/product-page/bb-display), firmware: [BlueBattery on GitHub](https://github.com/blue-battery-ch/BB-Display/releases)).
-7. For heater control: **TIN adapter** connected to the BB-Display and the Truma or Alde, and set up in the display.
+6. **BB-Display** (required) with current firmware, connected to Wi-Fi (see the [BB-Display product page](https://www.blue-battery.com/product-page/bb-display), firmware: [BlueBattery on GitHub](https://github.com/blue-battery-ch/BB-Display/releases)).
+7. **Your BlueBattery devices paired with the BB-Display** – see [step 1](#step-1--pair-devices-with-the-bb-display).
+8. For heater control: **TIN adapter** connected to the BB-Display and the Truma or Alde, and set up in the display.
 
 ## Step-by-step setup
 
-### Step 1 – Install the Mosquitto broker
+### Step 1 – Pair devices with the BB-Display
+
+Home Assistant only sees what the BB-Display knows. So first set up on the display (on the device or in its web interface) everything you want in Home Assistant:
+
+- **select the battery computer** (the display forwards exactly one),
+- **pair and name tank sensors** (BlueLevel/BlueLevel+, BB-Tank),
+- **pair and name temperature sensors** (Xiaomi LYWSD03MMC, RuuviTag),
+- **connect the TIN adapter** and set up the heater.
+
+The integration takes over the names from the display (e.g. "Fresh water", "Fridge"). Guide: [BB-Display product page](https://www.blue-battery.com/product-page/bb-display).
+
+### Step 2 – Install the Mosquitto broker
 
 1. Home Assistant → **Settings → Apps → App store** → **Mosquitto broker** → **Install**.
 2. After installing, **Start** it and enable **Start on boot** and **Watchdog**.
@@ -118,7 +127,7 @@ BlueBattery devices reach Home Assistant in **two ways**:
 <!-- 📷 TODO: images/01-mosquitto-app.png -->
 > 📷 *Image to follow: installing the Mosquitto app*
 
-### Step 2 – Create an MQTT user
+### Step 3 – Create an MQTT user
 
 The BB-Display logs in to the broker with its own user.
 
@@ -128,7 +137,7 @@ The BB-Display logs in to the broker with its own user.
 <!-- 📷 TODO: images/02-mqtt-user.png -->
 > 📷 *Image to follow: creating the MQTT user*
 
-### Step 3 – Set up the MQTT integration
+### Step 4 – Set up the MQTT integration
 
 1. **Settings → Devices & services** – usually **MQTT** already shows up under "Discovered" → **Configure** → confirm.
 2. If not: **Add integration → MQTT** and select the Mosquitto broker.
@@ -136,7 +145,7 @@ The BB-Display logs in to the broker with its own user.
 <!-- 📷 TODO: images/03-mqtt-integration.png -->
 > 📷 *Image to follow: MQTT integration*
 
-### Step 4 – Connect the BB-Display to the broker
+### Step 5 – Connect the BB-Display to the broker
 
 Open the display's web interface in a browser (IP address e.g. from your router's device list) → **Einstellungen (Settings) → Fernzugriff (Remote access) → MQTT**:
 
@@ -145,7 +154,7 @@ Open the display's web interface in a browser (IP address e.g. from your router'
 | Server | IP address of your Home Assistant (e.g. `192.168.1.10`) |
 | Client ID | any, e.g. `BBDisplay` |
 | Port | `1883` |
-| User / Password | from step 2 |
+| User / Password | from step 3 |
 | Topic | **`BlueBattery/BB-Display`** (factory default, recommended) |
 | Send data every | `30` seconds |
 | Home Assistant | **off** – this integration takes over (see [Migrating](#migrating-from-the-displays-built-in-home-assistant-support)) |
@@ -157,17 +166,17 @@ After saving, the display restarts. The connection symbol ⇄ appears at the top
 
 > **Any topic works:** the integration also detects BlueBattery devices under other topics (up to three levels, e.g. `camper/bb/display`). The factory default is still recommended.
 
-### Step 5 – Install the integration via HACS
+### Step 6 – Install the integration via HACS
 
 1. **HACS → Integrations → ⋮ → Custom repositories** → `https://github.com/sahomm/BlueBattery`, category **Integration**.
 2. Search for **BlueBattery** → **Download** – choose the **latest version** (`v…`), not an identifier like `21ff56e`.
 3. **Restart** Home Assistant.
 
-### Step 6 – Set up BlueBattery
+### Step 7 – Set up BlueBattery
 
 1. **Settings → Devices & services**: **BlueBattery – BB-Display** appears under "Discovered" → **Configure**.
-   *Not found?* → **Add integration → BlueBattery → Manual** and enter the topic from step 4.
-2. The integration lists all devices the display provides – **select** what to add:
+   *Not found?* → **Add integration → BlueBattery → Manual** and enter the topic from step 5.
+2. The integration lists all devices paired with the display – **select** what to add:
 
    | ☑ | Device |
    |---|---|
@@ -182,9 +191,11 @@ After saving, the display restarts. The connection symbol ⇄ appears at the top
 
 ## Adding devices later
 
-When a device is added (new tank, another temperature sensor, TIN adapter), Home Assistant reports under **Settings → Repairs**: *"New BlueBattery device found"*.
+When a device is added (new tank, another temperature sensor, TIN adapter):
 
-**Devices & services → BlueBattery → Configure** → tick the new device → save.
+1. **Pair the device with the BB-Display** (see [step 1](#step-1--pair-devices-with-the-bb-display)).
+2. Wait a moment – Home Assistant reports under **Settings → Repairs**: *"New BlueBattery device found"*.
+3. **Devices & services → BlueBattery → Configure** → tick the new device → save.
 
 - Existing entities are not changed – **history and statistics are kept**.
 - A deselected device is only **disabled** by default (history kept); it can be removed on request.
@@ -234,6 +245,7 @@ Entities that exist as a different type in the integration (e.g. "Booster limit"
 ## Troubleshooting
 
 - **No devices found:** Is the display publishing? In the MQTT integration use **Configure → Listen to a topic** with `BlueBattery/#` – messages should arrive every 30 s. Alternatively use [MQTT Explorer](https://mqtt-explorer.com).
+- **Device missing from the selection:** the integration only lists devices that are paired with the BB-Display and currently reported by it. Pair the device with the display (or select it as battery computer), check the range, then open **Configure** again.
 - **⇄ symbol missing on the display:** check server IP, port, user/password; is the Mosquitto app running?
 - **HACS: "Failed to download … refs/heads/<identifier>.zip" (404):** a commit identifier was selected instead of a version. **HACS → BlueBattery → ⋮ → Redownload** and choose the latest version `v…`.
 - **Old BlueBattery devices remain after switching off built-in discovery:** some devices (seen with BB-Tank and BlueLevel) do not delete their discovery entries in the broker. Fix: in [MQTT Explorer](https://mqtt-explorer.com) delete the device's entries under `homeassistant/…` – the devices then disappear from Home Assistant.

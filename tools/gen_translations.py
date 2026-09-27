@@ -110,8 +110,8 @@ CONFIG = {
         "pick": {"title": T("Several devices found", "Mehrere Geräte gefunden"),
                  "data": {"node": T("Device", "Gerät")}},
         "select": {"title": T("Select devices", "Geräte auswählen"),
-                   "description": T("{name} provides {count} devices. Select which ones to add – you can change this later via **Configure**.\n\n{warning} Built-in Home Assistant discovery on the display active: {firmware_discovery}. If yes, entities will appear twice until it is switched off on the display.",
-                                    "{name} liefert {count} Geräte. Wähle aus, welche übernommen werden – später jederzeit über **Konfigurieren** änderbar.\n\n{warning} Eingebaute Home-Assistant-Anbindung im Display aktiv: {firmware_discovery}. Falls ja, erscheinen Entitäten doppelt, bis sie im Display abgeschaltet wird."),
+                   "description": T("{name} provides {count} devices – all devices paired with the BB-Display. Select which ones to add – you can change this later via **Configure**. A device is missing? Pair it with the BB-Display first.\n\n{warning} Built-in Home Assistant discovery on the display active: {firmware_discovery}. If yes, entities will appear twice until it is switched off on the display.",
+                                    "{name} liefert {count} Geräte – alle im BB-Display gekoppelten Geräte. Wähle aus, welche übernommen werden – später jederzeit über **Konfigurieren** änderbar. Fehlt ein Gerät? Zuerst im BB-Display koppeln.\n\n{warning} Eingebaute Home-Assistant-Anbindung im Display aktiv: {firmware_discovery}. Falls ja, erscheinen Entitäten doppelt, bis sie im Display abgeschaltet wird."),
                    "data": {"selected": T("Devices", "Geräte")}},
     },
     "error": {"invalid_topic": T("Invalid topic (no + or # allowed).", "Ungültiges Topic (kein + oder # erlaubt)."),
@@ -141,16 +141,16 @@ OPTIONS = {"abort": {
                     "data": {"force_remove": T("Remove remaining old entities (only if discovery is already off)", "Verbliebene alte Entitäten entfernen (nur wenn die Anbindung bereits aus ist)")}},
   "settings": {
     "title": T("BlueBattery options", "BlueBattery-Optionen"),
-    "description": T("New devices found: {new}\n\nDeselected devices are disabled (history is kept) unless removal is selected.",
-                     "Neu gefundene Geräte: {new}\n\nAbgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt."),
+    "description": T("New devices found: {new}\n\nOnly devices paired with the BB-Display are listed. Deselected devices are disabled (history is kept) unless removal is selected.",
+                     "Neu gefundene Geräte: {new}\n\nAufgeführt sind die im BB-Display gekoppelten Geräte. Abgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt."),
     "data": {"selected": T("Devices", "Geräte"),
              "remove_deselected": T("Remove deselected devices instead of disabling them", "Abgewählte Geräte entfernen statt deaktivieren"),
              "timeout": T("Seconds without data until unavailable", "Sekunden ohne Daten bis „nicht verfügbar“"),
              "truma_extended_modes": T("Truma: offer VarioHeat/boost heating modes", "Truma: Heizmodi VarioHeat/Boost anbieten"),
              "truma_combi_e": T("Truma Combi E: energy source selectable", "Truma Combi E: Energieart wählbar")}}}}
 ISSUES = {"new_devices": {"title": T("New BlueBattery device found", "Neues BlueBattery-Gerät gefunden"),
-          "description": T("{title} provides new devices: {devices}.\n\nTo add them: **Settings → Devices & services → BlueBattery → Configure**.",
-                           "{title} liefert neue Geräte: {devices}.\n\nHinzufügen: **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren**.")}}
+          "description": T("{title} provides new devices (newly paired with the BB-Display): {devices}.\n\nTo add them: **Settings → Devices & services → BlueBattery → Configure**.",
+                           "{title} liefert neue Geräte (neu im BB-Display gekoppelt): {devices}.\n\nHinzufügen: **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren**.")}}
 EXCEPTIONS = {"target_out_of_range": {"message": T("Temperature must be between {min} and {max} °C.",
                                                    "Die Temperatur muss zwischen {min} und {max} °C liegen.")}}
 

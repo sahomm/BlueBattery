@@ -5,7 +5,7 @@ Stand: 2026-09-27 · Grundlage: interne, mit BlueBattery abgestimmte Schnittstel
 ## 1. Ziele und Nicht-Ziele
 
 **Ziele**
-- BlueBattery-Geräte über MQTT **automatisch finden**, unabhängig vom Topic, das der Kunde eingestellt hat.
+- Das **BB-Display** als zentralen Knoten über MQTT **automatisch finden**, unabhängig vom Topic, das der Kunde eingestellt hat, und **alle im Display gekoppelten Geräte** (Batteriecomputer, Tanks, BLE-Sensoren, Heizung) als Untergeräte bereitstellen.
 - Bei der Einrichtung **auswählen**, welche Geräte übernommen werden; später **neue Geräte hinzufügen**, ohne bestehende Entitäten oder deren History zu verändern.
 - Die Pflege der HA-Anbindung aus der Firmware herausnehmen: Neue JSON-Felder = neue Zeile in einer Zuordnungstabelle.
 - Heizung (Truma, Alde) sicher steuern – ehrlich gegenüber dem, was die Firmware zurückmeldet.
@@ -13,7 +13,7 @@ Stand: 2026-09-27 · Grundlage: interne, mit BlueBattery abgestimmte Schnittstel
 **Nicht-Ziele (vorerst)**
 - Kein eigener MQTT-Client: Die Integration nutzt die HA-MQTT-Integration (Broker-Verbindung, Anmeldedaten).
 - Keine Nutzung der Firmware-Discovery-Topics (`homeassistant/…`) als Datenquelle.
-- Direkt sendende Geräte (BBX400 Pro, BB-Tank, BlueLevel direkt) erst in einer späteren Phase (Architektur ist dafür vorbereitet).
+- Geräte, die nicht über das BB-Display kommen (z. B. per eigenem WLAN direkt sendende Geräte), werden nicht unterstützt.
 
 ## 2. Begriffe
 
@@ -49,11 +49,9 @@ Die Integration abonniert je Hauptgerät genau: `info`, `status`, `truma/alive`,
 - `info` ist retained → nach HA-Start wird jedes vorhandene Gerät sofort gemeldet.
 - **Fingerabdruck** im Config-Flow (`async_step_mqtt`): Payload ist JSON, `ProductName` ∈ bekannte Produkte **und** vorletztes Topic-Segment passt zum Produktmuster:
 
-  | ProductName | Node-Muster | Phase |
-  |---|---|---|
-  | `BB-Display` | `^BB-D_[0-9A-F]{12}$` | 1 |
-  | `BB-Tank` | `^BB-T_[0-9A-F]{12}$` | später |
-  | `BBX400 Pro` | `^BBX400Pro_[0-9A-F]{12}$` | später |
+  | ProductName | Node-Muster |
+  |---|---|
+  | `BB-Display` | `^BB-D_[0-9A-F]{12}$` |
 
   Passt es nicht → Flow wird still abgebrochen (`not_bluebattery`), keine Meldung für den Nutzer.
 - **Unique-ID des Config-Entries = `<node>`.** Ändert der Kunde später sein Topic, wird das Gerät erneut gefunden → bestehender Eintrag wird mit dem neuen Basis-Topic **aktualisiert** (kein Duplikat, History bleibt).
@@ -194,11 +192,10 @@ docs/  images/  README.md  README.en.md  LICENSE  hacs.json
 | 2 | Display nur lesend: Erkennung, Auswahl, Sensoren, Erreichbarkeit, Diagnose, Tests | erste Vorabversion |
 | 3 | Truma-Steuerung; Alde experimentell | Steuerung |
 | 4 | Umstieg im WoMo, History prüfen | Umstiegsanleitung |
-| 5 | Direkt sendende Geräte, bebilderte Anleitungen | Ausbau |
+| 5 | Bebilderte Anleitungen | Ausbau |
 
 ## 14. Offene Punkte
-- **Zwei Wege, ein Gerät:** Sobald direkt sendende Geräte unterstützt werden, kann z. B. ein BB-Tank über das Display **und** direkt kommen. Die Integration muss das erkennen (gleiche Hardware-ID) und pro Gerät einen Weg wählen lassen, statt doppelte Entitäten anzulegen.
-- **Display reicht nur einen Batteriecomputer weiter** – ein zweiter nur direkt (siehe README).
+- **Display reicht nur einen Batteriecomputer weiter** – ein zweiter erscheint nicht (siehe README).
 - Offene Fragen an BlueBattery: BB-Identifier, Mindest-Firmware, Bedeutung `booster_limit_status`, Werte der Klimaanlage, Fähigkeiten der Heizung.
 - Zustimmung BlueBattery zu Name/Logo.
 - Mindest-HA-Version (wird bei Phase 2 anhand der genutzten APIs festgelegt).
