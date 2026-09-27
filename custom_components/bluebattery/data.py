@@ -274,6 +274,7 @@ class BlueBatteryDevice:
     _unsubs: list[CALLBACK_TYPE] = field(default_factory=list)
     _online: bool = False
     _status_listeners: list[Callable[[], None]] = field(default_factory=list)
+    _info_listeners: list[Callable[[], None]] = field(default_factory=list)
 
     @property
     def prefix(self) -> str:
@@ -314,9 +315,19 @@ class BlueBatteryDevice:
         return lambda: self._status_listeners.remove(listener)
 
     @callback
+    def add_info_listener(self, listener: Callable[[], None]) -> CALLBACK_TYPE:
+        """Listener für geänderte Geräteinfo (Firmware-Version, URL)."""
+        self._info_listeners.append(listener)
+        return lambda: self._info_listeners.remove(listener)
+
+    @callback
     def _on_info(self, msg: ReceiveMessage) -> None:
         if (data := parse_json(msg.payload)) is not None:
+            changed = data != self.info
             self.info = data
+            if changed:
+                for listener in list(self._info_listeners):
+                    listener()
             self._notify()
 
     @callback

@@ -154,6 +154,8 @@ class TrumaClimate(_HeaterClimate):
     def target_temperature(self) -> float | None:
         """Raum-Soll; bei 0 (aus bzw. pausiert) der zuletzt gewünschte Wert."""
         target = self._field("target_room")
+        if self.heater in self.device.pending:
+            return self._last_target  # gewünschter Wert, bis die Heizung quittiert
         if target is not None and target > 0:
             self._last_target = int(target)
             return target
@@ -260,6 +262,8 @@ class AldeZoneClimate(_HeaterClimate):
     def target_temperature(self) -> float | None:
         """Zonen-Soll."""
         target = self._field(f"target_zone{self._zone}")
+        if self.heater in self.device.pending:
+            return self._last_target
         if target is not None and target > 0:
             self._last_target = int(target)
             return target

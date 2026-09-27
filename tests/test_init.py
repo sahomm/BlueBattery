@@ -205,3 +205,36 @@ async def test_rediscovery_updates_topic_without_duplicate(
     assert result["reason"] == "already_configured"
     assert entry.data["base_topic"] == new_base
     assert len(hass.config_entries.async_entries(DOMAIN)) == 1
+
+
+async def test_firmware_version_kept_and_updated(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Firmware-Version wird nachgetragen, sobald info eintrifft, und nie geleert."""
+    from homeassistant.helpers import device_registry as dr
+
+    entry = await _setup(hass, mqtt_mock, entry_data, info, status)
+    display = next(
+        d for d in dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)
+        if (DOMAIN, NODE) in d.identifiers
+    )
+    assert display.sw_version == info["FirmwareVersion"]
+    new_info = {**info, "FirmwareVersion": "v2.0.1"}
+    # An bestehende Abos liefert der Broker Aktualisierungen ohne Retain-Flag
+    async_fire_mqtt_message(hass, f"{PREFIX}/info", json.dumps(new_info), retain=False)
+    await hass.async_block_till_done()
+    assert dr.async_get(hass).async_get(display.id).sw_version == "v2.0.1"
+
+
+async def test_pending_target_shown_until_confirmed(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Nach set_temperature zeigt der Thermostat den gewünschten Wert bis zur Quittung."""
+    await _setup(hass, mqtt_mock, entry_data, info, status)
+    climate = _eid(hass, "climate", "truma", "truma_heater")
+    await hass.services.async_call("climate", "set_temperature", {"entity_id": climate, "temperature": 24}, blocking=True)
+    state = hass.states.get(climate)
+    assert state.attributes["temperature"] == 24
+    assert state.attributes["command_pending"] is True
+    status["truma"]["target_room"] = 24
+    async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status))
+    await hass.async_block_till_done()
+    state = hass.states.get(climate)
+    assert state.attributes["temperature"] == 24
+    assert state.attributes["command_pending"] is False

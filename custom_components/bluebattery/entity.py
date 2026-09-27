@@ -22,15 +22,20 @@ def build_device_info(device: BlueBatteryDevice, sub: SubDevice) -> DeviceInfo:
     """DeviceInfo für Display bzw. Untergerät."""
     info = device.info
     if sub.key == KEY_DISPLAY:
-        return DeviceInfo(
+        display = DeviceInfo(
             identifiers={device_identifier(device.node, KEY_DISPLAY)},
             manufacturer=MANUFACTURER,
             model=info.get("ProductName", "BB-Display"),
             name=f"{info.get('ProductName', 'BB-Display')} {device.node[-6:]}",
-            sw_version=info.get("FirmwareVersion"),
             serial_number=device.node,
-            configuration_url=info.get("url"),
         )
+        # Nur setzen, wenn bekannt – sonst würde ein früher Start (info noch nicht
+        # da) die vorhandene Firmware-Version in der Registry löschen
+        if info.get("FirmwareVersion"):
+            display["sw_version"] = info["FirmwareVersion"]
+        if info.get("url"):
+            display["configuration_url"] = info["url"]
+        return display
     models = {
         "battery": "Batteriecomputer",
         "truma": "Truma über TIN-Adapter",

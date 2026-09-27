@@ -134,6 +134,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: BlueBatteryConfigEntry) 
     _sync_registry(hass, entry)
 
     entry.async_on_unload(device.async_stop)
+    entry.async_on_unload(device.add_info_listener(lambda: _update_display_info(hass, entry)))
     entry.async_on_unload(device.add_status_listener(lambda: _check_new_devices(hass, entry)))
     entry.async_on_unload(entry.add_update_listener(_async_reload))
 
@@ -200,6 +201,23 @@ def _register_devices(hass: HomeAssistant, entry: BlueBatteryConfigEntry) -> Non
     device = entry.runtime_data.device
     for sub in sorted(entry.runtime_data.subdevices, key=lambda s: _KIND_ORDER.get(s.kind, 2)):
         dev_reg.async_get_or_create(config_entry_id=entry.entry_id, **build_device_info(device, sub))
+
+
+@callback
+def _update_display_info(hass: HomeAssistant, entry: BlueBatteryConfigEntry) -> None:
+    """Firmware-Version und Web-Adresse des Displays nachtragen, sobald `info` da ist."""
+    dev_reg = dr.async_get(hass)
+    device = entry.runtime_data.device
+    info = device.info
+    for device_entry in dr.async_entries_for_config_entry(dev_reg, entry.entry_id):
+        if (DOMAIN, device.node) in device_entry.identifiers:
+            changes = {}
+            if info.get("FirmwareVersion"):
+                changes["sw_version"] = info["FirmwareVersion"]
+            if info.get("url"):
+                changes["configuration_url"] = info["url"]
+            if changes:
+                dev_reg.async_update_device(device_entry.id, **changes)
 
 
 @callback
