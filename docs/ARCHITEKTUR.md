@@ -197,6 +197,8 @@ docs/  images/  README.md  README.en.md  LICENSE  hacs.json
 | 5 | Direkt sendende Geräte, bebilderte Anleitungen | Ausbau |
 
 ## 14. Offene Punkte
+- **Zwei Wege, ein Gerät:** Sobald direkt sendende Geräte unterstützt werden, kann z. B. ein BB-Tank über das Display **und** direkt kommen. Die Integration muss das erkennen (gleiche Hardware-ID) und pro Gerät einen Weg wählen lassen, statt doppelte Entitäten anzulegen.
+- **Display reicht nur einen Batteriecomputer weiter** – ein zweiter nur direkt (siehe README).
 - Offene Fragen an BlueBattery: BB-Identifier, Mindest-Firmware, Bedeutung `booster_limit_status`, Werte der Klimaanlage, Fähigkeiten der Heizung.
 - Zustimmung BlueBattery zu Name/Logo.
 - Mindest-HA-Version (wird bei Phase 2 anhand der genutzten APIs festgelegt).

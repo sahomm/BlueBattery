@@ -21,6 +21,7 @@ This project is developed by [sahomm](https://github.com/sahomm) in coordination
 - [What is BlueBattery?](#what-is-bluebattery)
 - [Features](#features)
 - [Supported devices](#supported-devices)
+- [How does the data reach Home Assistant?](#how-does-the-data-reach-home-assistant)
 - [Prerequisites](#prerequisites)
 - [Step-by-step setup](#step-by-step-setup)
 - [Adding devices later](#adding-devices-later)
@@ -80,6 +81,22 @@ Xiaomi/RuuviTag ───┘                    ▲                           (M
 | Alde Compact 3020 HE / 3030 | BB-Display + TIN adapter | 🧪 experimental |
 | BBX400 Pro, BBX200 Pro (Wi-Fi, direct) | direct (MQTT) | 📋 later |
 | BB-Tank, BlueLevel (Wi-Fi, direct) | direct (MQTT) | 📋 later |
+
+## How does the data reach Home Assistant?
+
+BlueBattery devices reach Home Assistant in **two ways**:
+
+| Path | How | Devices | Status |
+|---|---|---|---|
+| **Via the BB-Display** (default) | Devices send via Bluetooth to the BB-Display; the display forwards everything via Wi-Fi/MQTT | any BlueBattery battery computer, BlueLevel/BlueLevel+, BB-Tank, Xiaomi/Ruuvi sensors, Truma/Alde (TIN adapter) | ✅ supported |
+| **Directly via Wi-Fi** | Pro devices with their own Wi-Fi publish via MQTT themselves | BBX400 Pro, BBX200 Pro, BB-Tank, BlueLevel | 📋 planned |
+
+**The BB-Display is the hub – with limits:**
+- It forwards **exactly one** battery computer – the one selected on the display. A **second** battery computer (e.g. a BBX400 Pro for a second battery bank) only comes via the direct path.
+- It only forwards the tanks and sensors **selected on the display**.
+- For tanks it forwards level, volume, tilt and signal – **diagnostic values** of the tank sensors (e.g. distance to the water surface, memory) only come via the direct path.
+
+**Avoid duplicate values:** Many BlueBattery devices have **built-in Home Assistant support** ("Home Assistant" / "MQTT Discovery" switch). Switch it off on every device whose values you get through this integration – always on the BB-Display, and on BB-Tank/BlueLevel if they are connected to the display. For devices that (so far) only come directly – e.g. a second battery computer – **leave it on** until this integration supports the direct path.
 
 ## Prerequisites
 
@@ -175,11 +192,17 @@ When a device is added (new tank, another temperature sensor, TIN adapter), Home
 
 ## Migrating from the display's built-in Home Assistant support
 
-The BB-Display has its own Home Assistant support (switch **"Home Assistant"** in the MQTT settings, "MQTT Discovery"). This integration replaces it. **Running both results in duplicate entities.**
+The BB-Display has its own Home Assistant support (switch **"Home Assistant"** in the MQTT settings). This integration replaces it. **Running both results in duplicate entities.**
 
-🚧 *Migration that keeps your existing history is currently being tested. The guide will ship with the first release.* Planned: the integration detects the old setup, takes over the existing entity IDs (so history, statistics, dashboards and automations keep working) and helps clean up old broker entries.
+**Fresh start (recommended if previous history doesn't matter):** switch off "Home Assistant" on the display – the old entities disappear – and set up this integration.
 
-Until then: **do not switch off** "Home Assistant" on the display before the guide is available.
+**Keep history:** the integration can take over the existing entity IDs so dashboards, automations and history keep working:
+1. Set up the integration (entities appear twice for a while).
+2. **Devices & services → BlueBattery → Configure → Migration: prepare** – check the list and save.
+3. On the display, switch off **"Home Assistant"** under MQTT and wait a minute.
+4. **Configure → Migration: finish.**
+
+Entities that exist as a different type in the integration (e.g. "Booster limit" now a sensor instead of a binary sensor) are not taken over.
 
 ## Heater control
 

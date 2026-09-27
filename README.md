@@ -21,6 +21,7 @@ Dieses Projekt wird von [sahomm](https://github.com/sahomm) in Abstimmung mit de
 - [Was ist BlueBattery?](#was-ist-bluebattery)
 - [Was kann die Integration?](#was-kann-die-integration)
 - [Unterstützte Geräte](#unterstützte-geräte)
+- [Wie kommen die Daten zu Home Assistant?](#wie-kommen-die-daten-zu-home-assistant)
 - [Voraussetzungen](#voraussetzungen)
 - [Einrichtung Schritt für Schritt](#einrichtung-schritt-für-schritt)
 - [Geräte später hinzufügen](#geräte-später-hinzufügen)
@@ -80,6 +81,22 @@ Xiaomi/RuuviTag ───┘                    ▲                          (Mo
 | Alde Compact 3020 HE / 3030 | BB-Display + TIN-Adapter | 🧪 experimentell |
 | BBX400 Pro, BBX200 Pro (direkt per WLAN) | direkt (MQTT) | 📋 später |
 | BB-Tank, BlueLevel (direkt per WLAN) | direkt (MQTT) | 📋 später |
+
+## Wie kommen die Daten zu Home Assistant?
+
+BlueBattery-Geräte erreichen Home Assistant auf **zwei Wegen**:
+
+| Weg | Wie | Geräte | Status |
+|---|---|---|---|
+| **Über das BB-Display** (Standard) | Die Geräte funken per Bluetooth zum BB-Display; das Display schickt alles gebündelt per WLAN/MQTT | jeder BlueBattery-Batteriecomputer, BlueLevel/BlueLevel+, BB-Tank, Xiaomi-/Ruuvi-Sensoren, Truma/Alde (TIN-Adapter) | ✅ unterstützt |
+| **Direkt per WLAN** | Pro-Geräte mit eigenem WLAN senden selbst per MQTT | BBX400 Pro, BBX200 Pro, BB-Tank, BlueLevel | 📋 geplant |
+
+**Das BB-Display ist die Spinne im Netz – mit Grenzen:**
+- Es reicht **genau einen** Batteriecomputer weiter – den, der im Display ausgewählt ist. Ein **zweiter** Batteriecomputer (z. B. ein BBX400 Pro für eine zweite Batteriebank) kommt nur auf dem direkten Weg.
+- Es reicht nur die **im Display ausgewählten** Tanks und Sensoren weiter.
+- Bei Tanks kommen Füllstand, Inhalt, Neigung und Signal – **Diagnosewerte** der Tanksensoren (z. B. Abstand zur Wasseroberfläche, Speicher) nur auf dem direkten Weg.
+
+**Doppelte Werte vermeiden:** Viele BlueBattery-Geräte haben eine **eingebaute Home-Assistant-Anbindung** (Schalter „Home Assistant“ bzw. „MQTT Discovery“). Schalte sie bei jedem Gerät aus, dessen Werte du über diese Integration bekommst – beim BB-Display immer, bei BB-Tank/BlueLevel, wenn sie am Display hängen. Bei Geräten, die (noch) nur direkt kommen – z. B. einem zweiten Batteriecomputer – **lass sie an**, bis diese Integration den direkten Weg unterstützt.
 
 ## Voraussetzungen
 
@@ -177,11 +194,17 @@ Kommt ein Gerät dazu (neuer Tank, weiterer Temperatursensor, TIN-Adapter), meld
 
 ## Umstieg von der bisherigen Home-Assistant-Anbindung im Display
 
-Das BB-Display bringt eine eigene Anbindung mit (Schalter **„Home Assistant“** in den MQTT-Einstellungen, „MQTT Discovery“). Diese Integration ersetzt sie. **Beides gleichzeitig führt zu doppelten Entitäten.**
+Das BB-Display bringt eine eigene Anbindung mit (Schalter **„Home Assistant“** in den MQTT-Einstellungen). Diese Integration ersetzt sie. **Beides gleichzeitig führt zu doppelten Entitäten.**
 
-🚧 *Der Umstieg mit Übernahme des bisherigen Verlaufs wird derzeit erprobt. Die Anleitung folgt mit der ersten Version.* Geplanter Ablauf: Die Integration erkennt die alte Anbindung, übernimmt die bisherigen Entitäts-IDs (damit Verlauf, Statistiken, Dashboards und Automationen weiterlaufen) und hilft beim Aufräumen alter Einträge im Broker.
+**Neu einsteigen (empfohlen, wenn der bisherige Verlauf keine Rolle spielt):** Schalter „Home Assistant“ im Display ausschalten – die alten Entitäten verschwinden – und diese Integration einrichten.
 
-Bis dahin: Den Schalter „Home Assistant“ im Display **erst ausschalten, wenn die Anleitung vorliegt.**
+**Verlauf behalten:** Die Integration kann die bisherigen Entitäts-IDs übernehmen, damit Dashboards, Automationen und Verlauf weiterlaufen:
+1. Integration einrichten (die Entitäten erscheinen vorübergehend doppelt).
+2. **Geräte & Dienste → BlueBattery → Konfigurieren → Umstieg: vorbereiten** – die Liste prüfen und speichern.
+3. Im Display unter MQTT **„Home Assistant“ ausschalten**, eine Minute warten.
+4. **Konfigurieren → Umstieg: abschließen.**
+
+Entitäten, die es in der Integration als andere Art gibt (z. B. „Booster-Limit“ jetzt als Sensor statt Binärsensor), werden nicht übernommen.
 
 ## Heizung steuern
 
