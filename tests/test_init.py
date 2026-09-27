@@ -157,3 +157,51 @@ async def test_deselect_disables_device(hass: HomeAssistant, mqtt_mock, entry_da
     await hass.async_block_till_done()
     assert er.async_get(hass).async_get(temp) is not None
     assert hass.states.get(temp) is None or hass.states.get(temp).state == STATE_UNAVAILABLE
+
+
+async def test_tank_channel_under_bb_tank(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Kanäle eines BB-Tanks hängen unter dem BB-Tank, BlueLevel+ direkt am Display."""
+    from homeassistant.helpers import device_registry as dr
+
+    entry = await _setup(hass, mqtt_mock, entry_data, info, status)
+    devices = {
+        ident: dev
+        for dev in dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)
+        for _domain, ident in dev.identifiers
+    }
+    ctl = devices[f"{NODE}|tankctl:F1E2D3C4B5A6"]
+    display = devices[NODE]
+    channel = devices[f"{NODE}|tank:F1E2D3C4B5A6:1"]
+    level = devices[f"{NODE}|tank:F1E2D3C4B5A7:0"]
+    assert channel.via_device_id == ctl.id
+    assert level.via_device_id == display.id
+
+
+async def test_rediscovery_updates_topic_without_duplicate(
+    hass: HomeAssistant, mqtt_mock, entry_data, info, status
+) -> None:
+    """Neues Topic mit frischen Daten -> Eintrag aktualisiert, kein zweiter Eintrag."""
+    import asyncio
+
+    from homeassistant.config_entries import SOURCE_MQTT
+    from homeassistant.helpers.service_info.mqtt import MqttServiceInfo
+
+    entry = await _setup(hass, mqtt_mock, entry_data, info, status)
+    new_base = "camper/bb"
+    flow = hass.async_create_task(
+        hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": SOURCE_MQTT},
+            data=MqttServiceInfo(
+                topic=f"{new_base}/{NODE}/info", payload=json.dumps(info), qos=0, retain=True,
+                subscribed_topic="+/+/+/info", timestamp=0,
+            ),
+        )
+    )
+    await asyncio.sleep(0.3)
+    async_fire_mqtt_message(hass, f"{new_base}/{NODE}/status", json.dumps(status))
+    result = await flow
+    await hass.async_block_till_done()
+    assert result["reason"] == "already_configured"
+    assert entry.data["base_topic"] == new_base
+    assert len(hass.config_entries.async_entries(DOMAIN)) == 1

@@ -77,7 +77,7 @@ async def test_mqtt_discovery_rejects_foreign_device(hass: HomeAssistant) -> Non
     assert result["type"] is FlowResultType.ABORT and result["reason"] == "not_bluebattery"
 
 
-async def test_find_live_base_ignores_stale_topic(hass: HomeAssistant, mqtt_mock, info, status) -> None:
+async def test_find_live_base_ignores_stale_topic(hass: HomeAssistant, mqtt_mock, status) -> None:
     """Alte retained Nachrichten unter früherem Topic werden nicht genommen."""
     import asyncio
 
@@ -85,16 +85,9 @@ async def test_find_live_base_ignores_stale_topic(hass: HomeAssistant, mqtt_mock
 
     from custom_components.bluebattery import config_flow
 
-    stale = f"BB/{NODE}"
     task = hass.async_create_task(config_flow.find_live_base(hass, NODE, "BB", wait=5))
-    # Die Nachbildung kennt kein Retain: info in jedem der drei Suchfenster erneut senden
-    for _ in range(3):
-        await asyncio.sleep(0.25)
-        async_fire_mqtt_message(hass, f"{stale}/info", json.dumps(info), retain=True)
-        async_fire_mqtt_message(hass, f"{PREFIX}/info", json.dumps(info), retain=True)
-        await asyncio.sleep(0.25)
-    await asyncio.sleep(0.3)
-    async_fire_mqtt_message(hass, f"{stale}/status", json.dumps(status), retain=True)
+    await asyncio.sleep(0.5)
+    async_fire_mqtt_message(hass, f"BB/{NODE}/status", json.dumps(status), retain=True)
     async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status), retain=False)
     assert await task == BASE
 
@@ -107,7 +100,7 @@ async def test_find_live_base_none_when_only_stale(hass: HomeAssistant, mqtt_moc
 
     from custom_components.bluebattery import config_flow
 
-    task = hass.async_create_task(config_flow.find_live_base(hass, NODE, BASE, wait=2.5))
-    await asyncio.sleep(1.8)
+    task = hass.async_create_task(config_flow.find_live_base(hass, NODE, BASE, wait=1.5))
+    await asyncio.sleep(0.5)
     async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status), retain=True)
     assert await task is None

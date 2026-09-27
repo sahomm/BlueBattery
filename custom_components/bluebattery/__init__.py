@@ -32,6 +32,7 @@ from .const import (
     PREFIX_TANK_CTL,
 )
 from .data import BlueBatteryDevice, SubDevice
+from .entity import build_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -53,6 +54,9 @@ class BlueBatteryRuntime:
 
     device: BlueBatteryDevice
     subdevices: list[SubDevice] = field(default_factory=list)
+    # Stand beim Laden – neu geladen wird nur, wenn sich davon etwas ändert
+    loaded_data: dict = field(default_factory=dict)
+    loaded_options: dict = field(default_factory=dict)
 
 
 type BlueBatteryConfigEntry = ConfigEntry[BlueBatteryRuntime]
@@ -120,7 +124,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: BlueBatteryConfigEntry) 
         _LOGGER.debug("%s: noch kein Status nach %s s", device.node, FIRST_STATUS_WAIT)
     unsub_first()
 
-    entry.runtime_data = BlueBatteryRuntime(device, selected_subdevices(entry, device))
+    entry.runtime_data = BlueBatteryRuntime(
+        device,
+        selected_subdevices(entry, device),
+        loaded_data=dict(entry.data),
+        loaded_options=dict(entry.options),
+    )
+    _register_devices(hass, entry)
     _sync_registry(hass, entry)
 
     entry.async_on_unload(device.async_stop)
@@ -142,7 +152,12 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     ir.async_delete_issue(hass, DOMAIN, _issue_id(entry))
 
 
-async def _async_reload(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def _async_reload(hass: HomeAssistant, entry: BlueBatteryConfigEntry) -> None:
+    """Nur bei geänderten Optionen/Topic neu laden – HA ruft den Listener auch bei
+    rein internen Änderungen (z. B. Discovery-Keys nach erneuter Erkennung)."""
+    runtime = entry.runtime_data
+    if entry.data == runtime.loaded_data and entry.options == runtime.loaded_options:
+        return
     await hass.config_entries.async_reload(entry.entry_id)
 
 
@@ -172,6 +187,19 @@ def _check_new_devices(hass: HomeAssistant, entry: BlueBatteryConfigEntry) -> No
         )
     else:
         ir.async_delete_issue(hass, DOMAIN, _issue_id(entry))
+
+
+_KIND_ORDER = {"display": 0, "tank_ctl": 1}
+
+
+@callback
+def _register_devices(hass: HomeAssistant, entry: BlueBatteryConfigEntry) -> None:
+    """Geräte vor den Entitäten anlegen – übergeordnete zuerst, damit `via_device`
+    greift (Tank-Kanal unter BB-Tank). Korrigiert auch bestehende Zuordnungen."""
+    dev_reg = dr.async_get(hass)
+    device = entry.runtime_data.device
+    for sub in sorted(entry.runtime_data.subdevices, key=lambda s: _KIND_ORDER.get(s.kind, 2)):
+        dev_reg.async_get_or_create(config_entry_id=entry.entry_id, **build_device_info(device, sub))
 
 
 @callback

@@ -95,31 +95,26 @@ async def find_live_base(
     """Unter welchem Basis-Topic sendet das Gerät gerade wirklich?
 
     Alte Firmware-Stände lassen retained `info`/`status` unter früheren Topics im
-    Broker liegen (werden nicht aufgeräumt). Deshalb alle Basis-Topics mit dieser
-    Geräte-ID sammeln und das nehmen, auf dem ein NICHT-retained Status ankommt.
+    Broker liegen (werden nicht aufgeräumt). Deshalb auf den Status dieser
+    Geräte-ID unter allen Topic-Tiefen hören und das Basis-Topic nehmen, auf dem
+    ein NICHT-retained Status ankommt.
     """
-    bases = {known_base}
-    for depth in range(MAX_BASE_DEPTH):
-        pattern = "/".join(["+"] * (depth + 1) + [node, "info"])
-        for msg in await _collect(hass, pattern, 0.5):
-            if (match := match_product(msg.topic, msg.payload)) and match[1] == node:
-                bases.add(match[0])
+    suffix = f"/{node}/status"
+    topics = {known_base + suffix}
+    topics |= {"/".join(["+"] * depth) + suffix for depth in range(1, MAX_BASE_DEPTH + 1)}
+    live: asyncio.Future[str] = asyncio.get_running_loop().create_future()
 
-    live = asyncio.get_running_loop().create_future()
-    unsubs = []
-    for base in bases:
+    @callback
+    def on_status(msg: ReceiveMessage) -> None:
+        if not msg.retain and msg.topic.endswith(suffix) and not live.done():
+            live.set_result(msg.topic[: -len(suffix)])
 
-        @callback
-        def on_status(msg: ReceiveMessage, base: str = base) -> None:
-            if not msg.retain and not live.done():
-                live.set_result(base)
-
-        unsubs.append(await mqtt.async_subscribe(hass, f"{base}/{node}/status", on_status))
+    unsubs = [await mqtt.async_subscribe(hass, topic, on_status) for topic in topics]
     try:
         async with asyncio.timeout(wait):
             return await live
     except TimeoutError:
-        _LOGGER.debug("%s: kein frischer Status unter %s", node, sorted(bases))
+        _LOGGER.debug("%s: kein frischer Status unter %s", node, sorted(topics))
         return None
     finally:
         for unsub in unsubs:
@@ -153,7 +148,9 @@ class BlueBatteryConfigFlow(ConfigFlow, domain=DOMAIN):
         live = await find_live_base(self.hass, self._node, self._base)
         if live is not None:
             # Topic geändert? -> bestehenden Eintrag aktualisieren statt Duplikat
-            self._abort_if_unique_id_configured(updates={CONF_BASE_TOPIC: live})
+            self._abort_if_unique_id_configured(
+                updates={CONF_BASE_TOPIC: live}, reload_on_update=False
+            )  # der Update-Listener lädt neu
             self._base, self._live = live, True
         else:
             # Nie auf Basis einer (evtl. veralteten) retained Nachricht umstellen
