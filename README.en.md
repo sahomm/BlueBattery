@@ -160,7 +160,7 @@ After saving, the display restarts. The connection symbol ⇄ appears at the top
 ### Step 5 – Install the integration via HACS
 
 1. **HACS → Integrations → ⋮ → Custom repositories** → `https://github.com/sahomm/BlueBattery`, category **Integration**.
-2. Search for **BlueBattery** → **Download**.
+2. Search for **BlueBattery** → **Download** – choose the **latest version** (`v…`), not an identifier like `21ff56e`.
 3. **Restart** Home Assistant.
 
 ### Step 6 – Set up BlueBattery
@@ -235,6 +235,8 @@ Entities that exist as a different type in the integration (e.g. "Booster limit"
 
 - **No devices found:** Is the display publishing? In the MQTT integration use **Configure → Listen to a topic** with `BlueBattery/#` – messages should arrive every 30 s. Alternatively use [MQTT Explorer](https://mqtt-explorer.com).
 - **⇄ symbol missing on the display:** check server IP, port, user/password; is the Mosquitto app running?
+- **HACS: "Failed to download … refs/heads/<identifier>.zip" (404):** a commit identifier was selected instead of a version. **HACS → BlueBattery → ⋮ → Redownload** and choose the latest version `v…`.
+- **Old BlueBattery devices remain after switching off built-in discovery:** some devices (seen with BB-Tank and BlueLevel) do not delete their discovery entries in the broker. Fix: in [MQTT Explorer](https://mqtt-explorer.com) delete the device's entries under `homeassistant/…` – the devices then disappear from Home Assistant.
 - **Duplicate entities:** the "Home Assistant" switch on the display is still on (see [Migrating](#migrating-from-the-displays-built-in-home-assistant-support)).
 - **Reporting a bug:** **Devices & services → BlueBattery → ⋮ → Download diagnostics** (addresses are redacted) and attach it to an [issue](https://github.com/sahomm/BlueBattery/issues).
 

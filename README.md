@@ -162,7 +162,7 @@ Nach dem Speichern startet das Display neu. Oben in der Anzeige erscheint das Ve
 ### Schritt 5 – Integration über HACS installieren
 
 1. **HACS → Integrationen → ⋮ → Benutzerdefinierte Repositories** → `https://github.com/sahomm/BlueBattery`, Kategorie **Integration**.
-2. **BlueBattery** suchen → **Herunterladen**.
+2. **BlueBattery** suchen → **Herunterladen** – als Version die **neueste Version** (`v…`) auswählen, nicht eine Kennung wie `21ff56e`.
 3. Home Assistant **neu starten**.
 
 ### Schritt 6 – BlueBattery einrichten
@@ -237,6 +237,8 @@ Entitäten, die es in der Integration als andere Art gibt (z. B. „Booster-Limi
 
 - **Keine Geräte gefunden:** Sendet das Display? In der MQTT-Integration unter **Konfigurieren → Auf ein Topic hören** `BlueBattery/#` abonnieren – es sollten alle 30 s Nachrichten kommen. Alternativ [MQTT Explorer](https://mqtt-explorer.com).
 - **Symbol ⇄ fehlt im Display:** Server-IP, Port, Benutzer/Passwort prüfen; läuft die Mosquitto-App?
+- **HACS: „Failed to download … refs/heads/<Kennung>.zip“ (404):** Beim Herunterladen wurde statt einer Version eine Commit-Kennung gewählt. **HACS → BlueBattery → ⋮ → Erneut herunterladen** und die neueste Version `v…` auswählen.
+- **Alte BlueBattery-Geräte bleiben nach dem Abschalten der eingebauten Anbindung stehen:** Manche Geräte (beobachtet bei BB-Tank und BlueLevel) löschen ihre Discovery-Einträge im Broker nicht. Abhilfe: im [MQTT Explorer](https://mqtt-explorer.com) unter `homeassistant/…` die Einträge des Geräts löschen – danach verschwinden die Geräte in Home Assistant.
 - **Doppelte Entitäten:** Schalter „Home Assistant“ im Display ist noch aktiv (siehe [Umstieg](#umstieg-von-der-bisherigen-home-assistant-anbindung-im-display)).
 - **Fehler melden:** **Geräte & Dienste → BlueBattery → ⋮ → Diagnose herunterladen** (Adressen sind geschwärzt) und als [Issue](https://github.com/sahomm/BlueBattery/issues) anhängen.
 
