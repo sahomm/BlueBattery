@@ -43,6 +43,9 @@ _LOGGER = logging.getLogger(__name__)
 OPT_LABELS = "labels"
 STATUS_WAIT = 8.0
 SCAN_WAIT = 6.0
+# Firmware-Standardintervall ist 60 s – so lange plus Reserve auf einen frischen Status warten
+LIVE_WAIT = 75.0
+MAX_BASE_DEPTH = 3
 
 
 def match_product(topic: str, payload: Any) -> tuple[str, str, str] | None:
@@ -86,6 +89,43 @@ async def _collect(
     return messages
 
 
+async def find_live_base(
+    hass: HomeAssistant, node: str, known_base: str, wait: float = LIVE_WAIT
+) -> str | None:
+    """Unter welchem Basis-Topic sendet das Gerät gerade wirklich?
+
+    Alte Firmware-Stände lassen retained `info`/`status` unter früheren Topics im
+    Broker liegen (werden nicht aufgeräumt). Deshalb alle Basis-Topics mit dieser
+    Geräte-ID sammeln und das nehmen, auf dem ein NICHT-retained Status ankommt.
+    """
+    bases = {known_base}
+    for depth in range(MAX_BASE_DEPTH):
+        pattern = "/".join(["+"] * (depth + 1) + [node, "info"])
+        for msg in await _collect(hass, pattern, 0.5):
+            if (match := match_product(msg.topic, msg.payload)) and match[1] == node:
+                bases.add(match[0])
+
+    live = asyncio.get_running_loop().create_future()
+    unsubs = []
+    for base in bases:
+
+        @callback
+        def on_status(msg: ReceiveMessage, base: str = base) -> None:
+            if not msg.retain and not live.done():
+                live.set_result(base)
+
+        unsubs.append(await mqtt.async_subscribe(hass, f"{base}/{node}/status", on_status))
+    try:
+        async with asyncio.timeout(wait):
+            return await live
+    except TimeoutError:
+        _LOGGER.debug("%s: kein frischer Status unter %s", node, sorted(bases))
+        return None
+    finally:
+        for unsub in unsubs:
+            unsub()
+
+
 class BlueBatteryConfigFlow(ConfigFlow, domain=DOMAIN):
     """Config-Flow für BlueBattery-Hauptgeräte."""
 
@@ -99,6 +139,7 @@ class BlueBatteryConfigFlow(ConfigFlow, domain=DOMAIN):
         self._found: dict[str, tuple[str, str, str]] = {}
         self._subdevices: dict[str, SubDevice] = {}
         self._firmware_discovery = False
+        self._live = False
 
     # --- automatisch -------------------------------------------------------------
 
@@ -109,20 +150,34 @@ class BlueBatteryConfigFlow(ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="not_bluebattery")
         self._base, self._node, self._product = match
         await self.async_set_unique_id(self._node)
-        # Topic geändert? -> bestehenden Eintrag aktualisieren statt Duplikat
-        self._abort_if_unique_id_configured(updates={CONF_BASE_TOPIC: self._base})
+        live = await find_live_base(self.hass, self._node, self._base)
+        if live is not None:
+            # Topic geändert? -> bestehenden Eintrag aktualisieren statt Duplikat
+            self._abort_if_unique_id_configured(updates={CONF_BASE_TOPIC: live})
+            self._base, self._live = live, True
+        else:
+            # Nie auf Basis einer (evtl. veralteten) retained Nachricht umstellen
+            self._abort_if_unique_id_configured()
         self.context["title_placeholders"] = {"name": self._title()}
         return await self.async_step_confirm()
 
     async def async_step_confirm(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Bestätigen."""
+        """Bestätigen (erst, wenn unter dem Topic wirklich aktuelle Daten ankommen)."""
+        errors: dict[str, str] = {}
         if user_input is not None:
-            return await self.async_step_select()
+            if not self._live:
+                live = await find_live_base(self.hass, self._node, self._base)
+                if live is not None:
+                    self._base, self._live = live, True
+            if self._live:
+                return await self.async_step_select()
+            errors["base"] = "no_fresh_data"
         self._set_confirm_only()
         return self.async_show_form(
             step_id="confirm",
+            errors=errors,
             description_placeholders={"name": self._title(), "topic": f"{self._base}/{self._node}"},
         )
 
@@ -170,7 +225,10 @@ class BlueBatteryConfigFlow(ConfigFlow, domain=DOMAIN):
     async def _async_pick(self, node: str) -> ConfigFlowResult:
         self._base, self._node, self._product = self._found[node]
         await self.async_set_unique_id(self._node)
-        self._abort_if_unique_id_configured(updates={CONF_BASE_TOPIC: self._base})
+        self._abort_if_unique_id_configured()
+        live = await find_live_base(self.hass, self._node, self._base)
+        if live is not None:
+            self._base, self._live = live, True
         return await self.async_step_select()
 
     # --- Geräteauswahl -----------------------------------------------------------

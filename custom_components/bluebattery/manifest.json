@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/sahomm/BlueBattery/issues",
   "mqtt": ["+/+/info", "+/+/+/info", "+/+/+/+/info"],
   "requirements": [],
-  "version": "0.1.0b1"
+  "version": "0.1.0b2"
 }

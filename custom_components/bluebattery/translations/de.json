@@ -4,7 +4,7 @@
     "step": {
       "confirm": {
         "title": "BlueBattery-Gerät gefunden",
-        "description": "{name} sendet auf `{topic}`. Einrichten?"
+        "description": "{name} sendet auf `{topic}`. Einrichten? (Die Prüfung auf aktuelle Daten kann bis zu einer Minute dauern.)"
       },
       "user": {
         "title": "BlueBattery-Geräte suchen",
@@ -29,6 +29,7 @@
     },
     "error": {
       "invalid_topic": "Ungültiges Topic (kein + oder # erlaubt).",
+      "no_fresh_data": "Von diesem Gerät kommen keine aktuellen Daten (nur alte gespeicherte Nachrichten). Ist das Display eingeschaltet und mit MQTT verbunden? In einer Minute erneut versuchen.",
       "no_devices": "Kein neues BlueBattery-Gerät unter diesem Topic gefunden. Sendet das Gerät?"
     },
     "abort": {

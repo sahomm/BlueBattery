@@ -6,6 +6,7 @@ import json
 import time
 from unittest.mock import patch
 
+import pytest
 from homeassistant.components.mqtt.models import ReceiveMessage
 from homeassistant.config_entries import SOURCE_MQTT
 from homeassistant.core import HomeAssistant
@@ -16,6 +17,12 @@ from custom_components.bluebattery.config_flow import match_product
 from custom_components.bluebattery.const import DOMAIN
 
 from .conftest import BASE, NODE, PREFIX
+
+
+@pytest.fixture
+def expected_lingering_timers() -> bool:
+    """Timer der MQTT-Nachbildung."""
+    return True
 
 
 def _info_msg(topic: str, payload: dict) -> MqttServiceInfo:
@@ -41,9 +48,12 @@ async def test_mqtt_discovery_flow(hass: HomeAssistant, info, status) -> None:
             return [ReceiveMessage(topic, json.dumps(status), 0, True, topic, time.time())]
         return []
 
+    async def fake_live(_hass, _node, base, wait=0):
+        return base
+
     with patch("custom_components.bluebattery.config_flow._collect", fake_collect), patch(
-        "custom_components.bluebattery.async_setup_entry", return_value=True
-    ):
+        "custom_components.bluebattery.config_flow.find_live_base", fake_live
+    ), patch("custom_components.bluebattery.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_init(
             DOMAIN, context={"source": SOURCE_MQTT}, data=_info_msg(f"{PREFIX}/info", info)
         )
@@ -65,3 +75,39 @@ async def test_mqtt_discovery_rejects_foreign_device(hass: HomeAssistant) -> Non
         DOMAIN, context={"source": SOURCE_MQTT}, data=_info_msg("zigbee2mqtt/bridge/info", {"version": "2"})
     )
     assert result["type"] is FlowResultType.ABORT and result["reason"] == "not_bluebattery"
+
+
+async def test_find_live_base_ignores_stale_topic(hass: HomeAssistant, mqtt_mock, info, status) -> None:
+    """Alte retained Nachrichten unter früherem Topic werden nicht genommen."""
+    import asyncio
+
+    from pytest_homeassistant_custom_component.common import async_fire_mqtt_message
+
+    from custom_components.bluebattery import config_flow
+
+    stale = f"BB/{NODE}"
+    task = hass.async_create_task(config_flow.find_live_base(hass, NODE, "BB", wait=5))
+    # Die Nachbildung kennt kein Retain: info in jedem der drei Suchfenster erneut senden
+    for _ in range(3):
+        await asyncio.sleep(0.25)
+        async_fire_mqtt_message(hass, f"{stale}/info", json.dumps(info), retain=True)
+        async_fire_mqtt_message(hass, f"{PREFIX}/info", json.dumps(info), retain=True)
+        await asyncio.sleep(0.25)
+    await asyncio.sleep(0.3)
+    async_fire_mqtt_message(hass, f"{stale}/status", json.dumps(status), retain=True)
+    async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status), retain=False)
+    assert await task == BASE
+
+
+async def test_find_live_base_none_when_only_stale(hass: HomeAssistant, mqtt_mock, status) -> None:
+    """Nur retained Status -> kein Live-Topic."""
+    import asyncio
+
+    from pytest_homeassistant_custom_component.common import async_fire_mqtt_message
+
+    from custom_components.bluebattery import config_flow
+
+    task = hass.async_create_task(config_flow.find_live_base(hass, NODE, BASE, wait=2.5))
+    await asyncio.sleep(1.8)
+    async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status), retain=True)
+    assert await task is None

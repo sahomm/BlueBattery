@@ -4,7 +4,7 @@
     "step": {
       "confirm": {
         "title": "BlueBattery device found",
-        "description": "{name} publishes on `{topic}`. Set it up?"
+        "description": "{name} publishes on `{topic}`. Set it up? (Checking for current data can take up to a minute.)"
       },
       "user": {
         "title": "Search for BlueBattery devices",
@@ -29,6 +29,7 @@
     },
     "error": {
       "invalid_topic": "Invalid topic (no + or # allowed).",
+      "no_fresh_data": "No current data is arriving from this device (only old stored messages). Is the display switched on and connected to MQTT? Try again in a minute.",
       "no_devices": "No new BlueBattery device found under this topic. Is the device publishing?"
     },
     "abort": {
