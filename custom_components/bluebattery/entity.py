@@ -19,7 +19,10 @@ def device_identifier(node: str, key: str) -> tuple[str, str]:
 
 
 def build_device_info(device: BlueBatteryDevice, sub: SubDevice) -> DeviceInfo:
-    """DeviceInfo für Display bzw. Untergerät."""
+    """DeviceInfo für Display bzw. Untergerät.
+
+    Ohne Verweis auf das übergeordnete Gerät: `via_device_id` braucht dessen
+    Registry-ID und wird in `_register_devices` gesetzt."""
     info = device.info
     if sub.key == KEY_DISPLAY:
         display = DeviceInfo(
@@ -50,7 +53,6 @@ def build_device_info(device: BlueBatteryDevice, sub: SubDevice) -> DeviceInfo:
         manufacturer=MANUFACTURER if sub.kind not in ("truma", "alde", "ble") else None,
         model=models.get(sub.kind),
         name=names.get(sub.key, sub.label),
-        via_device=device_identifier(device.node, sub.parent),
     )
 
 
