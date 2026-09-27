@@ -1,0 +1,379 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "confirm": {
+        "title": "BlueBattery-Gerät gefunden",
+        "description": "{name} sendet auf `{topic}`. Einrichten?"
+      },
+      "user": {
+        "title": "BlueBattery-Geräte suchen",
+        "description": "MQTT-Topic eingeben, das im Gerät eingestellt ist (ohne Geräte-ID). Werkseinstellung: `BlueBattery/BB-Display`.",
+        "data": {
+          "base_topic": "MQTT-Topic"
+        }
+      },
+      "pick": {
+        "title": "Mehrere Geräte gefunden",
+        "data": {
+          "node": "Gerät"
+        }
+      },
+      "select": {
+        "title": "Geräte auswählen",
+        "description": "{name} liefert {count} Geräte. Wähle aus, welche übernommen werden – später jederzeit über **Konfigurieren** änderbar.\n\n{warning} Eingebaute Home-Assistant-Anbindung im Display aktiv: {firmware_discovery}. Falls ja, erscheinen Entitäten doppelt, bis sie im Display abgeschaltet wird.",
+        "data": {
+          "selected": "Geräte"
+        }
+      }
+    },
+    "error": {
+      "invalid_topic": "Ungültiges Topic (kein + oder # erlaubt).",
+      "no_devices": "Kein neues BlueBattery-Gerät unter diesem Topic gefunden. Sendet das Gerät?"
+    },
+    "abort": {
+      "not_bluebattery": "Kein BlueBattery-Gerät.",
+      "already_configured": "Dieses Gerät ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "BlueBattery-Optionen",
+        "description": "Neu gefundene Geräte: {new}\n\nAbgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt.",
+        "data": {
+          "selected": "Geräte",
+          "remove_deselected": "Abgewählte Geräte entfernen statt deaktivieren",
+          "timeout": "Sekunden ohne Daten bis „nicht verfügbar“",
+          "truma_extended_modes": "Truma: Heizmodi VarioHeat/Boost anbieten",
+          "truma_combi_e": "Truma Combi E: Energieart wählbar"
+        }
+      }
+    }
+  },
+  "issues": {
+    "new_devices": {
+      "title": "Neues BlueBattery-Gerät gefunden",
+      "description": "{title} liefert neue Geräte: {devices}.\n\nHinzufügen: **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren**."
+    }
+  },
+  "exceptions": {
+    "target_out_of_range": {
+      "message": "Die Temperatur muss zwischen {min} und {max} °C liegen."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "ambient_temp": {
+        "name": "Innentemperatur"
+      },
+      "ambient_dewpoint": {
+        "name": "Taupunkt"
+      },
+      "wifi_rssi": {
+        "name": "WLAN-Signal"
+      },
+      "cpu_temp": {
+        "name": "CPU-Temperatur"
+      },
+      "heap": {
+        "name": "Freier Speicher"
+      },
+      "uptime": {
+        "name": "Laufzeit"
+      },
+      "reset_reason": {
+        "name": "Letzter Neustartgrund"
+      },
+      "battery_voltage": {
+        "name": "Batteriespannung"
+      },
+      "battery_current": {
+        "name": "Batteriestrom"
+      },
+      "battery_power": {
+        "name": "Batterieleistung"
+      },
+      "starter_voltage": {
+        "name": "Starterbatterie"
+      },
+      "solar_current": {
+        "name": "Solarstrom"
+      },
+      "solar_power": {
+        "name": "Solarleistung"
+      },
+      "pv_voltage": {
+        "name": "Solarspannung"
+      },
+      "pv_peak_power": {
+        "name": "Solar-Spitzenleistung heute"
+      },
+      "solar_charge": {
+        "name": "Solarladung heute"
+      },
+      "pv_charger_phase": {
+        "name": "Solar-Ladephase",
+        "state": {
+          "bulk": "Hauptladung",
+          "absorption": "Absorption",
+          "float": "Erhaltung",
+          "maintenance": "Pflege"
+        }
+      },
+      "booster_current": {
+        "name": "Boosterstrom"
+      },
+      "booster_charge": {
+        "name": "Boosterladung heute"
+      },
+      "booster_charger_phase": {
+        "name": "Booster-Ladephase",
+        "state": {
+          "bulk": "Hauptladung",
+          "absorption": "Absorption",
+          "float": "Erhaltung",
+          "maintenance": "Pflege"
+        }
+      },
+      "device_temp": {
+        "name": "Gerätetemperatur"
+      },
+      "solar_energy": {
+        "name": "Solarenergie"
+      },
+      "battery_in_energy": {
+        "name": "Batterie-Energie geladen"
+      },
+      "battery_out_energy": {
+        "name": "Batterie-Energie entnommen"
+      },
+      "booster_energy": {
+        "name": "Booster-Energie"
+      },
+      "land_energy": {
+        "name": "Landstrom-Energie (geschätzt)"
+      },
+      "ble_rssi": {
+        "name": "Bluetooth-Signal"
+      },
+      "booster_limit_status": {
+        "name": "Booster-Limit (Rohwert)"
+      },
+      "snaps": {
+        "name": "Snapshot-Wiederherstellungen"
+      },
+      "tank_level": {
+        "name": "Füllstand"
+      },
+      "tank_volume": {
+        "name": "Inhalt"
+      },
+      "tank_capacity": {
+        "name": "Kapazität"
+      },
+      "tank_type": {
+        "name": "Tankart",
+        "state": {
+          "fresh": "Frischwasser",
+          "grey": "Grauwasser",
+          "black": "Schwarzwasser",
+          "other": "Sonstiges"
+        }
+      },
+      "roll": {
+        "name": "Seitenneigung"
+      },
+      "pitch": {
+        "name": "Längsneigung"
+      },
+      "connection_duration": {
+        "name": "Verbindungsdauer"
+      },
+      "connection_count": {
+        "name": "Verbindungen"
+      },
+      "room_temp": {
+        "name": "Raumtemperatur"
+      },
+      "water_temp": {
+        "name": "Wassertemperatur"
+      },
+      "vent_mode": {
+        "name": "Lüfter",
+        "state": {
+          "off": "Aus",
+          "eco": "Eco",
+          "high": "High",
+          "level_1": "Stufe 1",
+          "level_2": "Stufe 2",
+          "level_3": "Stufe 3",
+          "level_4": "Stufe 4",
+          "level_5": "Stufe 5",
+          "level_6": "Stufe 6",
+          "level_7": "Stufe 7",
+          "level_8": "Stufe 8",
+          "level_9": "Stufe 9",
+          "level_10": "Stufe 10"
+        }
+      },
+      "error_code": {
+        "name": "Fehlercode"
+      },
+      "error_text": {
+        "name": "Fehlertext"
+      },
+      "supply_voltage": {
+        "name": "Versorgungsspannung"
+      },
+      "energy_mode": {
+        "name": "Energieart",
+        "state": {
+          "gas": "Gas/Diesel",
+          "mix_900": "Mix 900 W",
+          "mix_1800": "Mix 1800 W",
+          "electric_900": "Elektro 900 W",
+          "electric_1800": "Elektro 1800 W"
+        }
+      },
+      "heater_connection": {
+        "name": "Verbindungsstatus",
+        "state": {
+          "offline": "Offline",
+          "not_connected": "Nicht verbunden",
+          "ok": "OK",
+          "error": "Fehler"
+        }
+      },
+      "zone1_temp": {
+        "name": "Temperatur Zone 1"
+      },
+      "zone2_temp": {
+        "name": "Temperatur Zone 2"
+      },
+      "outdoor_temp": {
+        "name": "Außentemperatur"
+      }
+    },
+    "binary_sensor": {
+      "display_connected": {
+        "name": "Verbindung"
+      },
+      "relay": {
+        "name": "Relais"
+      },
+      "heater_connected": {
+        "name": "Heizung verbunden"
+      },
+      "heater_problem": {
+        "name": "Heizungsstörung"
+      },
+      "ac_supply": {
+        "name": "230-V-Versorgung"
+      }
+    },
+    "select": {
+      "truma_boiler": {
+        "name": "Boiler",
+        "state": {
+          "off": "Aus",
+          "eco": "Eco (40 °C)",
+          "high": "High (55 °C)",
+          "boost": "Boost (60 °C)"
+        }
+      },
+      "truma_energy": {
+        "name": "Energieart",
+        "state": {
+          "gas": "Gas/Diesel",
+          "mix_900": "Mix 900 W",
+          "mix_1800": "Mix 1800 W",
+          "electric_900": "Elektro 900 W",
+          "electric_1800": "Elektro 1800 W"
+        }
+      },
+      "alde_water": {
+        "name": "Warmwasser",
+        "state": {
+          "off": "Aus",
+          "on": "Ein",
+          "boost": "Boost"
+        }
+      },
+      "alde_el_power": {
+        "name": "Elektroleistung",
+        "state": {
+          "off": "Aus",
+          "1kw": "1 kW",
+          "2kw": "2 kW",
+          "3kw": "3 kW"
+        }
+      },
+      "alde_gas_prio": {
+        "name": "Energie-Priorität",
+        "state": {
+          "electric": "Elektro",
+          "gas": "Gas"
+        }
+      }
+    },
+    "switch": {
+      "alde_gas": {
+        "name": "Gas"
+      }
+    },
+    "climate": {
+      "truma_heater": {
+        "name": "Heizung",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "eco": "Eco",
+              "high": "High",
+              "vario_night": "VarioHeat Nacht",
+              "vario_auto": "VarioHeat Auto",
+              "boost": "Boost"
+            }
+          },
+          "command_pending": {
+            "name": "Befehl unterwegs"
+          },
+          "room_heating_paused": {
+            "name": "Raumheizung pausiert (z. B. Boiler-Boost)"
+          },
+          "last_target_temperature": {
+            "name": "Zuletzt gewünschte Temperatur"
+          }
+        }
+      },
+      "alde_zone1": {
+        "name": "Heizung Zone 1",
+        "state_attributes": {
+          "command_pending": {
+            "name": "Befehl unterwegs"
+          },
+          "room_heating_paused": {
+            "name": "Raumheizung pausiert (z. B. Boiler-Boost)"
+          },
+          "last_target_temperature": {
+            "name": "Zuletzt gewünschte Temperatur"
+          }
+        }
+      },
+      "alde_zone2": {
+        "name": "Heizung Zone 2",
+        "state_attributes": {
+          "command_pending": {
+            "name": "Befehl unterwegs"
+          },
+          "room_heating_paused": {
+            "name": "Raumheizung pausiert (z. B. Boiler-Boost)"
+          },
+          "last_target_temperature": {
+            "name": "Zuletzt gewünschte Temperatur"
+          }
+        }
+      }
+    }
+  }
+}

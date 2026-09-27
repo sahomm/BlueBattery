@@ -36,7 +36,7 @@ def main() -> None:
         counts[topic] = counts.get(topic, 0) + 1
 
     index = ["topic\tcount\tretained\tjson\tbytes"]
-    for topic, (ts, retained, payload) in sorted(latest.items()):
+    for topic, (_ts, retained, payload) in sorted(latest.items()):
         try:
             data = json.loads(payload)
             body = json.dumps(data, indent=2, ensure_ascii=False)
