@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store
+*.log
+
+# Local-only design/history notes - not part of the public repo, see instructions
+DECISIONS.md
+
+# Rohmitschnitte enthalten MAC-Adressen/Seriennummern - nur anonymisierte Beispiele committen
+samples/raw/
+
+# Lokales Arbeitswissen (Analysen, Produktnotizen) - nicht Teil des Repos
+local/
+
+# Mit BlueBattery abgestimmte Schnittstellenbeschreibung - NIE veröffentlichen
+*MQTT_SPEC*
+
+# Arbeitsanweisungen für Claude (enthält lokale Pfade)
+CLAUDE.md
