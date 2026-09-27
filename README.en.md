@@ -237,10 +237,10 @@ Entities that exist as a different type in the integration (e.g. "Booster limit"
 
 ## Good to know
 
-- **Energy counters** (`… Wh`) are calculated in the display and reset daily. **Shore power energy is an estimate** (battery current minus solar and booster current), not a measurement.
-- **Temperature sensors** via the display carry no timestamp; if a sensor fails, the integration shows "unknown" once the display stops reporting a valid value.
-- After a **Home Assistant restart**, the last known values are shown; the display only counts as *connected* once it actively publishes again.
-- After a **display restart**, the heater connection takes 1–2 minutes; no heater error is reported during that time.
+- **Energy counters straight from the display** (`… Wh`): the display calculates them and starts fresh every day; Home Assistant continues them seamlessly in the Energy dashboard. The display derives **shore power energy** from battery, solar and booster current – a good guide value, even without a dedicated shore power meter.
+- **Temperature sensors with failure detection:** if the display no longer reports a valid value for a sensor, the integration shows "unknown" instead of an outdated value.
+- **After a Home Assistant restart** the last known values are available immediately. The display counts as *connected* as soon as it sends fresh data again – so the connection indicator stays reliable.
+- **After a display restart** the integration gives the heater 1–2 minutes to establish its connection before reporting a fault – so there are no false alarms.
 
 ## Troubleshooting
 

@@ -239,10 +239,10 @@ Entitäten, die es in der Integration als andere Art gibt (z. B. „Booster-Limi
 
 ## Gut zu wissen
 
-- **Energiezähler** (`… Wh`) werden im Display berechnet und täglich zurückgesetzt. **Landstrom-Energie ist ein Schätzwert** (Batteriestrom minus Solar- und Boosterstrom), keine Messung.
-- **Temperatursensoren** über das Display liefern keinen Zeitstempel; fällt ein Sensor aus, zeigt die Integration „unbekannt“, sobald das Display keinen gültigen Wert mehr meldet.
-- Nach einem **Neustart von Home Assistant** werden die zuletzt bekannten Werte angezeigt; als *verbunden* gilt das Display erst, wenn es wieder aktiv sendet.
-- Nach einem **Neustart des Displays** braucht die Heizungsverbindung 1–2 Minuten; in dieser Zeit wird kein Heizungsfehler gemeldet.
+- **Energiezähler direkt aus dem Display** (`… Wh`): Das Display berechnet sie und beginnt jeden Tag neu; Home Assistant führt sie im Energie-Dashboard fortlaufend weiter. Die **Landstrom-Energie** ermittelt das Display rechnerisch aus Batterie-, Solar- und Boosterstrom – ein guter Richtwert, auch ohne eigenen Landstromzähler.
+- **Temperatursensoren mit Ausfallerkennung:** Meldet das Display für einen Sensor keinen gültigen Wert mehr, zeigt die Integration „unbekannt“ statt eines veralteten Werts.
+- **Nach einem Neustart von Home Assistant** stehen die zuletzt bekannten Werte sofort bereit. Als *verbunden* gilt das Display, sobald es wieder frische Daten sendet – so bleibt die Verbindungsanzeige verlässlich.
+- **Nach einem Neustart des Displays** gibt die Integration der Heizung 1–2 Minuten Zeit, die Verbindung aufzubauen, bevor sie eine Störung meldet – so entstehen keine Fehlalarme.
 
 ## Fehlersuche
 
