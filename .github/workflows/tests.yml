@@ -13,6 +13,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.14"
-      - run: uv pip install -r requirements_test.txt
-      - run: uv run --no-project ruff check custom_components tests tools --select E,F,W,B,UP,SIM,I --ignore E501,SIM108,UP040
-      - run: uv run --no-project pytest -q
+      - run: uv venv .venv
+      - run: uv pip install --python .venv/bin/python -r requirements_test.txt
+      - run: .venv/bin/ruff check custom_components tests tools --select E,F,W,B,UP,SIM,I --ignore E501,SIM108,UP040
+      - run: .venv/bin/python -m pytest -q
