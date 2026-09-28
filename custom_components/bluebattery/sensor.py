@@ -29,7 +29,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import BlueBatteryConfigEntry
-from .const import ALIVE_STATES, TRUMA_ENERGY_MODES
+from .const import ALIVE_STATES, KEY_DISPLAY, TRUMA_ENERGY_MODES
 from .data import BlueBatteryDevice, SubDevice, to_number
 from .entity import BlueBatteryEntity
 
@@ -82,6 +82,26 @@ def _alive(heater: str) -> Callable[[dict[str, Any], BlueBatteryDevice], str | N
         return None if value is None else ALIVE_STATES.get(value)
 
     return get
+
+
+def _tilt(field: str) -> Callable[[dict[str, Any], BlueBatteryDevice], float | None]:
+    """Neigung auf 0,1° gerundet – die Firmware liefert Float-Artefakte wie -0.200000002980232."""
+    def get(block: dict[str, Any], _device: BlueBatteryDevice) -> float | None:
+        value = to_number(block.get(field))
+        return None if value is None else round(value, 1)
+
+    return get
+
+
+def _error_text(block: dict[str, Any], _device: BlueBatteryDevice) -> str | None:
+    """Fehlertext; ohne Störung meldet die Firmware „0“ – dann „OK“."""
+    text = block.get("error_txt")
+    if text is None:
+        return None
+    text = str(text).strip()
+    if text in ("", "0") and not to_number(block.get("error")):
+        return "OK"
+    return text or None
 
 
 def _is_liters(block: dict[str, Any]) -> bool:
@@ -245,8 +265,8 @@ SENSORS: tuple[BlueBatterySensorDescription, ...] = (
         device_class=SensorDeviceClass.ENUM, options=list(TANK_TYPES.values()),
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    BlueBatterySensorDescription(key="roll", translation_key="roll", kinds=("tank", "tank_ctl"), value_fn=_num("roll"), **TILT),
-    BlueBatterySensorDescription(key="pitch", translation_key="pitch", kinds=("tank", "tank_ctl"), value_fn=_num("pitch"), **TILT),
+    BlueBatterySensorDescription(key="roll", translation_key="roll", kinds=("tank", "tank_ctl"), value_fn=_tilt("roll"), **TILT),
+    BlueBatterySensorDescription(key="pitch", translation_key="pitch", kinds=("tank", "tank_ctl"), value_fn=_tilt("pitch"), **TILT),
     BlueBatterySensorDescription(key="rssi", translation_key="ble_rssi", kinds=("tank", "tank_ctl", "ble"), value_fn=_num("rssi"), **RSSI),
     # --- BLE-Sensor ---
     BlueBatterySensorDescription(key="temperature", kinds=("ble",), value_fn=_num("temperature"), **TEMP),
@@ -284,8 +304,7 @@ SENSORS: tuple[BlueBatterySensorDescription, ...] = (
     ),
     BlueBatterySensorDescription(
         key="error_text", translation_key="error_text", kinds=("truma", "alde"),
-        value_fn=lambda block, _d: (str(block.get("error_txt")).strip() or None)
-        if block.get("error_txt") is not None else None,
+        value_fn=_error_text,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     BlueBatterySensorDescription(
@@ -346,6 +365,9 @@ class BlueBatterySensor(BlueBatteryEntity, SensorEntity):
     ) -> None:
         """Initialisieren."""
         super().__init__(device, sub, description)
+        # Kanäle eines BB-Tanks: gleiche Neigung wie der BB-Tank selbst -> dort genügt sie
+        if description.key in ("roll", "pitch") and sub.kind == "tank" and sub.parent != KEY_DISPLAY:
+            self._attr_entity_registry_enabled_default = False
         if description.tank_volume:
             self._update_volume_unit(device.block(sub.key))
 

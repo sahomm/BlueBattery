@@ -141,13 +141,15 @@ OPTIONS = {"abort": {
                     "data": {"force_remove": T("Remove remaining old entities (only if discovery is already off)", "Verbliebene alte Entitäten entfernen (nur wenn die Anbindung bereits aus ist)")}},
   "settings": {
     "title": T("BlueBattery options", "BlueBattery-Optionen"),
-    "description": T("New devices found: {new}\n\nOnly devices paired with the BB-Display are listed. Deselected devices are disabled (history is kept) unless removal is selected.",
-                     "Neu gefundene Geräte: {new}\n\nAufgeführt sind die im BB-Display gekoppelten Geräte. Abgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt."),
-    "data": {"selected": T("Devices", "Geräte"),
-             "remove_deselected": T("Remove deselected devices instead of disabling them", "Abgewählte Geräte entfernen statt deaktivieren"),
-             "timeout": T("Seconds without data until unavailable", "Sekunden ohne Daten bis „nicht verfügbar“"),
-             "truma_extended_modes": T("Truma: offer VarioHeat/boost heating modes", "Truma: Heizmodi VarioHeat/Boost anbieten"),
-             "truma_combi_e": T("Truma Combi E: energy source selectable", "Truma Combi E: Energieart wählbar")}}}}
+    "description": T("New devices found: {new}\n\nOnly devices paired with the BB-Display are listed. Deselected devices are disabled (history is kept) unless removal is selected under \"Advanced\".",
+                     "Neu gefundene Geräte: {new}\n\nAufgeführt sind die im BB-Display gekoppelten Geräte. Abgewählte Geräte werden deaktiviert (Verlauf bleibt), außer unter „Erweitert“ ist „Entfernen“ gewählt."),
+    "data": {"selected": T("Devices", "Geräte")},
+    "sections": {"advanced": {
+        "name": T("Advanced", "Erweitert"),
+        "data": {"remove_deselected": T("Remove deselected devices instead of disabling them", "Abgewählte Geräte entfernen statt deaktivieren"),
+                 "timeout": T("Seconds without data until unavailable", "Sekunden ohne Daten bis „nicht verfügbar“"),
+                 "truma_extended_modes": T("Truma: offer VarioHeat/boost heating modes", "Truma: Heizmodi VarioHeat/Boost anbieten"),
+                 "truma_combi_e": T("Truma Combi E: energy source selectable", "Truma Combi E: Energieart wählbar")}}}}}}
 ISSUES = {"new_devices": {"title": T("New BlueBattery device found", "Neues BlueBattery-Gerät gefunden"),
           "description": T("{title} provides new devices (newly paired with the BB-Display): {devices}.\n\nTo add them: **Settings → Devices & services → BlueBattery → Configure**.",
                            "{title} liefert neue Geräte (neu im BB-Display gekoppelt): {devices}.\n\nHinzufügen: **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren**.")}}

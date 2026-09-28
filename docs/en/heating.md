@@ -15,8 +15,8 @@ Combi with CP plus iNet ready, via the TIN adapter:
 - **Thermostat:** off / heat, level **eco** or **high**, room setpoint 5–30 °C
 - **Boiler:** Off / Eco (40 °C) / High (55 °C) / Boost (60 °C)
 - **Display:** room and water temperature, fan level, error code and text, connection
-- **Energy source** (gas / mix / electric) on **Combi E** – enable in the integration options
-- Additional heating levels (VarioHeat, boost) can be enabled in the options
+- **Energy source** (gas / mix / electric) on **Combi E** – enable in the integration options under "Advanced"
+- Additional heating levels (VarioHeat, boost) can also be enabled under "Advanced"
 
 ## Alde – 🧪 experimental
 

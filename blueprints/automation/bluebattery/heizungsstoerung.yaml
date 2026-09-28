@@ -122,7 +122,7 @@ actions:
               title: "{{ vehicle_name }} – Heizungsstörung"
               message: >-
                 Die Heizung meldet eine Störung
-                {%- if error_text and states(error_text) not in ['unknown', 'unavailable', '', '0'] %}: {{ states(error_text) }}{% endif %}
+                {%- if error_text and states(error_text) not in ['unknown', 'unavailable', '', '0', 'OK'] %}: {{ states(error_text) }}{% endif %}
                 {%- if error_code and states(error_code) not in ['unknown', 'unavailable', ''] %} (Code {{ states(error_code) }}){% endif %}.
                 Zurücksetzen am Bedienteil der Heizung.
       - conditions:

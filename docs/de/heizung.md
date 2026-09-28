@@ -15,8 +15,8 @@ Combi mit CP plus iNet ready, über den TIN-Adapter:
 - **Thermostat:** aus / heizen, Stufe **eco** oder **high**, Raum-Soll 5–30 °C
 - **Boiler:** Aus / Eco (40 °C) / High (55 °C) / Boost (60 °C)
 - **Anzeige:** Raum- und Wassertemperatur, Lüfterstufe, Fehlercode und -text, Verbindung
-- **Energieart** (Gas / Mix / Elektro) bei **Combi E** – in den Optionen der Integration einschalten
-- Weitere Heizstufen (VarioHeat, Boost) lassen sich in den Optionen einschalten
+- **Energieart** (Gas / Mix / Elektro) bei **Combi E** – in den Optionen der Integration unter „Erweitert“ einschalten
+- Weitere Heizstufen (VarioHeat, Boost) lassen sich ebenfalls unter „Erweitert“ einschalten
 
 ## Alde – 🧪 experimentell
 

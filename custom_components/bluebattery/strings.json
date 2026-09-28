@@ -64,13 +64,20 @@
       },
       "settings": {
         "title": "BlueBattery options",
-        "description": "New devices found: {new}\n\nOnly devices paired with the BB-Display are listed. Deselected devices are disabled (history is kept) unless removal is selected.",
+        "description": "New devices found: {new}\n\nOnly devices paired with the BB-Display are listed. Deselected devices are disabled (history is kept) unless removal is selected under \"Advanced\".",
         "data": {
-          "selected": "Devices",
-          "remove_deselected": "Remove deselected devices instead of disabling them",
-          "timeout": "Seconds without data until unavailable",
-          "truma_extended_modes": "Truma: offer VarioHeat/boost heating modes",
-          "truma_combi_e": "Truma Combi E: energy source selectable"
+          "selected": "Devices"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Advanced",
+            "data": {
+              "remove_deselected": "Remove deselected devices instead of disabling them",
+              "timeout": "Seconds without data until unavailable",
+              "truma_extended_modes": "Truma: offer VarioHeat/boost heating modes",
+              "truma_combi_e": "Truma Combi E: energy source selectable"
+            }
+          }
         }
       }
     }

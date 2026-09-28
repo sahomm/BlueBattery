@@ -16,6 +16,7 @@ from homeassistant.config_entries import (
     OptionsFlow,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.data_entry_flow import section
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.service_info.mqtt import MqttServiceInfo
@@ -43,6 +44,7 @@ from .migrate import OPT_MIGRATION, async_apply, async_plan, plan_to_options
 _LOGGER = logging.getLogger(__name__)
 
 OPT_LABELS = "labels"
+SECTION_ADVANCED = "advanced"
 STATUS_WAIT = 8.0
 SCAN_WAIT = 6.0
 # Firmware-Standardintervall ist 60 s – so lange plus Reserve auf einen frischen Status warten
@@ -360,16 +362,18 @@ class BlueBatteryOptionsFlow(OptionsFlow):
 
         if user_input is not None:
             selected = list(user_input.get(OPT_SELECTED, []))
+            # Erweiterte Einstellungen liegen im zugeklappten Bereich „advanced“
+            advanced = user_input.get(SECTION_ADVANCED, user_input)
             return self.async_create_entry(
                 data={
                     **entry.options,
                     OPT_SELECTED: selected,
                     OPT_IGNORED: [k for k in all_keys if k not in selected],
                     OPT_LABELS: labels,
-                    OPT_TIMEOUT: int(user_input[OPT_TIMEOUT]),
-                    OPT_REMOVE_DESELECTED: bool(user_input.get(OPT_REMOVE_DESELECTED, False)),
-                    OPT_TRUMA_EXTENDED_MODES: bool(user_input.get(OPT_TRUMA_EXTENDED_MODES, False)),
-                    OPT_TRUMA_COMBI_E: bool(user_input.get(OPT_TRUMA_COMBI_E, False)),
+                    OPT_TIMEOUT: int(advanced.get(OPT_TIMEOUT, entry.options.get(OPT_TIMEOUT, DEFAULT_TIMEOUT))),
+                    OPT_REMOVE_DESELECTED: bool(advanced.get(OPT_REMOVE_DESELECTED, False)),
+                    OPT_TRUMA_EXTENDED_MODES: bool(advanced.get(OPT_TRUMA_EXTENDED_MODES, False)),
+                    OPT_TRUMA_COMBI_E: bool(advanced.get(OPT_TRUMA_COMBI_E, False)),
                 }
             )
 
@@ -379,17 +383,24 @@ class BlueBatteryOptionsFlow(OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Optional(OPT_SELECTED, default=selected_before): cv.multi_select(choices),
-                    vol.Optional(OPT_REMOVE_DESELECTED, default=False): bool,
-                    vol.Required(
-                        OPT_TIMEOUT, default=entry.options.get(OPT_TIMEOUT, DEFAULT_TIMEOUT)
-                    ): vol.All(vol.Coerce(int), vol.Range(min=MIN_TIMEOUT, max=MAX_TIMEOUT)),
-                    vol.Optional(
-                        OPT_TRUMA_EXTENDED_MODES,
-                        default=entry.options.get(OPT_TRUMA_EXTENDED_MODES, False),
-                    ): bool,
-                    vol.Optional(
-                        OPT_TRUMA_COMBI_E, default=entry.options.get(OPT_TRUMA_COMBI_E, False)
-                    ): bool,
+                    vol.Required(SECTION_ADVANCED): section(
+                        vol.Schema(
+                            {
+                                vol.Optional(OPT_REMOVE_DESELECTED, default=False): bool,
+                                vol.Required(
+                                    OPT_TIMEOUT, default=entry.options.get(OPT_TIMEOUT, DEFAULT_TIMEOUT)
+                                ): vol.All(vol.Coerce(int), vol.Range(min=MIN_TIMEOUT, max=MAX_TIMEOUT)),
+                                vol.Optional(
+                                    OPT_TRUMA_EXTENDED_MODES,
+                                    default=entry.options.get(OPT_TRUMA_EXTENDED_MODES, False),
+                                ): bool,
+                                vol.Optional(
+                                    OPT_TRUMA_COMBI_E, default=entry.options.get(OPT_TRUMA_COMBI_E, False)
+                                ): bool,
+                            }
+                        ),
+                        {"collapsed": True},
+                    ),
                 }
             ),
             description_placeholders={

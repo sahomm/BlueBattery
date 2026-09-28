@@ -64,13 +64,20 @@
       },
       "settings": {
         "title": "BlueBattery-Optionen",
-        "description": "Neu gefundene Geräte: {new}\n\nAufgeführt sind die im BB-Display gekoppelten Geräte. Abgewählte Geräte werden deaktiviert (Verlauf bleibt), außer „Entfernen“ ist gewählt.",
+        "description": "Neu gefundene Geräte: {new}\n\nAufgeführt sind die im BB-Display gekoppelten Geräte. Abgewählte Geräte werden deaktiviert (Verlauf bleibt), außer unter „Erweitert“ ist „Entfernen“ gewählt.",
         "data": {
-          "selected": "Geräte",
-          "remove_deselected": "Abgewählte Geräte entfernen statt deaktivieren",
-          "timeout": "Sekunden ohne Daten bis „nicht verfügbar“",
-          "truma_extended_modes": "Truma: Heizmodi VarioHeat/Boost anbieten",
-          "truma_combi_e": "Truma Combi E: Energieart wählbar"
+          "selected": "Geräte"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Erweitert",
+            "data": {
+              "remove_deselected": "Abgewählte Geräte entfernen statt deaktivieren",
+              "timeout": "Sekunden ohne Daten bis „nicht verfügbar“",
+              "truma_extended_modes": "Truma: Heizmodi VarioHeat/Boost anbieten",
+              "truma_combi_e": "Truma Combi E: Energieart wählbar"
+            }
+          }
         }
       }
     }

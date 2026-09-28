@@ -277,3 +277,42 @@ async def test_pending_target_shown_until_confirmed(hass: HomeAssistant, mqtt_mo
     state = hass.states.get(climate)
     assert state.attributes["temperature"] == 24
     assert state.attributes["command_pending"] is False
+
+
+async def test_tilt_rounded_and_channel_tilt_disabled(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Neigung gerundet; an BB-Tank-Kanälen standardmäßig aus, an BlueLevel+ an."""
+    await _setup(hass, mqtt_mock, entry_data, info, status)
+    assert hass.states.get(_eid(hass, "sensor", "tankctl:F1E2D3C4B5A6", "roll")).state == "-0.2"
+    assert hass.states.get(_eid(hass, "sensor", "tankctl:F1E2D3C4B5A6", "pitch")).state == "0.4"
+    channel_roll = er.async_get(hass).async_get(_eid(hass, "sensor", "tank:F1E2D3C4B5A6:1", "roll"))
+    assert channel_roll.disabled_by is er.RegistryEntryDisabler.INTEGRATION
+    assert hass.states.get(_eid(hass, "sensor", "tank:F1E2D3C4B5A7:0", "roll")).state == "0.7"
+
+
+async def test_error_text_ok_without_fault(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Ohne Störung meldet die Firmware „0“ – angezeigt wird „OK“; bei Störung der Text."""
+    await _setup(hass, mqtt_mock, entry_data, info, status)
+    text = _eid(hass, "sensor", "truma", "error_text")
+    assert hass.states.get(text).state == "OK"
+    status["truma"].update(error=2212, error_txt="E2212-unbekannter Fehler")
+    async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status))
+    await hass.async_block_till_done()
+    assert hass.states.get(text).state == "E2212-unbekannter Fehler"
+
+
+async def test_options_advanced_section(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Erweiterte Optionen liegen im zugeklappten Bereich und werden übernommen."""
+    entry = await _setup(hass, mqtt_mock, entry_data, info, status)
+    flow = await hass.config_entries.options.async_init(entry.entry_id)
+    flow = await hass.config_entries.options.async_configure(flow["flow_id"], {"next_step_id": "settings"})
+    assert flow["step_id"] == "settings"
+    selected = list(entry.options["selected"])
+    result = await hass.config_entries.options.async_configure(
+        flow["flow_id"],
+        {"selected": selected, "advanced": {"timeout": 120, "remove_deselected": False,
+                                            "truma_extended_modes": True, "truma_combi_e": False}},
+    )
+    assert result["type"] == "create_entry"
+    await hass.async_block_till_done()  # Neuladen nach Optionsänderung abwarten
+    assert entry.options["timeout"] == 120
+    assert entry.options["truma_extended_modes"] is True
