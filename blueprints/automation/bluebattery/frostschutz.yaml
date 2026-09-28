@@ -96,6 +96,11 @@ triggers:
     below: !input threshold
     for: !input duration
 
+conditions:
+  # Nach Neustart/Aussetzer nicht auslösen (Wert war vorher nicht verfügbar)
+  - condition: template
+    value_template: "{{ trigger.from_state.state not in ['unavailable', 'unknown'] }}"
+
 actions:
   - if:
       - condition: template
