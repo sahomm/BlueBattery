@@ -172,6 +172,8 @@ Web-Oberfläche des Displays im Browser öffnen (IP-Adresse z. B. aus der Gerät
 
 Nach dem Speichern startet das Display neu. Oben in der Anzeige erscheint das Verbindungssymbol ⇄.
 
+> **Feste IP-Adresse:** Gib Home Assistant im Router eine feste IP-Adresse (DHCP-Reservierung). Ändert sich die Adresse, findet das Display den Broker sonst nicht mehr.
+
 <!-- 📷 TODO: images/04-bb-display-mqtt.png – Fernzugriff/MQTT-Seite (Passwort verdeckt) -->
 > 📷 *Bild folgt: MQTT-Einstellungen im BB-Display*
 
@@ -262,7 +264,7 @@ Entitäten, die es in der Integration als andere Art gibt (z. B. „Booster-Limi
 
 - **Keine Geräte gefunden:** Sendet das Display? In der MQTT-Integration unter **Konfigurieren → Auf ein Topic hören** `BlueBattery/#` abonnieren – es sollten alle 30 s Nachrichten kommen. Alternativ [MQTT Explorer](https://mqtt-explorer.com).
 - **Gerät fehlt in der Auswahl:** Die Integration zeigt nur Geräte, die im BB-Display gekoppelt sind und von dort gerade gemeldet werden. Gerät im Display koppeln (bzw. beim Batteriecomputer auswählen), Reichweite prüfen, dann **Konfigurieren** erneut öffnen.
-- **Symbol ⇄ fehlt im Display:** Server-IP, Port, Benutzer/Passwort prüfen; läuft die Mosquitto-App?
+- **Symbol ⇄ fehlt im Display:** Server-IP, Port, Benutzer/Passwort prüfen; läuft die Mosquitto-App? Wurde der MQTT-Benutzer gerade erst angelegt und die Anmeldung scheitert, die **Mosquitto-App einmal neu starten**.
 - **HACS: „Failed to download … refs/heads/<Kennung>.zip“ (404):** Beim Herunterladen wurde statt einer Version eine Commit-Kennung gewählt. **HACS → BlueBattery → ⋮ → Erneut herunterladen** und die neueste Version `v…` auswählen.
 - **Alte BlueBattery-Geräte bleiben nach dem Abschalten der eingebauten Anbindung stehen:** Manche Geräte (beobachtet bei BB-Tank und BlueLevel) löschen ihre Discovery-Einträge im Broker nicht. Abhilfe: im [MQTT Explorer](https://mqtt-explorer.com) unter `homeassistant/…` die Einträge des Geräts löschen – danach verschwinden die Geräte in Home Assistant.
 - **Doppelte Entitäten:** Schalter „Home Assistant“ im Display ist noch aktiv (siehe [Umstieg](#umstieg-von-der-bisherigen-home-assistant-anbindung-im-display)).
