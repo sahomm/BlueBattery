@@ -2,9 +2,9 @@
 
 [🇩🇪 Deutsch](../de/einrichtung.md) | 🇬🇧 English · [← back to overview](../../README.en.md)
 
-This guide takes you from the BB-Display to the finished integration. The buttons open the right page directly in your Home Assistant – if a button does not work, the manual way is always written below it.
+This guide takes you from the BB-Display to the finished integration. Each step names the path through the Home Assistant menu. Often it is followed by a link **"Open directly ↗"** that opens the matching page right away.
 
-> **On the first button** [my.home-assistant.io](https://my.home-assistant.io) asks once for the address of your Home Assistant (e.g. `http://homeassistant.local:8123` or `http://192.168.1.10:8123`) → enter it → **Save**. After that, all buttons lead straight to their target. More: [If the buttons don't work](#if-the-buttons-dont-work).
+> **"Open directly"** goes through [my.home-assistant.io](https://my.home-assistant.io): the first time, the page asks once for the address of your Home Assistant (e.g. `http://homeassistant.local:8123`) → enter it → **Save**. After that you briefly confirm with **"Open link"** each time – a security check. More: [If "Open directly" doesn't work](#if-open-directly-doesnt-work).
 
 **Contents**
 - [Before you start](#before-you-start)
@@ -16,7 +16,7 @@ This guide takes you from the BB-Display to the finished integration. The button
 - [Step 6 – Install BlueBattery via HACS](#step-6--install-bluebattery-via-hacs)
 - [Step 7 – Set up BlueBattery](#step-7--set-up-bluebattery)
 - [Adding devices later](#adding-devices-later)
-- [If the buttons don't work](#if-the-buttons-dont-work)
+- [If "Open directly" doesn't work](#if-open-directly-doesnt-work)
 
 ---
 
@@ -50,11 +50,9 @@ The integration takes over the names from the display (e.g. "Fresh water", "Frid
 
 ## Step 2 – Install the Mosquitto broker
 
-The broker is the "post office" through which the BB-Display sends its data to Home Assistant.
+The broker is the "post office" through which the BB-Display sends its data to Home Assistant. Mosquitto is an official app and already included in the app store – nothing needs to be added.
 
-[![Open Mosquitto](https://my.home-assistant.io/badges/supervisor_addon.svg)](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
-
-*Manually:* Settings → **Apps** → **App store** → search "Mosquitto broker".
+**In the menu:** Settings → **Apps** → **App store** → search "Mosquitto broker". · [Open directly ↗](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
 
 1. **Install**.
 2. **Start** it and enable **Start on boot** and **Watchdog**.
@@ -67,9 +65,7 @@ The broker is the "post office" through which the BB-Display sends its data to H
 
 The BB-Display logs in to the broker with its own user.
 
-[![Open people](https://my.home-assistant.io/badges/people.svg)](https://my.home-assistant.io/redirect/people/)
-
-*Manually:* Settings → **People**.
+**In the menu:** Settings → **People**. · [Open directly ↗](https://my.home-assistant.io/redirect/people/)
 
 1. **Add person**.
 2. Enter a name (e.g. `BB-Display`) and switch on **"Allow login"**.
@@ -84,9 +80,7 @@ The BB-Display logs in to the broker with its own user.
 
 ## Step 4 – Set up the MQTT integration
 
-[![Add MQTT](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
-
-*Manually:* Settings → **Devices & services** – usually **MQTT** already shows up under "Discovered" → **Configure** → confirm. If not: **Add integration** → "MQTT" → select the Mosquitto broker.
+**In the menu:** Settings → **Devices & services** – usually **MQTT** already shows up under "Discovered" → **Configure** → confirm. If not: **Add integration** → "MQTT" → select the Mosquitto broker. · [Open directly ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
 
 <!-- 📷 TODO: images/03-mqtt-integration.png -->
 
@@ -136,9 +130,7 @@ The button opens BlueBattery directly in HACS → **Download** → **restart** H
 
 ## Step 7 – Set up BlueBattery
 
-[![Add BlueBattery](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluebattery)
-
-*Manually:* Settings → **Devices & services** → **BlueBattery – BB-Display** appears under "Discovered" → **Configure**.
+**In the menu:** Settings → **Devices & services** → **BlueBattery – BB-Display** appears under "Discovered" → **Configure**. · [Open directly ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluebattery)
 
 1. Confirm – the integration briefly checks that the display sends current data (up to one minute).
 2. **Select the devices** to add – all devices paired with the display are listed.
@@ -168,13 +160,13 @@ New tank, another temperature sensor, TIN adapter retrofitted?
 
 ---
 
-## If the buttons don't work
+## If "Open directly" doesn't work
 
-The buttons go through [my.home-assistant.io](https://my.home-assistant.io). On the first click the page asks for the address of your Home Assistant (e.g. `http://homeassistant.local:8123` or `http://192.168.1.10:8123`) and remembers it.
+The "Open directly" links and the HACS button go through [my.home-assistant.io](https://my.home-assistant.io). On the first click the page asks for the address of your Home Assistant (e.g. `http://homeassistant.local:8123` or `http://192.168.1.10:8123`) and remembers it.
 
 Typical reasons when it fails:
 - The stored address is no longer correct → on [my.home-assistant.io](https://my.home-assistant.io) click "Change" at the bottom and enter it again.
-- You opened the button in the Home Assistant **app** → open it in a **browser** instead.
+- You opened the link in the Home Assistant **app** → open it in a **browser** instead.
 - Your phone is not on the vehicle's network → connect to the vehicle Wi-Fi.
 
-The manual way below each button always leads to the same place.
+The menu path always leads to the same place.

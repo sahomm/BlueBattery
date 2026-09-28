@@ -79,9 +79,7 @@ Eine Störung wird am Bedienteil der Heizung zurückgesetzt (z. B. CP plus) – 
 
 **Vorab einmalig zwei Helfer anlegen:**
 
-[![Helfer öffnen](https://my.home-assistant.io/badges/helpers.svg)](https://my.home-assistant.io/redirect/helpers/)
-
-*Von Hand:* Einstellungen → Geräte & Dienste → Helfer → Helfer erstellen
+**Im Menü:** Einstellungen → Geräte & Dienste → Helfer → Helfer erstellen · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/helpers/)
 1. **Datum und/oder Uhrzeit** → Name „Vorheizen ab“ → „Datum und Uhrzeit“ auswählen.
 2. **Taste** → Name „Jetzt vorheizen“.
 
@@ -195,9 +193,7 @@ display:
 
 **Du brauchst:** BB-Display + BlueBattery-Batteriecomputer
 
-[![Energie-Einstellungen öffnen](https://my.home-assistant.io/badges/config_energy.svg)](https://my.home-assistant.io/redirect/config_energy/)
-
-*Von Hand:* Einstellungen → Dashboards → Energie
+**Im Menü:** Einstellungen → Dashboards → Energie · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/config_energy/)
 
 | Bereich im Energie-Dashboard | BlueBattery-Sensor |
 |---|---|

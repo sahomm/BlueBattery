@@ -18,7 +18,7 @@
 - [I see all values twice](#i-see-all-values-twice)
 - [Old devices remain after switching off the built-in support](#old-devices-remain-after-switching-off-the-built-in-support)
 - [HACS reports "Failed to download … 404"](#hacs-reports-failed-to-download--404)
-- [The "My Home Assistant" buttons don't work](#the-my-home-assistant-buttons-dont-work)
+- ["Open directly" doesn't work](#open-directly-doesnt-work)
 - [How do I report a bug?](#how-do-i-report-a-bug)
 
 **Advanced**
@@ -101,9 +101,9 @@ Some devices (seen with BB-Tank and BlueLevel) do not clean up their old entries
 
 An identifier like `21ff56e` was selected instead of a version. **HACS → BlueBattery → ⋮ → Redownload** and choose the latest version `v…`.
 
-### The "My Home Assistant" buttons don't work
+### "Open directly" doesn't work
 
-See [If the buttons don't work](setup.md#if-the-buttons-dont-work). The manual way is also written below each button.
+See [If "Open directly" doesn't work](setup.md#if-open-directly-doesnt-work). The menu path is written before it in each step.
 
 ### How do I report a bug?
 

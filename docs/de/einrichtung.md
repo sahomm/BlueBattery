@@ -2,9 +2,9 @@
 
 🇩🇪 Deutsch | [🇬🇧 English](../en/setup.md) · [← zurück zur Übersicht](../../README.md)
 
-Diese Anleitung führt dich vom BB-Display bis zur fertigen Integration. Die Knöpfe öffnen die richtige Seite direkt in deinem Home Assistant – klappt ein Knopf nicht, steht darunter immer der Weg von Hand.
+Diese Anleitung führt dich vom BB-Display bis zur fertigen Integration. Jeder Schritt nennt den Weg über das Menü von Home Assistant. Dahinter steht oft ein Link **„Direkt öffnen ↗“**, der die passende Seite gleich öffnet.
 
-> **Beim ersten Knopf** fragt [my.home-assistant.io](https://my.home-assistant.io) einmalig nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123` oder `http://192.168.1.10:8123`) → eintragen → **Save**. Danach führen alle Knöpfe direkt ans Ziel. Mehr dazu: [Wenn die Knöpfe nicht funktionieren](#wenn-die-knöpfe-nicht-funktionieren).
+> **„Direkt öffnen“** läuft über [my.home-assistant.io](https://my.home-assistant.io): Beim ersten Mal fragt die Seite einmalig nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123`) → eintragen → **Save**. Danach bestätigst du jeweils kurz mit **„Open link“** – eine Sicherheitsabfrage. Mehr dazu: [Wenn „Direkt öffnen“ nicht funktioniert](#wenn-direkt-öffnen-nicht-funktioniert).
 
 **Inhalt**
 - [Bevor du startest](#bevor-du-startest)
@@ -16,7 +16,7 @@ Diese Anleitung führt dich vom BB-Display bis zur fertigen Integration. Die Kn�
 - [Schritt 6 – BlueBattery über HACS installieren](#schritt-6--bluebattery-über-hacs-installieren)
 - [Schritt 7 – BlueBattery einrichten](#schritt-7--bluebattery-einrichten)
 - [Geräte später hinzufügen](#geräte-später-hinzufügen)
-- [Wenn die Knöpfe nicht funktionieren](#wenn-die-knöpfe-nicht-funktionieren)
+- [Wenn „Direkt öffnen“ nicht funktioniert](#wenn-direkt-öffnen-nicht-funktioniert)
 
 ---
 
@@ -50,11 +50,9 @@ Die Namen aus dem Display (z. B. „Frischwasser“, „Kühlschrank“) überni
 
 ## Schritt 2 – Mosquitto-Broker installieren
 
-Der Broker ist die „Poststelle“, über die das BB-Display seine Daten an Home Assistant schickt.
+Der Broker ist die „Poststelle“, über die das BB-Display seine Daten an Home Assistant schickt. Mosquitto ist eine offizielle App und im App-Store bereits enthalten – du musst nichts hinzufügen.
 
-[![Mosquitto öffnen](https://my.home-assistant.io/badges/supervisor_addon.svg)](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
-
-*Von Hand:* Einstellungen → **Apps** → **App-Store** → „Mosquitto broker“ suchen.
+**Im Menü:** Einstellungen → **Apps** → **App-Store** → „Mosquitto broker“ suchen. · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
 
 1. **Installieren**.
 2. **Starten** und **Beim Booten starten** sowie **Watchdog** einschalten.
@@ -67,9 +65,7 @@ Der Broker ist die „Poststelle“, über die das BB-Display seine Daten an Hom
 
 Das BB-Display meldet sich mit einem eigenen Benutzer am Broker an.
 
-[![Personen öffnen](https://my.home-assistant.io/badges/people.svg)](https://my.home-assistant.io/redirect/people/)
-
-*Von Hand:* Einstellungen → **Personen**.
+**Im Menü:** Einstellungen → **Personen**. · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/people/)
 
 1. **Person hinzufügen**.
 2. Einen Namen vergeben (z. B. `BB-Display`) und **„Anmeldung erlauben“** einschalten.
@@ -84,9 +80,7 @@ Das BB-Display meldet sich mit einem eigenen Benutzer am Broker an.
 
 ## Schritt 4 – MQTT-Integration einrichten
 
-[![MQTT hinzufügen](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
-
-*Von Hand:* Einstellungen → **Geräte & Dienste** – meist erscheint **MQTT** schon unter „Entdeckt“ → **Konfigurieren** → bestätigen. Falls nicht: **Integration hinzufügen** → „MQTT“ → den Mosquitto-Broker auswählen.
+**Im Menü:** Einstellungen → **Geräte & Dienste** – meist erscheint **MQTT** schon unter „Entdeckt“ → **Konfigurieren** → bestätigen. Falls nicht: **Integration hinzufügen** → „MQTT“ → den Mosquitto-Broker auswählen. · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
 
 <!-- 📷 TODO: images/03-mqtt-integration.png -->
 
@@ -136,9 +130,7 @@ Der Knopf öffnet BlueBattery direkt in HACS → **Herunterladen** → Home Assi
 
 ## Schritt 7 – BlueBattery einrichten
 
-[![BlueBattery hinzufügen](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluebattery)
-
-*Von Hand:* Einstellungen → **Geräte & Dienste** → unter „Entdeckt“ erscheint **BlueBattery – BB-Display** → **Konfigurieren**.
+**Im Menü:** Einstellungen → **Geräte & Dienste** → unter „Entdeckt“ erscheint **BlueBattery – BB-Display** → **Konfigurieren**. · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluebattery)
 
 1. Bestätigen – die Integration prüft kurz, ob das Display aktuelle Daten sendet (bis zu einer Minute).
 2. **Geräte auswählen**, die übernommen werden sollen – angezeigt werden alle im Display gekoppelten Geräte.
@@ -168,13 +160,13 @@ Neuer Tank, weiterer Temperatursensor, TIN-Adapter nachgerüstet?
 
 ---
 
-## Wenn die Knöpfe nicht funktionieren
+## Wenn „Direkt öffnen“ nicht funktioniert
 
-Die Knöpfe laufen über [my.home-assistant.io](https://my.home-assistant.io). Beim ersten Klick fragt die Seite nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123` oder `http://192.168.1.10:8123`) und merkt sie sich.
+Die Links „Direkt öffnen“ und der HACS-Knopf laufen über [my.home-assistant.io](https://my.home-assistant.io). Beim ersten Klick fragt die Seite nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123` oder `http://192.168.1.10:8123`) und merkt sie sich.
 
 Typische Gründe, wenn es nicht klappt:
 - Die gespeicherte Adresse stimmt nicht mehr → auf [my.home-assistant.io](https://my.home-assistant.io) unten „Change“ bzw. „Ändern“ und neu eintragen.
-- Du hast den Knopf in der Home-Assistant-**App** geöffnet → stattdessen im **Browser** öffnen.
+- Du hast den Link in der Home-Assistant-**App** geöffnet → stattdessen im **Browser** öffnen.
 - Dein Handy ist gerade nicht im Netz des Fahrzeugs → mit dem Fahrzeug-WLAN verbinden.
 
-Der Weg von Hand unter jedem Knopf führt immer zum selben Ziel.
+Der Weg über das Menü führt immer zum selben Ziel.

@@ -18,7 +18,7 @@
 - [Ich sehe alle Werte doppelt](#ich-sehe-alle-werte-doppelt)
 - [Nach dem Ausschalten der eingebauten Anbindung bleiben alte Geräte stehen](#nach-dem-ausschalten-der-eingebauten-anbindung-bleiben-alte-geräte-stehen)
 - [HACS meldet „Failed to download … 404“](#hacs-meldet-failed-to-download--404)
-- [Die Knöpfe „My Home Assistant“ funktionieren nicht](#die-knöpfe-my-home-assistant-funktionieren-nicht)
+- [„Direkt öffnen“ funktioniert nicht](#direkt-öffnen-funktioniert-nicht)
 - [Wie melde ich einen Fehler?](#wie-melde-ich-einen-fehler)
 
 **Für Fortgeschrittene**
@@ -101,9 +101,9 @@ Manche Geräte (beobachtet bei BB-Tank und BlueLevel) räumen ihre alten Einträ
 
 Beim Herunterladen wurde statt einer Version eine Kennung wie `21ff56e` gewählt. **HACS → BlueBattery → ⋮ → Erneut herunterladen** und die neueste Version `v…` auswählen.
 
-### Die Knöpfe „My Home Assistant“ funktionieren nicht
+### „Direkt öffnen“ funktioniert nicht
 
-Siehe [Wenn die Knöpfe nicht funktionieren](einrichtung.md#wenn-die-knöpfe-nicht-funktionieren). Unter jedem Knopf steht außerdem der Weg von Hand.
+Siehe [Wenn „Direkt öffnen“ nicht funktioniert](einrichtung.md#wenn-direkt-öffnen-nicht-funktioniert). Der Weg über das Menü steht bei jedem Schritt davor.
 
 ### Wie melde ich einen Fehler?
 

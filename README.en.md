@@ -45,43 +45,27 @@ All examples: **[Practical examples](https://github.com/sahomm/BlueBattery/blob/
 
 ## Setup in 7 steps
 
-The buttons open the right page directly in your Home Assistant. If a button does not work, the manual way is written below it. In full detail: **[Step-by-step setup](https://github.com/sahomm/BlueBattery/blob/main/docs/en/setup.md)**.
+In full detail: **[Step-by-step setup](https://github.com/sahomm/BlueBattery/blob/main/docs/en/setup.md)**.
 
-> **On the first button** [my.home-assistant.io](https://my.home-assistant.io) asks once for the address of your Home Assistant (e.g. `http://homeassistant.local:8123` or `http://192.168.1.10:8123`) → enter it → **Save**. After that, all buttons lead straight to their target. If it doesn't work, simply use the manual way below it.
+> **Tip:** Some steps have a link **"Open directly ↗"**. It opens the matching page in your Home Assistant via [my.home-assistant.io](https://my.home-assistant.io). The first time, the page asks once for the address of your Home Assistant (e.g. `http://homeassistant.local:8123`) and after that briefly for "Open link" each time – this is a security check. The menu path always leads to the same place.
 
 **1. Pair devices with the BB-Display** – select the battery computer, pair and name tank and temperature sensors, set up the TIN adapter. Home Assistant only sees what the display knows.
 
-**2. Install the Mosquitto broker**
+**2. Install the Mosquitto broker** – Settings → Apps → App store → search "Mosquitto broker" → Install → Start, enable "Start on boot" and "Watchdog". Mosquitto is an official app and already included in the app store. [Open directly ↗](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
 
-[![Open Mosquitto](https://my.home-assistant.io/badges/supervisor_addon.svg)](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
+**3. Create a user for the display** – Settings → People → Add person → "Allow login" → note username and a strong password → "Local access only", not an administrator → Create. [Open directly ↗](https://my.home-assistant.io/redirect/people/)
 
-*Manually:* Settings → Apps → App store → "Mosquitto broker" → Install → Start, enable "Start on boot" and "Watchdog".
-
-**3. Create a user for the display**
-
-[![Open people](https://my.home-assistant.io/badges/people.svg)](https://my.home-assistant.io/redirect/people/)
-
-*Manually:* Settings → People → Add person → "Allow login" → note username and a strong password → "Local access only", not an administrator → Create.
-
-**4. Set up the MQTT integration**
-
-[![Add MQTT](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
-
-*Manually:* Settings → Devices & services → under "Discovered" **MQTT** → Configure → confirm.
+**4. Set up the MQTT integration** – Settings → Devices & services → under "Discovered" **MQTT** → Configure → confirm. [Open directly ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
 
 **5. Connect the BB-Display to Home Assistant** – in the display's web interface under Remote access → MQTT: server = IP address of your Home Assistant, port `1883`, user and password from step 3, leave the topic unchanged, switch **"Home Assistant" off**. After saving, the display shows the ⇄ symbol.
 
-**6. Install BlueBattery via HACS**
+**6. Install BlueBattery via HACS** – easiest with this button: it opens BlueBattery directly in HACS and adds the repository itself after a confirmation. Then **Download** → restart Home Assistant.
 
 [![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sahomm&repository=BlueBattery&category=integration)
 
 *Manually:* HACS → ⋮ (top right) → Custom repositories → `https://github.com/sahomm/BlueBattery`, type **Integration** → Add. Then search for **BlueBattery** → Download → restart Home Assistant.
 
-**7. Set up BlueBattery**
-
-[![Add BlueBattery](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluebattery)
-
-*Manually:* Settings → Devices & services → under "Discovered" **BlueBattery – BB-Display** → Configure → select devices → Done.
+**7. Set up BlueBattery** – Settings → Devices & services → under "Discovered" **BlueBattery – BB-Display** → Configure → select devices → Done. [Open directly ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluebattery)
 
 **Done!** Later you simply pair new devices on the display – Home Assistant then offers them for adding.
 

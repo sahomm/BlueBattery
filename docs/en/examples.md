@@ -81,9 +81,7 @@ A fault is reset on the heater's control panel (e.g. CP plus) – as intended by
 
 **Create two helpers once beforehand:**
 
-[![Open helpers](https://my.home-assistant.io/badges/helpers.svg)](https://my.home-assistant.io/redirect/helpers/)
-
-*Manually:* Settings → Devices & services → Helpers → Create helper
+**In the menu:** Settings → Devices & services → Helpers → Create helper · [Open directly ↗](https://my.home-assistant.io/redirect/helpers/)
 1. **Date and/or time** → name "Pre-heat from" → select "Date and time".
 2. **Button** → name "Pre-heat now".
 
@@ -197,9 +195,7 @@ display:
 
 **You need:** BB-Display + BlueBattery battery computer
 
-[![Open energy settings](https://my.home-assistant.io/badges/config_energy.svg)](https://my.home-assistant.io/redirect/config_energy/)
-
-*Manually:* Settings → Dashboards → Energy
+**In the menu:** Settings → Dashboards → Energy · [Open directly ↗](https://my.home-assistant.io/redirect/config_energy/)
 
 | Section in the energy dashboard | BlueBattery sensor |
 |---|---|
