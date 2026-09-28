@@ -136,8 +136,12 @@ The integration takes over the names from the display (e.g. "Fresh water", "Frid
 
 The BB-Display logs in to the broker with its own user.
 
-1. **Settings → People → Users** (enable "Advanced mode" in your profile if needed) → **Add user**.
-2. Name e.g. `mqtt_user`, set a **strong password**, enable "Can only log in from the local network", not an administrator.
+1. **Settings → People → Add person**.
+2. Enter a name (e.g. `BB-Display`) and switch on **"Allow login"**.
+3. Set a **username** (e.g. `mqtt_user`) and a **strong password** – note both, you will enter them on the display in step 5.
+4. Switch on **"Local access only"**, **not an administrator** → **Create**.
+
+> The usernames `homeassistant` and `addons` are reserved by the Mosquitto broker and will not work. Don't use your own Home Assistant login either.
 
 <!-- 📷 TODO: images/02-mqtt-user.png -->
 > 📷 *Image to follow: creating the MQTT user*
