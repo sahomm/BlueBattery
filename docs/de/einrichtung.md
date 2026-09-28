@@ -24,7 +24,7 @@ Diese Anleitung führt dich vom BB-Display bis zur fertigen Integration. Jeder S
 
 - **BB-Display** mit aktueller Firmware, im WLAN deines Fahrzeugs angemeldet ([Anleitung auf der Produktseite](https://www.blue-battery.com/product-page/bb-display)). Das Display nutzt **2,4-GHz-WLAN**.
 - **Home Assistant** im selben Netz – am einfachsten **Home Assistant OS**, z. B. auf einem Raspberry Pi im Fahrzeug.
-- **HACS** in Home Assistant ([so installierst du HACS](https://hacs.xyz/docs/use/)).
+- **HACS** in Home Assistant – eine Art „App-Store für Zusatzprogramme“ ([so installierst du HACS](https://hacs.xyz/docs/use/); du brauchst dafür ein kostenloses GitHub-Konto).
 - **Internet** während der Einrichtung. Im Betrieb läuft alles lokal.
 
 <details>
@@ -50,12 +50,14 @@ Die Namen aus dem Display (z. B. „Frischwasser“, „Kühlschrank“) überni
 
 ## Schritt 2 – Mosquitto-Broker installieren
 
-Der Broker ist die „Poststelle“, über die das BB-Display seine Daten an Home Assistant schickt. Mosquitto ist eine offizielle App und im App-Store bereits enthalten – du musst nichts hinzufügen.
+Mosquitto ist die „Poststelle“: Das BB-Display gibt dort seine Werte ab, Home Assistant holt sie dort ab. Mosquitto ist eine offizielle App und im App-Store bereits enthalten – du musst nichts hinzufügen.
 
 **Im Menü:** Einstellungen → **Apps** → **App-Store** → „Mosquitto broker“ suchen. · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
 
 1. **Installieren**.
-2. **Starten** und **Beim Booten starten** sowie **Watchdog** einschalten.
+2. **Beim Booten starten** und **Watchdog** einschalten, dann **Starten**.
+
+✅ Mosquitto zeigt „Wird ausgeführt“. *Der Start dauert einen Moment – das ist normal.*
 
 <!-- 📷 TODO: images/01-mosquitto-app.png -->
 
@@ -72,6 +74,8 @@ Das BB-Display meldet sich mit einem eigenen Benutzer am Broker an.
 3. **Benutzername** (z. B. `mqtt_user`) und ein **sicheres Passwort** festlegen – beides notieren, du brauchst es in Schritt 5.
 4. **„Nur lokaler Zugriff“** einschalten, **kein Administrator** → **Erstellen**.
 
+✅ Die neue Person steht in der Liste.
+
 > Die Benutzernamen `homeassistant` und `addons` sind vom Mosquitto-Broker reserviert und funktionieren nicht. Deinen eigenen Home-Assistant-Zugang solltest du ebenfalls nicht verwenden.
 
 <!-- 📷 TODO: images/02-mqtt-user.png -->
@@ -80,7 +84,11 @@ Das BB-Display meldet sich mit einem eigenen Benutzer am Broker an.
 
 ## Schritt 4 – MQTT-Integration einrichten
 
+MQTT ist die „Sprache“, in der Display, Mosquitto und Home Assistant miteinander reden. Die MQTT-Integration verbindet Home Assistant mit Mosquitto.
+
 **Im Menü:** Einstellungen → **Geräte & Dienste** – meist erscheint **MQTT** schon unter „Entdeckt“ → **Konfigurieren** → bestätigen. Falls nicht: **Integration hinzufügen** → „MQTT“ → den Mosquitto-Broker auswählen. · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
+
+✅ Unter Geräte & Dienste gibt es eine Kachel **MQTT**.
 
 <!-- 📷 TODO: images/03-mqtt-integration.png -->
 
@@ -88,7 +96,11 @@ Das BB-Display meldet sich mit einem eigenen Benutzer am Broker an.
 
 ## Schritt 5 – BB-Display mit Home Assistant verbinden
 
-Öffne die Web-Oberfläche des Displays im Browser (die IP-Adresse findest du z. B. in der Geräteliste deines Routers) → **Einstellungen → Fernzugriff → MQTT**:
+Das Display bekommt die Adresse von Home Assistant und den Zugang aus Schritt 3.
+
+1. **Adresse von Home Assistant nachsehen:** in Home Assistant unter **Einstellungen → System → Netzwerk**, z. B. `192.168.1.10`.
+2. **Einstellungsseite des Displays öffnen:** die Adresse des Displays im Browser eingeben. Du findest sie in der Geräteliste deines Routers bzw. wie in der [Anleitung des Displays](https://www.blue-battery.com/product-page/bb-display) beschrieben.
+3. Dort **Einstellungen → Fernzugriff → MQTT** öffnen und ausfüllen:
 
 | Feld | Eintrag |
 |---|---|
@@ -100,7 +112,9 @@ Das BB-Display meldet sich mit einem eigenen Benutzer am Broker an.
 | Daten senden alle | `30` Sekunden |
 | Home Assistant | **aus** – das übernimmt diese Integration |
 
-Nach dem Speichern startet das Display neu. Oben in der Anzeige erscheint das Verbindungssymbol **⇄**.
+Nach dem Speichern startet das Display neu – das ist normal.
+
+✅ Oben in der Anzeige erscheint das Verbindungssymbol **⇄**. Kein ⇄? Meist ist es ein Tippfehler – siehe [Fragen & Antworten](faq.md#oben-im-display-fehlt-das-symbol-).
 
 > **Feste IP-Adresse:** Gib Home Assistant im Router eine feste IP-Adresse (DHCP-Reservierung). Ändert sich die Adresse, findet das Display den Broker sonst nicht mehr.
 
@@ -118,7 +132,9 @@ Die Integration erkennt das BB-Display auch unter einem eigenen Topic (bis zu dr
 
 [![In HACS öffnen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sahomm&repository=BlueBattery&category=integration)
 
-Der Knopf öffnet BlueBattery direkt in HACS → **Herunterladen** → Home Assistant **neu starten** (Einstellungen → System → ⏻ → Home Assistant neu starten).
+Der Knopf öffnet BlueBattery direkt in HACS und trägt das Repository nach einer Rückfrage selbst ein → **Herunterladen** → Home Assistant **neu starten** (Einstellungen → System → ⏻ → Home Assistant neu starten).
+
+✅ Home Assistant ist nach dem Neustart (1–2 Minuten) wieder erreichbar.
 
 *Von Hand – Repository hinzufügen:*
 1. **HACS** öffnen → **⋮** (oben rechts) → **Benutzerdefinierte Repositories**.
@@ -157,6 +173,8 @@ Neuer Tank, weiterer Temperatursensor, TIN-Adapter nachgerüstet?
 - Vorhandene Geräte, Werte und ihr Verlauf bleiben unverändert.
 - Ein abgewähltes Gerät wird nur **deaktiviert** (Verlauf bleibt); auf Wunsch kann es entfernt werden.
 - Ist ein Gerät kurz außer Reichweite, wird es als **nicht verfügbar** angezeigt, aber nicht entfernt.
+
+**Einstellungsseite des Displays später öffnen:** Einstellungen → Geräte & Dienste → BlueBattery → **BB-Display**. Auf der Geräteseite führt ein Link direkt zur Einstellungsseite des Displays – du musst seine Adresse nicht mehr suchen, auch wenn sie sich ändert.
 
 ---
 

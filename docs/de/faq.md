@@ -9,6 +9,7 @@
 - [Warum sehe ich nur einen Batteriecomputer?](#warum-sehe-ich-nur-einen-batteriecomputer)
 - [Wie genau ist die Landstrom-Energie?](#wie-genau-ist-die-landstrom-energie)
 - [Was passiert nach einem Neustart?](#was-passiert-nach-einem-neustart)
+- [Wie öffne ich später die Einstellungsseite des Displays?](#wie-öffne-ich-später-die-einstellungsseite-des-displays)
 
 **Fehlersuche**
 - [Oben im Display fehlt das Symbol ⇄](#oben-im-display-fehlt-das-symbol-)
@@ -61,6 +62,10 @@ Das Display berechnet sie aus Batterie-, Solar- und Boosterstrom – ein guter R
 - **Home Assistant neu gestartet:** Die zuletzt bekannten Werte stehen sofort bereit. Als *verbunden* gilt das Display, sobald es wieder frische Daten sendet.
 - **Display neu gestartet:** Die Heizung bekommt 1–2 Minuten Zeit, sich wieder zu verbinden, bevor eine Störung gemeldet wird.
 - **Temperatursensor ausgefallen:** Meldet das Display keinen gültigen Wert mehr, zeigt die Integration „unbekannt“ statt eines veralteten Werts.
+
+### Wie öffne ich später die Einstellungsseite des Displays?
+
+Einstellungen → Geräte & Dienste → BlueBattery → **BB-Display**. Auf der Geräteseite führt ein Link direkt zur Einstellungsseite des Displays. Das Display teilt seine Adresse selbst mit – auch wenn der Router ihm eine neue gibt, stimmt der Link. Für den Betrieb braucht Home Assistant die Adresse des Displays übrigens nicht: Das Display meldet sich selbst bei Mosquitto.
 
 ---
 

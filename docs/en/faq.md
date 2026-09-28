@@ -9,6 +9,7 @@
 - [Why do I see only one battery computer?](#why-do-i-see-only-one-battery-computer)
 - [How accurate is the shore power energy?](#how-accurate-is-the-shore-power-energy)
 - [What happens after a restart?](#what-happens-after-a-restart)
+- [How do I open the display's settings page later?](#how-do-i-open-the-displays-settings-page-later)
 
 **Troubleshooting**
 - [The ⇄ symbol is missing on the display](#the--symbol-is-missing-on-the-display)
@@ -61,6 +62,10 @@ The display calculates it from battery, solar and booster current – a good gui
 - **Home Assistant restarted:** the last known values are available immediately. The display counts as *connected* as soon as it sends fresh data again.
 - **Display restarted:** the heater gets 1–2 minutes to reconnect before a fault is reported.
 - **Temperature sensor failed:** if the display no longer reports a valid value, the integration shows "unknown" instead of an outdated value.
+
+### How do I open the display's settings page later?
+
+Settings → Devices & services → BlueBattery → **BB-Display**. The device page has a link straight to the display's settings page. The display reports its address itself – the link stays correct even if the router assigns a new one. Incidentally, Home Assistant does not need the display's address for operation: the display connects to Mosquitto on its own.
 
 ---
 

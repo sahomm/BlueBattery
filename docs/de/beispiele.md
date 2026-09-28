@@ -4,10 +4,11 @@
 
 Die BlueBattery-App zeigt dir, was in deinem Fahrzeug los ist. Mit Home Assistant **handelt dein Fahrzeug selbst**: Es meldet sich, wenn etwas nicht stimmt, heizt vor, wenn du kommst, und schützt vor Frost – auch wenn niemand an Bord ist.
 
-Für die meisten Beispiele gibt es eine **fertige Vorlage (Blueprint)**. Ein Klick auf den Knopf importiert sie in dein Home Assistant, danach wählst du nur noch deine Geräte aus und passt die Grenzwerte an – ganz ohne Programmieren. Alle Vorlagen sind im Wohnmobil des Autors eingerichtet.
+Für die meisten Beispiele gibt es eine **fertige Vorlage**. Du musst nichts programmieren: Vorlage mit einem Klick übernehmen, deine Geräte auswählen, fertig. Alle Vorlagen sind im Wohnmobil des Autors eingerichtet.
 
 **Inhalt**
-- [Benachrichtigungen einrichten](#benachrichtigungen-einrichten) – einmalig vorab
+- [So nutzt du eine Vorlage](#so-nutzt-du-eine-vorlage) – einmal lesen, gilt für alle
+- [Nachrichten aufs Handy](#nachrichten-aufs-handy) – einmalig vorab
 - [Heizungsstörung melden](#heizungsstörung-melden)
 - [Frostschutz](#frostschutz)
 - [Vorheizen](#vorheizen)
@@ -17,15 +18,51 @@ Für die meisten Beispiele gibt es eine **fertige Vorlage (Blueprint)**. Ein Kli
 - [Wasserwaage](#wasserwaage)
 - [Energie-Dashboard](#energie-dashboard)
 - [Alles auf einer Seite](#alles-auf-einer-seite)
-- [Vorlage importieren und Grenzwerte ändern](#vorlage-importieren-und-grenzwerte-ändern)
 
 ---
 
-## Benachrichtigungen einrichten
+## So nutzt du eine Vorlage
 
-Die Vorlagen schicken Nachrichten aufs Handy. Am einfachsten geht das mit der **Home-Assistant-App** ([iOS](https://apps.apple.com/app/home-assistant/id1099568401), [Android](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)): App installieren, anmelden – fertig. Danach gibt es einen Benachrichtigungsdienst wie `notify.mobile_app_mein_handy`.
+Bei jedem Beispiel steht ein blauer Knopf **„Vorlage importieren“**.
 
-**Wie heißt mein Dienst?** Entwicklerwerkzeuge → Aktionen → „notify.“ eintippen. Den angezeigten Namen (z. B. `notify.mobile_app_mein_handy`) trägst du in jeder Vorlage unter „Benachrichtigungsdienst“ ein. Andere Dienste wie Pushover oder Telegram funktionieren genauso.
+1. Auf den Knopf klicken. Beim ersten Mal fragt die Seite nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123`) → eintragen → **Save**.
+2. **Open link** klicken. Home Assistant zeigt die Vorlage → **Blueprint importieren**.
+3. **Automation erstellen** klicken.
+4. Die Felder ausfüllen – welche das sind, steht bei jedem Beispiel in einer Tabelle. Meist wählst du nur dein Gerät aus einer Liste aus.
+5. Unten rechts **Speichern** → einen Namen vergeben (z. B. „Frostschutz“) → **Speichern**.
+
+✅ Fertig – die Vorlage arbeitet ab jetzt im Hintergrund.
+
+**Später einen Wert ändern** (z. B. die Frostgrenze): **Einstellungen** → **Automationen & Szenen** → deine Automation anklicken → Wert ändern → **Speichern**.
+
+<details>
+<summary>Knopf klappt nicht? So geht es von Hand</summary>
+
+1. **Einstellungen** → **Automationen & Szenen** → oben **Blueprints**.
+2. Unten rechts **Blueprint importieren**.
+3. Diese Adresse einfügen und den Dateinamen am Ende durch den der gewünschten Vorlage ersetzen:
+   ```
+   https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/frostschutz.yaml
+   ```
+   Vorlagen: `heizungsstoerung.yaml`, `frostschutz.yaml`, `vorheizen.yaml`, `temperaturwarnung.yaml`, `tankwarnung.yaml`, `batteriewarnung.yaml`
+4. **Vorschau** → **Blueprint importieren** → weiter ab Punkt 3 oben.
+
+**Vorlage aktualisieren**, wenn es eine neue Version gibt: **Einstellungen** → **Automationen & Szenen** → **Blueprints** → **⋮** bei der Vorlage → **Blueprint erneut importieren**. Deine Einstellungen bleiben erhalten.
+</details>
+
+---
+
+## Nachrichten aufs Handy
+
+Damit die Vorlagen dir Nachrichten schicken können, brauchst du einmalig die **Home-Assistant-App** auf dem Handy ([iPhone](https://apps.apple.com/app/home-assistant/id1099568401), [Android](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)):
+
+1. App installieren und mit deinem Home Assistant anmelden.
+2. In Home Assistant die **Entwicklerwerkzeuge** öffnen (links in der Seitenleiste) → Reiter **Aktionen** → ins Suchfeld **notify.mobile** eintippen.
+3. Es erscheint ein Name wie `notify.mobile_app_mein_handy`. **Diesen Namen aufschreiben.**
+
+In jeder Vorlage trägst du ihn im Feld **„Benachrichtigungsdienst“** ein.
+
+*Andere Wege* (z. B. Pushover oder Telegram) funktionieren genauso – dann steht dort deren Name.
 
 ---
 
@@ -209,21 +246,3 @@ Die Landstrom-Energie berechnet das Display aus Batterie-, Solar- und Boosterstr
 ## Alles auf einer Seite
 
 Home Assistant bringt die Werte von BlueBattery mit allem anderen im Fahrzeug zusammen: Solarregler anderer Hersteller, Lithium-Batterien mit Bluetooth, Bewegungsmelder, Wassersensoren, Kameras, GPS-Position. Ein Dashboard statt vieler Apps – und alle Werte lassen sich in Automationen miteinander verknüpfen.
-
----
-
-## Vorlage importieren und Grenzwerte ändern
-
-**Importieren:** Auf den Knopf „Vorlage importieren“ klicken → in Home Assistant „Blueprint importieren“ bestätigen → **Automation erstellen** → Geräte und Grenzwerte auswählen → Speichern.
-
-*Knopf funktioniert nicht?* Einstellungen → Automationen & Szenen → Blueprints → **Blueprint importieren** → diese Adresse einfügen (Dateiname je nach Vorlage):
-
-```
-https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/frostschutz.yaml
-```
-
-Vorlagen: `heizungsstoerung.yaml`, `frostschutz.yaml`, `vorheizen.yaml`, `temperaturwarnung.yaml`, `tankwarnung.yaml`, `batteriewarnung.yaml`
-
-**Grenzwerte ändern:** Einstellungen → Automationen & Szenen → Automation öffnen → Wert ändern → Speichern. Mehr ist nicht nötig.
-
-**Vorlage aktualisieren:** Einstellungen → Automationen & Szenen → Blueprints → ⋮ bei der Vorlage → „Blueprint erneut importieren“. Deine Einstellungen bleiben erhalten.

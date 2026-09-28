@@ -4,10 +4,13 @@
 
 The BlueBattery app shows you what is going on in your vehicle. With Home Assistant **your vehicle acts on its own**: it tells you when something is wrong, pre-heats before you arrive and protects against frost – even when nobody is on board.
 
-For most examples there is a **ready-made template (blueprint)**. One click on the button imports it into your Home Assistant; then you just pick your devices and adjust the limits – no programming needed. All templates are set up in the author's motorhome.
+For most examples there is a **ready-made template**. No programming needed: take over the template with one click, select your devices, done. All templates are set up in the author's motorhome.
+
+> The templates' texts (names, settings, notifications) are in German.
 
 **Contents**
-- [Set up notifications](#set-up-notifications) – once, beforehand
+- [How to use a template](#how-to-use-a-template) – read once, applies to all
+- [Notifications on your phone](#notifications-on-your-phone) – once, beforehand
 - [Heater fault notification](#heater-fault-notification)
 - [Frost protection](#frost-protection)
 - [Pre-heating](#pre-heating)
@@ -17,17 +20,51 @@ For most examples there is a **ready-made template (blueprint)**. One click on t
 - [Spirit level](#spirit-level)
 - [Energy dashboard](#energy-dashboard)
 - [Everything on one page](#everything-on-one-page)
-- [Import a template and change limits](#import-a-template-and-change-limits)
-
-> The templates' texts (names, settings, notifications) are in German. Notification texts can be adjusted after "Take control" in the automation if needed.
 
 ---
 
-## Set up notifications
+## How to use a template
 
-The templates send messages to your phone. The easiest way is the **Home Assistant app** ([iOS](https://apps.apple.com/app/home-assistant/id1099568401), [Android](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)): install the app, log in – done. You then have a notification service such as `notify.mobile_app_my_phone`.
+Each example has a blue **"Import template"** button.
 
-**What is my service called?** Developer tools → Actions → type "notify.". Enter the name shown (e.g. `notify.mobile_app_my_phone`) in each template under "Benachrichtigungsdienst" (notification service). Other services such as Pushover or Telegram work the same way.
+1. Click the button. The first time, the page asks for the address of your Home Assistant (e.g. `http://homeassistant.local:8123`) → enter it → **Save**.
+2. Click **Open link**. Home Assistant shows the template → **Import blueprint**.
+3. Click **Create automation**.
+4. Fill in the fields – which ones is listed in a table for each example. Mostly you just pick your device from a list.
+5. **Save** (bottom right) → give it a name (e.g. "Frost protection") → **Save**.
+
+✅ Done – the template now works in the background.
+
+**Change a value later** (e.g. the frost limit): **Settings** → **Automations & scenes** → click your automation → change the value → **Save**.
+
+<details>
+<summary>Button not working? The manual way</summary>
+
+1. **Settings** → **Automations & scenes** → **Blueprints** at the top.
+2. **Import blueprint** (bottom right).
+3. Paste this address and replace the file name at the end with the one of the template you want:
+   ```
+   https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/frostschutz.yaml
+   ```
+   Templates: `heizungsstoerung.yaml` (heater fault), `frostschutz.yaml` (frost protection), `vorheizen.yaml` (pre-heating), `temperaturwarnung.yaml` (temperature warning), `tankwarnung.yaml` (tank warning), `batteriewarnung.yaml` (battery warning)
+4. **Preview** → **Import blueprint** → continue with step 3 above.
+
+**Update a template** when there is a new version: **Settings** → **Automations & scenes** → **Blueprints** → **⋮** next to the template → **Re-import blueprint**. Your settings are kept.
+</details>
+
+---
+
+## Notifications on your phone
+
+For the templates to send you messages, you need the **Home Assistant app** on your phone once ([iPhone](https://apps.apple.com/app/home-assistant/id1099568401), [Android](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)):
+
+1. Install the app and log in to your Home Assistant.
+2. In Home Assistant open the **Developer tools** (in the sidebar) → **Actions** tab → type **notify.mobile** in the search field.
+3. A name like `notify.mobile_app_my_phone` appears. **Write this name down.**
+
+Enter it in each template in the **"Benachrichtigungsdienst"** (notification service) field.
+
+*Other ways* (e.g. Pushover or Telegram) work the same – then their name goes there.
 
 ---
 
@@ -211,21 +248,3 @@ The display calculates shore power energy from battery, solar and booster curren
 ## Everything on one page
 
 Home Assistant brings BlueBattery's values together with everything else in the vehicle: solar chargers from other manufacturers, lithium batteries with Bluetooth, motion detectors, water sensors, cameras, GPS position. One dashboard instead of many apps – and all values can be combined in automations.
-
----
-
-## Import a template and change limits
-
-**Import:** click the "Import template" button → confirm "Import blueprint" in Home Assistant → **Create automation** → select devices and limits → Save.
-
-*Button not working?* Settings → Automations & scenes → Blueprints → **Import blueprint** → paste this address (file name depending on the template):
-
-```
-https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/frostschutz.yaml
-```
-
-Templates: `heizungsstoerung.yaml` (heater fault), `frostschutz.yaml` (frost protection), `vorheizen.yaml` (pre-heating), `temperaturwarnung.yaml` (temperature warning), `tankwarnung.yaml` (tank warning), `batteriewarnung.yaml` (battery warning)
-
-**Change limits:** Settings → Automations & scenes → open the automation → change the value → Save. That's all.
-
-**Update a template:** Settings → Automations & scenes → Blueprints → ⋮ next to the template → "Re-import blueprint". Your settings are kept.

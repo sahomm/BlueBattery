@@ -24,7 +24,7 @@ This guide takes you from the BB-Display to the finished integration. Each step 
 
 - **BB-Display** with current firmware, connected to your vehicle's Wi-Fi ([guide on the product page](https://www.blue-battery.com/product-page/bb-display)). The display uses **2.4 GHz Wi-Fi**.
 - **Home Assistant** on the same network – easiest with **Home Assistant OS**, e.g. on a Raspberry Pi in the vehicle.
-- **HACS** in Home Assistant ([how to install HACS](https://hacs.xyz/docs/use/)).
+- **HACS** in Home Assistant – a kind of "app store for add-on software" ([how to install HACS](https://hacs.xyz/docs/use/); you need a free GitHub account for it).
 - **Internet** during setup. In operation everything runs locally.
 
 <details>
@@ -50,12 +50,14 @@ The integration takes over the names from the display (e.g. "Fresh water", "Frid
 
 ## Step 2 – Install the Mosquitto broker
 
-The broker is the "post office" through which the BB-Display sends its data to Home Assistant. Mosquitto is an official app and already included in the app store – nothing needs to be added.
+Mosquitto is the "post office": the BB-Display drops off its values there and Home Assistant picks them up. Mosquitto is an official app and already included in the app store – nothing needs to be added.
 
 **In the menu:** Settings → **Apps** → **App store** → search "Mosquitto broker". · [Open directly ↗](https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto)
 
 1. **Install**.
-2. **Start** it and enable **Start on boot** and **Watchdog**.
+2. Enable **Start on boot** and **Watchdog**, then **Start**.
+
+✅ Mosquitto shows "Running". *Starting takes a moment – that's normal.*
 
 <!-- 📷 TODO: images/01-mosquitto-app.png -->
 
@@ -72,6 +74,8 @@ The BB-Display logs in to the broker with its own user.
 3. Set a **username** (e.g. `mqtt_user`) and a **strong password** – note both, you need them in step 5.
 4. Switch on **"Local access only"**, **not an administrator** → **Create**.
 
+✅ The new person appears in the list.
+
 > The usernames `homeassistant` and `addons` are reserved by the Mosquitto broker and will not work. Don't use your own Home Assistant login either.
 
 <!-- 📷 TODO: images/02-mqtt-user.png -->
@@ -80,7 +84,11 @@ The BB-Display logs in to the broker with its own user.
 
 ## Step 4 – Set up the MQTT integration
 
+MQTT is the "language" in which the display, Mosquitto and Home Assistant talk to each other. The MQTT integration connects Home Assistant to Mosquitto.
+
 **In the menu:** Settings → **Devices & services** – usually **MQTT** already shows up under "Discovered" → **Configure** → confirm. If not: **Add integration** → "MQTT" → select the Mosquitto broker. · [Open directly ↗](https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt)
+
+✅ Devices & services shows an **MQTT** tile.
 
 <!-- 📷 TODO: images/03-mqtt-integration.png -->
 
@@ -88,7 +96,11 @@ The BB-Display logs in to the broker with its own user.
 
 ## Step 5 – Connect the BB-Display to Home Assistant
 
-Open the display's web interface in a browser (you find its IP address e.g. in your router's device list) → **Settings → Remote access → MQTT**:
+The display gets the address of Home Assistant and the login from step 3.
+
+1. **Look up the address of Home Assistant:** in Home Assistant under **Settings → System → Network**, e.g. `192.168.1.10`.
+2. **Open the display's settings page:** enter the display's address in a browser. You find it in your router's device list or as described in the [display manual](https://www.blue-battery.com/product-page/bb-display).
+3. Open **Settings → Remote access → MQTT** there and fill in:
 
 | Field | Value |
 |---|---|
@@ -100,7 +112,9 @@ Open the display's web interface in a browser (you find its IP address e.g. in y
 | Send data every | `30` seconds |
 | Home Assistant | **off** – this integration takes over |
 
-After saving, the display restarts. The connection symbol **⇄** appears at the top of the screen.
+After saving, the display restarts – that's normal.
+
+✅ The connection symbol **⇄** appears at the top of the screen. No ⇄? Usually it's a typo – see [Questions & answers](faq.md#the--symbol-is-missing-on-the-display).
 
 > **Fixed IP address:** give Home Assistant a fixed IP address in your router (DHCP reservation). Otherwise the display loses the broker if the address changes.
 
@@ -118,7 +132,9 @@ The integration also finds the BB-Display under a custom topic (up to three leve
 
 [![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sahomm&repository=BlueBattery&category=integration)
 
-The button opens BlueBattery directly in HACS → **Download** → **restart** Home Assistant (Settings → System → ⏻ → Restart Home Assistant).
+The button opens BlueBattery directly in HACS and adds the repository itself after a confirmation → **Download** → **restart** Home Assistant (Settings → System → ⏻ → Restart Home Assistant).
+
+✅ Home Assistant is reachable again after the restart (1–2 minutes).
 
 *Manually – add the repository:*
 1. Open **HACS** → **⋮** (top right) → **Custom repositories**.
@@ -157,6 +173,8 @@ New tank, another temperature sensor, TIN adapter retrofitted?
 - Existing devices, values and their history stay unchanged.
 - A deselected device is only **disabled** (history is kept); it can be removed on request.
 - If a device is briefly out of range, it is shown as **unavailable**, not removed.
+
+**Open the display's settings page later:** Settings → Devices & services → BlueBattery → **BB-Display**. The device page has a link straight to the display's settings page – no need to look up its address any more, even if it changes.
 
 ---
 
