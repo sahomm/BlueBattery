@@ -198,6 +198,24 @@ async def test_tank_channel_under_bb_tank(hass: HomeAssistant, mqtt_mock, entry_
     assert level.via_device_id == display.id
 
 
+async def test_child_devices_linked_via_device_id(
+    hass: HomeAssistant, mqtt_mock, entry_data, info, status, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Jedes Untergerät hängt per `via_device_id` am Display bzw. BB-Tank."""
+    from homeassistant.helpers import device_registry as dr
+
+    entry = await _setup(hass, mqtt_mock, entry_data, info, status)
+    devices = dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)
+    ids = {dev.id for dev in devices}
+    display = next(dev for dev in devices if (DOMAIN, NODE) in dev.identifiers)
+    children = [dev for dev in devices if dev is not display]
+    assert children
+    assert display.via_device_id is None
+    for dev in children:
+        assert dev.via_device_id in ids, dev.name
+    assert "via_device" not in caplog.text
+
+
 async def test_rediscovery_updates_topic_without_duplicate(
     hass: HomeAssistant, mqtt_mock, entry_data, info, status
 ) -> None:

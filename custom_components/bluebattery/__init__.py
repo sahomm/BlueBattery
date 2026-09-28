@@ -32,7 +32,7 @@ from .const import (
     PREFIX_TANK_CTL,
 )
 from .data import BlueBatteryDevice, SubDevice
-from .entity import build_device_info
+from .entity import build_device_info, device_identifier
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -195,12 +195,20 @@ _KIND_ORDER = {"display": 0, "tank_ctl": 1}
 
 @callback
 def _register_devices(hass: HomeAssistant, entry: BlueBatteryConfigEntry) -> None:
-    """Geräte vor den Entitäten anlegen – übergeordnete zuerst, damit `via_device`
-    greift (Tank-Kanal unter BB-Tank). Korrigiert auch bestehende Zuordnungen."""
+    """Geräte vor den Entitäten anlegen – übergeordnete zuerst, damit deren ID für
+    `via_device_id` bekannt ist (Tank-Kanal unter BB-Tank, sonst unter dem Display).
+    Korrigiert auch bestehende Zuordnungen."""
     dev_reg = dr.async_get(hass)
     device = entry.runtime_data.device
     for sub in sorted(entry.runtime_data.subdevices, key=lambda s: _KIND_ORDER.get(s.kind, 2)):
-        dev_reg.async_get_or_create(config_entry_id=entry.entry_id, **build_device_info(device, sub))
+        info = build_device_info(device, sub)
+        if sub.key != KEY_DISPLAY and (
+            parent := dev_reg.async_get_device_by_identifier(
+                device_identifier(device.node, sub.parent), entry.entry_id
+            )
+        ):
+            info["via_device_id"] = parent.id
+        dev_reg.async_get_or_create(config_entry_id=entry.entry_id, **info)
 
 
 @callback

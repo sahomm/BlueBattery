@@ -4,6 +4,8 @@
 
 This guide takes you from the BB-Display to the finished integration. The buttons open the right page directly in your Home Assistant – if a button does not work, the manual way is always written below it.
 
+> **On the first button** [my.home-assistant.io](https://my.home-assistant.io) asks once for the address of your Home Assistant (e.g. `http://homeassistant.local:8123` or `http://192.168.1.10:8123`) → enter it → **Save**. After that, all buttons lead straight to their target. More: [If the buttons don't work](#if-the-buttons-dont-work).
+
 **Contents**
 - [Before you start](#before-you-start)
 - [Step 1 – Pair devices with the BB-Display](#step-1--pair-devices-with-the-bb-display)
