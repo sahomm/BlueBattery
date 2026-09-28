@@ -1,17 +1,17 @@
 # BlueBattery for Home Assistant
 
-[🇩🇪 Deutsch](README.md) | 🇬🇧 English
+[🇩🇪 Deutsch](https://github.com/sahomm/BlueBattery/blob/main/README.md) | 🇬🇧 English
 
 <p align="center">
-  <img src="custom_components/bluebattery/brand/icon.png" alt="BlueBattery" width="96">
+  <img src="https://raw.githubusercontent.com/sahomm/BlueBattery/main/custom_components/bluebattery/brand/icon.png" alt="BlueBattery" width="96">
   &nbsp;&nbsp;
-  <img src="images/produkt-bb-display.png" alt="BB-Display with Wi-Fi and MQTT" width="260">
+  <img src="https://raw.githubusercontent.com/sahomm/BlueBattery/main/images/produkt-bb-display.png" alt="BB-Display with Wi-Fi and MQTT" width="260">
 </p>
 
 Bring your motorhome or caravan into **Home Assistant**: battery and solar, tanks, temperatures and the **heater (Truma/Alde)** – all via the **[BB-Display](https://www.blue-battery.com/product-page/bb-display)** by [BlueBattery](https://www.blue-battery.com). The integration finds your BB-Display automatically and takes over all devices paired with it.
 
 <p align="center">
-  <img src="images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display with all paired devices" width="560">
+  <img src="https://raw.githubusercontent.com/sahomm/BlueBattery/main/images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display with all paired devices" width="560">
   <br><em>One BB-Display with battery computer, tanks, temperature sensors and Truma</em>
 </p>
 
@@ -111,7 +111,7 @@ All devices come **via the BB-Display**.
 
 - Bugs and feature requests: [GitHub Issues](https://github.com/sahomm/BlueBattery/issues) – ideally with a **diagnostics export** (Devices & services → BlueBattery → ⋮ → Download diagnostics; addresses are redacted).
 - **Alde owners wanted:** if you have an Alde with TIN adapter, a diagnostics export helps a lot.
-- Technical background: [Architecture](docs/ARCHITEKTUR.md) (German)
+- Technical background: [Architecture](https://github.com/sahomm/BlueBattery/blob/main/docs/ARCHITEKTUR.md) (German)
 
 This project is developed by [sahomm](https://github.com/sahomm) in coordination with the BlueBattery developer and with support from Claude (Anthropic).
 
@@ -125,4 +125,4 @@ This project is developed by [sahomm](https://github.com/sahomm) in coordination
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/sahomm/BlueBattery/blob/main/LICENSE)

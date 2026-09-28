@@ -1,17 +1,17 @@
 # BlueBattery für Home Assistant
 
-🇩🇪 Deutsch | [🇬🇧 English](README.en.md)
+🇩🇪 Deutsch | [🇬🇧 English](https://github.com/sahomm/BlueBattery/blob/main/README.en.md)
 
 <p align="center">
-  <img src="custom_components/bluebattery/brand/icon.png" alt="BlueBattery" width="96">
+  <img src="https://raw.githubusercontent.com/sahomm/BlueBattery/main/custom_components/bluebattery/brand/icon.png" alt="BlueBattery" width="96">
   &nbsp;&nbsp;
-  <img src="images/produkt-bb-display.png" alt="BB-Display mit WLAN und MQTT" width="260">
+  <img src="https://raw.githubusercontent.com/sahomm/BlueBattery/main/images/produkt-bb-display.png" alt="BB-Display mit WLAN und MQTT" width="260">
 </p>
 
 Bring dein Wohnmobil oder deinen Wohnwagen in **Home Assistant**: Batterie und Solar, Tanks, Temperaturen und die **Heizung (Truma/Alde)** – alles über das **[BB-Display](https://www.blue-battery.com/product-page/bb-display)** von [BlueBattery](https://www.blue-battery.com). Die Integration findet dein BB-Display automatisch und übernimmt alle Geräte, die dort gekoppelt sind.
 
 <p align="center">
-  <img src="images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display mit allen gekoppelten Geräten" width="560">
+  <img src="https://raw.githubusercontent.com/sahomm/BlueBattery/main/images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display mit allen gekoppelten Geräten" width="560">
   <br><em>Ein BB-Display mit Batteriecomputer, Tanks, Temperatursensoren und Truma</em>
 </p>
 
@@ -111,7 +111,7 @@ Alle Geräte kommen **über das BB-Display**.
 
 - Fehler und Wünsche: [GitHub Issues](https://github.com/sahomm/BlueBattery/issues) – am besten mit **Diagnose-Export** (Geräte & Dienste → BlueBattery → ⋮ → Diagnose herunterladen; Adressen sind geschwärzt).
 - **Alde-Besitzer gesucht:** Wer eine Alde mit TIN-Adapter hat, hilft sehr mit einem Diagnose-Export.
-- Technische Grundlage: [Architektur](docs/ARCHITEKTUR.md)
+- Technische Grundlage: [Architektur](https://github.com/sahomm/BlueBattery/blob/main/docs/ARCHITEKTUR.md)
 
 Dieses Projekt wird von [sahomm](https://github.com/sahomm) in Abstimmung mit dem BlueBattery-Entwickler und mit Unterstützung von Claude (Anthropic) entwickelt.
 
@@ -125,4 +125,4 @@ Dieses Projekt wird von [sahomm](https://github.com/sahomm) in Abstimmung mit de
 
 ## Lizenz
 
-[MIT](LICENSE)
+[MIT](https://github.com/sahomm/BlueBattery/blob/main/LICENSE)
