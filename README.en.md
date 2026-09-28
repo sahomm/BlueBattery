@@ -61,6 +61,11 @@ Xiaomi/RuuviTag ───┘                    ▲                           (M
 
 ## Features
 
+<p align="center">
+  <img src="images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display with all paired devices" width="480">
+  <br><em>One BB-Display with battery computer, tanks, temperature sensors and Truma</em>
+</p>
+
 - **Automatic discovery** of the BB-Display in the MQTT broker – regardless of the MQTT topic configured on the display (fallback: manual entry).
 - **Device selection** during setup: all devices paired with the display – battery computer, heater, each tank, each temperature sensor individually.
 - **New devices:** as soon as a device is newly paired with the display, Home Assistant reports it; it is added via reconfiguration – existing entities and their history stay untouched.
@@ -185,7 +190,12 @@ After saving, the display restarts. The connection symbol ⇄ appears at the top
    | ☑ | Tank "Fresh water" (BB-Tank, channel 1) |
    | ☐ | Temperature sensor "Fridge" |
 
-3. **Done** – entities are created per device, with the BB-Display as parent device.
+3. **Done** – entities are created per device, with the BB-Display as parent device. This is what the result looks like:
+
+<p align="center">
+  <img src="images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display with all paired devices" width="700">
+  <br><em>One BB-Display with battery computer, tanks, temperature sensors and Truma</em>
+</p>
 
 <!-- 📷 TODO: images/06-config-flow-auswahl.png -->
 
