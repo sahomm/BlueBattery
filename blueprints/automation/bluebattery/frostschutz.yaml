@@ -1,0 +1,117 @@
+blueprint:
+  name: BlueBattery – Frostschutz
+  description: >
+    Meldet, wenn die Innentemperatur unter eine Grenze fällt, und schaltet auf
+    Wunsch die Heizung automatisch ein (nur wenn sie aus ist).
+
+    Notifies when the indoor temperature drops below a limit and can switch the
+    heater on automatically (only if it is off).
+  domain: automation
+  author: sahomm
+  source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/frostschutz.yaml
+  input:
+    temperature:
+      name: Temperatur
+      icon: mdi:snowflake-thermometer
+      input:
+        temperature_sensor:
+          name: Innentemperatur
+          description: z. B. die Innentemperatur des BB-Displays
+          selector:
+            entity:
+              filter:
+                - domain: sensor
+                  device_class: temperature
+        threshold:
+          name: Frostgrenze
+          default: 5
+          selector:
+            number:
+              min: -10
+              max: 15
+              step: 0.5
+              unit_of_measurement: °C
+        duration:
+          name: Unterschritten für
+          default:
+            minutes: 10
+          selector:
+            duration: {}
+    heating:
+      name: Heizung automatisch einschalten
+      icon: mdi:radiator
+      input:
+        auto_heat:
+          name: Heizung einschalten
+          description: Schaltet die Heizung bei Frost ein, falls sie aus ist. Die Heizung arbeitet dann ohne Rückfrage.
+          default: true
+          selector:
+            boolean: {}
+        climate_entity:
+          name: Heizung
+          default: ""
+          selector:
+            entity:
+              filter:
+                - domain: climate
+        heat_target:
+          name: Zieltemperatur
+          default: 12
+          selector:
+            number:
+              min: 5
+              max: 30
+              step: 1
+              unit_of_measurement: °C
+    notification:
+      name: Benachrichtigung
+      icon: mdi:message-alert
+      input:
+        notify_action:
+          name: Benachrichtigungsdienst
+          description: z. B. `notify.mobile_app_mein_handy` oder `notify.pushover`.
+          default: notify.notify
+          selector:
+            text: {}
+        vehicle_name:
+          name: Fahrzeugname
+          default: Wohnmobil
+          selector:
+            text: {}
+
+mode: single
+
+variables:
+  notify_action: !input notify_action
+  vehicle_name: !input vehicle_name
+  temperature_sensor: !input temperature_sensor
+  auto_heat: !input auto_heat
+  climate_entity: !input climate_entity
+  heat_target: !input heat_target
+  will_heat: "{{ auto_heat and climate_entity != '' and is_state(climate_entity, 'off') }}"
+
+triggers:
+  - trigger: numeric_state
+    entity_id: !input temperature_sensor
+    below: !input threshold
+    for: !input duration
+
+actions:
+  - if:
+      - condition: template
+        value_template: "{{ will_heat }}"
+    then:
+      - action: climate.set_temperature
+        target:
+          entity_id: "{{ climate_entity }}"
+        data:
+          temperature: "{{ heat_target }}"
+          hvac_mode: heat
+  - action: "{{ notify_action }}"
+    data:
+      title: "{{ vehicle_name }} – Frostgefahr"
+      message: >-
+        Innen nur noch {{ states(temperature_sensor) }} °C.
+        {%- if will_heat %} Die Heizung wurde auf {{ heat_target }} °C eingeschaltet.
+        {%- elif auto_heat and climate_entity != '' %} Heizung nicht eingeschaltet, Zustand: {{ states(climate_entity) }} – bitte prüfen.
+        {%- endif %}

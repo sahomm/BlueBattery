@@ -1,0 +1,88 @@
+blueprint:
+  name: BlueBattery – Tankwarnung
+  description: >
+    Meldet, wenn ein Tank (BlueLevel oder BB-Tank am BB-Display) einen Füllstand
+    über- oder unterschreitet – z. B. Grauwasser fast voll oder Frischwasser fast leer.
+    Für jeden Tank eine eigene Automation anlegen.
+
+    Notifies when a tank level rises above or falls below a limit.
+  domain: automation
+  author: sahomm
+  source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/tankwarnung.yaml
+  input:
+    tank_level:
+      name: Tank-Füllstand (%)
+      selector:
+        entity:
+          filter:
+            - integration: bluebattery
+              domain: sensor
+    direction:
+      name: Melden, wenn der Füllstand …
+      default: above
+      selector:
+        select:
+          options:
+            - label: über dem Grenzwert liegt (z. B. Grauwasser voll)
+              value: above
+            - label: unter dem Grenzwert liegt (z. B. Frischwasser leer)
+              value: below
+    threshold:
+      name: Grenzwert
+      default: 80
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          unit_of_measurement: "%"
+    duration:
+      name: Für
+      default:
+        minutes: 5
+      selector:
+        duration: {}
+    notify_action:
+      name: Benachrichtigungsdienst
+      description: z. B. `notify.mobile_app_mein_handy` oder `notify.pushover`.
+      default: notify.notify
+      selector:
+        text: {}
+    vehicle_name:
+      name: Fahrzeugname
+      default: Wohnmobil
+      selector:
+        text: {}
+
+mode: single
+
+variables:
+  notify_action: !input notify_action
+  vehicle_name: !input vehicle_name
+  tank_level: !input tank_level
+  direction: !input direction
+  threshold: !input threshold
+
+triggers:
+  - trigger: numeric_state
+    entity_id: !input tank_level
+    above: !input threshold
+    for: !input duration
+    id: above
+  - trigger: numeric_state
+    entity_id: !input tank_level
+    below: !input threshold
+    for: !input duration
+    id: below
+
+conditions:
+  - condition: template
+    value_template: "{{ trigger.id == direction }}"
+
+actions:
+  - action: "{{ notify_action }}"
+    data:
+      title: "{{ vehicle_name }} – {{ state_attr(tank_level, 'friendly_name') }}"
+      message: >-
+        {{ state_attr(tank_level, 'friendly_name') }}: {{ states(tank_level) }} %
+        ({{ 'über' if direction == 'above' else 'unter' }} {{ threshold }} %).

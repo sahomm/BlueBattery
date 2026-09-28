@@ -1,0 +1,95 @@
+blueprint:
+  name: BlueBattery – Batteriewarnung
+  description: >
+    Meldet, wenn der Ladezustand der Bordbatterie oder die Spannung der
+    Starterbatterie zu niedrig ist.
+
+    Notifies when the house battery state of charge or the starter battery
+    voltage is too low.
+  domain: automation
+  author: sahomm
+  source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/batteriewarnung.yaml
+  input:
+    soc_sensor:
+      name: Bordbatterie – Ladezustand (%)
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+              device_class: battery
+    soc_threshold:
+      name: Bordbatterie – Mindest-Ladezustand
+      default: 30
+      selector:
+        number:
+          min: 5
+          max: 90
+          step: 1
+          unit_of_measurement: "%"
+    starter_sensor:
+      name: Starterbatterie – Spannung (optional)
+      default: []
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - domain: sensor
+              device_class: voltage
+    starter_threshold:
+      name: Starterbatterie – Mindestspannung
+      default: 12.0
+      selector:
+        number:
+          min: 10
+          max: 13
+          step: 0.1
+          unit_of_measurement: V
+    duration:
+      name: Unterschritten für
+      default:
+        minutes: 10
+      selector:
+        duration: {}
+    notify_action:
+      name: Benachrichtigungsdienst
+      description: z. B. `notify.mobile_app_mein_handy` oder `notify.pushover`.
+      default: notify.notify
+      selector:
+        text: {}
+    vehicle_name:
+      name: Fahrzeugname
+      default: Wohnmobil
+      selector:
+        text: {}
+
+mode: queued
+max: 3
+
+variables:
+  notify_action: !input notify_action
+  vehicle_name: !input vehicle_name
+  soc_sensor: !input soc_sensor
+  starter_sensor: !input starter_sensor
+  soc_threshold: !input soc_threshold
+  starter_threshold: !input starter_threshold
+
+triggers:
+  - trigger: numeric_state
+    entity_id: !input soc_sensor
+    below: !input soc_threshold
+    for: !input duration
+    id: soc
+  - trigger: numeric_state
+    entity_id: !input starter_sensor
+    below: !input starter_threshold
+    for: !input duration
+    id: starter
+
+actions:
+  - action: "{{ notify_action }}"
+    data:
+      title: "{{ vehicle_name }} – Batterie niedrig"
+      message: >-
+        {%- if trigger.id == 'soc' %}Bordbatterie nur noch {{ states(soc_sensor) }} % (Grenze {{ soc_threshold }} %).
+        {%- else %}Starterbatterie nur noch {{ states(trigger.entity_id) }} V (Grenze {{ starter_threshold }} V).
+        {%- endif %}
