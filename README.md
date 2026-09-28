@@ -61,6 +61,11 @@ Xiaomi/RuuviTag ───┘                    ▲                          (Mo
 
 ## Was kann die Integration?
 
+<p align="center">
+  <img src="images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display mit allen gekoppelten Geräten" width="480">
+  <br><em>Ein BB-Display mit Batteriecomputer, Tanks, Temperatursensoren und Truma</em>
+</p>
+
 - **Automatische Erkennung** des BB-Displays im MQTT-Broker – unabhängig davon, welches MQTT-Topic im Display eingestellt ist (Fallback: manuelle Eingabe).
 - **Geräteauswahl** bei der Einrichtung: alle im Display gekoppelten Geräte – Batteriecomputer, Heizung, jeder Tank, jeder Temperatursensor einzeln.
 - **Neue Geräte:** Sobald ein Gerät im Display neu gekoppelt ist, meldet Home Assistant es; per Neukonfiguration wird es hinzugefügt – bestehende Entitäten und ihr Verlauf bleiben unverändert.
@@ -187,7 +192,12 @@ Nach dem Speichern startet das Display neu. Oben in der Anzeige erscheint das Ve
    | ☑ | Tank „Frischwasser“ (BB-Tank, Kanal 1) |
    | ☐ | Temperatursensor „Kühlschrank“ |
 
-3. **Fertig** – je Gerät entstehen Entitäten, das BB-Display ist das übergeordnete Gerät.
+3. **Fertig** – je Gerät entstehen Entitäten, das BB-Display ist das übergeordnete Gerät. So sieht das Ergebnis aus:
+
+<p align="center">
+  <img src="images/integration-geraete.png" alt="BlueBattery in Home Assistant: BB-Display mit allen gekoppelten Geräten" width="700">
+  <br><em>Ein BB-Display mit Batteriecomputer, Tanks, Temperatursensoren und Truma</em>
+</p>
 
 <!-- 📷 TODO: images/06-config-flow-auswahl.png -->
 
