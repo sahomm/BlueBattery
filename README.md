@@ -138,8 +138,12 @@ Die Namen aus dem Display (z. B. „Frischwasser“, „Kühlschrank“) überni
 
 Das BB-Display meldet sich mit einem eigenen Benutzer am Broker an.
 
-1. **Einstellungen → Personen → Benutzer** (ggf. „Erweiterter Modus“ im Profil aktivieren) → **Benutzer hinzufügen**.
-2. Name z. B. `mqtt_user`, ein **sicheres Passwort** vergeben, „Kann sich nur aus dem lokalen Netzwerk anmelden“ aktivieren, kein Administrator.
+1. **Einstellungen → Personen → Person hinzufügen**.
+2. Einen Namen vergeben (z. B. `BB-Display`) und **„Anmeldung erlauben“** einschalten.
+3. **Benutzername** (z. B. `mqtt_user`) und ein **sicheres Passwort** festlegen – beides notieren, sie werden in Schritt 5 im Display eingetragen.
+4. **„Nur lokaler Zugriff“** einschalten, **kein Administrator** → **Erstellen**.
+
+> Die Benutzernamen `homeassistant` und `addons` sind vom Mosquitto-Broker reserviert und funktionieren nicht. Deinen eigenen Home-Assistant-Zugang solltest du ebenfalls nicht verwenden.
 
 <!-- 📷 TODO: images/02-mqtt-user.png -->
 > 📷 *Bild folgt: Benutzer für MQTT anlegen*
