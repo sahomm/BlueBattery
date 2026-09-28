@@ -95,6 +95,6 @@ actions:
     data:
       title: "{{ vehicle_name }} – Batterie niedrig"
       message: >-
-        {%- if trigger.id == 'soc' %}Bordbatterie nur noch {{ states(soc_sensor) }} % (Grenze {{ soc_threshold }} %).
-        {%- else %}Starterbatterie nur noch {{ states(trigger.entity_id) }} V (Grenze {{ starter_threshold }} V).
+        {%- if trigger.id | default('') == 'starter' %}Starterbatterie nur noch {{ states(trigger.entity_id) }} V (Grenze {{ starter_threshold }} V).
+        {%- else %}Bordbatterie nur noch {{ states(soc_sensor) }} % (Grenze {{ soc_threshold }} %).
         {%- endif %}
