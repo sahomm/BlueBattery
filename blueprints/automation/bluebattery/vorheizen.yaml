@@ -1,0 +1,125 @@
+blueprint:
+  name: BlueBattery – Vorheizen
+  description: >
+    Heizt nach Zeitplan vor (z. B. morgen ab 13 Uhr) oder sofort per Knopf.
+    Zeitplan: Heizung zu Beginn des Zeitfensters an, am Ende aus.
+    Knopf: Heizung sofort an und nach der eingestellten Dauer wieder aus
+    (Dauer 0 = bleibt an).
+
+    Vorher anlegen: Helfer „Zeitplan“ und Helfer „Taste“ (Einstellungen → Geräte & Dienste → Helfer).
+
+    Pre-heats on a schedule or instantly via a button.
+  domain: automation
+  author: sahomm
+  source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/vorheizen.yaml
+  input:
+    climate_entity:
+      name: Heizung
+      selector:
+        entity:
+          filter:
+            - domain: climate
+    target_temperature:
+      name: Zieltemperatur
+      default: 20
+      selector:
+        number:
+          min: 5
+          max: 30
+          step: 1
+          unit_of_measurement: °C
+    preset:
+      name: Heizstufe (optional)
+      description: z. B. `eco` oder `high` (Truma). Leer lassen für die zuletzt genutzte Stufe.
+      default: ""
+      selector:
+        text: {}
+    schedule_entity:
+      name: Zeitplan (optional)
+      default: []
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - domain: schedule
+    button_entity:
+      name: Knopf „Jetzt vorheizen“ (optional)
+      default: []
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - domain: input_button
+    button_duration:
+      name: Heizdauer nach Knopfdruck
+      description: 0 = Heizung bleibt an.
+      default:
+        hours: 2
+      selector:
+        duration: {}
+
+mode: restart
+
+variables:
+  climate_entity: !input climate_entity
+  target_temperature: !input target_temperature
+  preset: !input preset
+  button_duration: !input button_duration
+  button_seconds: >-
+    {{ (button_duration.hours | default(0)) * 3600 + (button_duration.minutes | default(0)) * 60
+       + (button_duration.seconds | default(0)) }}
+
+triggers:
+  - trigger: state
+    entity_id: !input schedule_entity
+    to: "on"
+    id: schedule_on
+  - trigger: state
+    entity_id: !input schedule_entity
+    from: "on"
+    to: "off"
+    id: schedule_off
+  - trigger: state
+    entity_id: !input button_entity
+    not_to:
+      - unavailable
+      - unknown
+    id: button
+
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: schedule_off
+        sequence:
+          - action: climate.turn_off
+            target:
+              entity_id: "{{ climate_entity }}"
+    default:
+      - action: climate.set_temperature
+        target:
+          entity_id: "{{ climate_entity }}"
+        data:
+          temperature: "{{ target_temperature }}"
+          hvac_mode: heat
+      - if:
+          - condition: template
+            value_template: "{{ preset != '' }}"
+        then:
+          - delay:
+              seconds: 3
+          - action: climate.set_preset_mode
+            target:
+              entity_id: "{{ climate_entity }}"
+            data:
+              preset_mode: "{{ preset }}"
+      - if:
+          - condition: trigger
+            id: button
+          - condition: template
+            value_template: "{{ button_seconds | int(0) > 0 }}"
+        then:
+          - delay: "{{ button_seconds | int(0) }}"
+          - action: climate.turn_off
+            target:
+              entity_id: "{{ climate_entity }}"

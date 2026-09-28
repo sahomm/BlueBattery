@@ -1,0 +1,137 @@
+blueprint:
+  name: BlueBattery – Heizungsstörung melden
+  description: >
+    Schickt eine Nachricht, wenn die Heizung (Truma/Alde über den TIN-Adapter am
+    BB-Display) eine Störung meldet – mit Fehlercode und Fehlertext. Optional auch,
+    wenn das BB-Display keine Daten mehr sendet, denn dann ist die Heizung nicht
+    mehr überwacht.
+
+    Sends a notification when the heater reports a fault (with error code and text)
+    and, optionally, when the BB-Display stops sending data.
+  domain: automation
+  author: sahomm
+  source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/heizungsstoerung.yaml
+  input:
+    heater:
+      name: Heizung
+      icon: mdi:radiator
+      input:
+        fault_sensor:
+          name: Störungsmelder
+          description: z. B. „Truma Heizungsstörung“
+          selector:
+            entity:
+              filter:
+                - integration: bluebattery
+                  domain: binary_sensor
+                  device_class: problem
+        error_text:
+          name: Fehlertext (optional)
+          default: ""
+          selector:
+            entity:
+              filter:
+                - integration: bluebattery
+                  domain: sensor
+        error_code:
+          name: Fehlercode (optional)
+          default: ""
+          selector:
+            entity:
+              filter:
+                - integration: bluebattery
+                  domain: sensor
+        fault_delay:
+          name: Störung melden nach
+          description: Kurze Aussetzer werden ignoriert.
+          default:
+            minutes: 1
+          selector:
+            duration: {}
+    display:
+      name: BB-Display
+      icon: mdi:access-point-network
+      collapsed: true
+      input:
+        display_connection:
+          name: Display-Verbindung (optional)
+          description: z. B. „BB-Display … Verbindung“. Leer lassen, um keine Offline-Meldung zu erhalten.
+          default: []
+          selector:
+            entity:
+              multiple: true
+              filter:
+                - integration: bluebattery
+                  domain: binary_sensor
+                  device_class: connectivity
+        offline_delay:
+          name: Offline melden nach
+          default:
+            minutes: 10
+          selector:
+            duration: {}
+    notification:
+      name: Benachrichtigung
+      icon: mdi:message-alert
+      input:
+        notify_action:
+          name: Benachrichtigungsdienst
+          description: >
+            z. B. `notify.mobile_app_mein_handy` (Home-Assistant-App) oder `notify.pushover`.
+            Zu finden unter Entwicklerwerkzeuge → Aktionen → „notify.“ eintippen.
+          default: notify.notify
+          selector:
+            text: {}
+        vehicle_name:
+          name: Fahrzeugname
+          default: Wohnmobil
+          selector:
+            text: {}
+
+mode: queued
+max: 5
+
+variables:
+  notify_action: !input notify_action
+  vehicle_name: !input vehicle_name
+  error_text: !input error_text
+  error_code: !input error_code
+
+triggers:
+  - trigger: state
+    entity_id: !input fault_sensor
+    from: "off"
+    to: "on"
+    for: !input fault_delay
+    id: fault
+  - trigger: state
+    entity_id: !input display_connection
+    from: "on"
+    to: "off"
+    for: !input offline_delay
+    id: offline
+
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: fault
+        sequence:
+          - action: "{{ notify_action }}"
+            data:
+              title: "{{ vehicle_name }} – Heizungsstörung"
+              message: >-
+                Die Heizung meldet eine Störung
+                {%- if error_text and states(error_text) not in ['unknown', 'unavailable', '', '0'] %}: {{ states(error_text) }}{% endif %}
+                {%- if error_code and states(error_code) not in ['unknown', 'unavailable', ''] %} (Code {{ states(error_code) }}){% endif %}.
+                Zurücksetzen am Bedienteil der Heizung.
+      - conditions:
+          - condition: trigger
+            id: offline
+        sequence:
+          - action: "{{ notify_action }}"
+            data:
+              title: "{{ vehicle_name }} – BB-Display offline"
+              message: >-
+                Das BB-Display sendet keine Daten mehr. Heizung und Temperaturen
+                werden gerade nicht überwacht.

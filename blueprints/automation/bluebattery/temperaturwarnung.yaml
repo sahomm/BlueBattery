@@ -1,0 +1,68 @@
+blueprint:
+  name: BlueBattery – Temperatur zu hoch (Kühlschrank, Gefrierfach)
+  description: >
+    Meldet, wenn ein Temperatursensor (z. B. Xiaomi oder RuuviTag im Kühlschrank
+    oder Gefrierfach, gekoppelt am BB-Display) zu lange über einem Grenzwert liegt.
+    Für jeden Sensor eine eigene Automation anlegen.
+
+    Notifies when a temperature sensor (e.g. fridge/freezer) stays above a limit.
+  domain: automation
+  author: sahomm
+  source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/temperaturwarnung.yaml
+  input:
+    temperature_sensor:
+      name: Temperatursensor
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+              device_class: temperature
+    threshold:
+      name: Höchstwert
+      description: z. B. 10 °C für den Kühlschrank, −10 °C für das Gefrierfach
+      default: 10
+      selector:
+        number:
+          min: -30
+          max: 40
+          step: 0.5
+          unit_of_measurement: °C
+    duration:
+      name: Überschritten für
+      default:
+        minutes: 30
+      selector:
+        duration: {}
+    notify_action:
+      name: Benachrichtigungsdienst
+      description: z. B. `notify.mobile_app_mein_handy` oder `notify.pushover`.
+      default: notify.notify
+      selector:
+        text: {}
+    vehicle_name:
+      name: Fahrzeugname
+      default: Wohnmobil
+      selector:
+        text: {}
+
+mode: single
+
+variables:
+  notify_action: !input notify_action
+  vehicle_name: !input vehicle_name
+  temperature_sensor: !input temperature_sensor
+  threshold: !input threshold
+
+triggers:
+  - trigger: numeric_state
+    entity_id: !input temperature_sensor
+    above: !input threshold
+    for: !input duration
+
+actions:
+  - action: "{{ notify_action }}"
+    data:
+      title: "{{ vehicle_name }} – {{ state_attr(temperature_sensor, 'friendly_name') }} zu warm"
+      message: >-
+        {{ state_attr(temperature_sensor, 'friendly_name') }}: {{ states(temperature_sensor) }} °C
+        (Grenze {{ threshold }} °C).
