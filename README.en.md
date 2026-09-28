@@ -170,6 +170,8 @@ Open the display's web interface in a browser (IP address e.g. from your router'
 
 After saving, the display restarts. The connection symbol ⇄ appears at the top of the screen.
 
+> **Fixed IP address:** give Home Assistant a fixed IP address in your router (DHCP reservation). Otherwise the display loses the broker if the address changes.
+
 <!-- 📷 TODO: images/04-bb-display-mqtt.png -->
 > 📷 *Image to follow: MQTT settings on the BB-Display*
 
@@ -260,7 +262,7 @@ Entities that exist as a different type in the integration (e.g. "Booster limit"
 
 - **No devices found:** Is the display publishing? In the MQTT integration use **Configure → Listen to a topic** with `BlueBattery/#` – messages should arrive every 30 s. Alternatively use [MQTT Explorer](https://mqtt-explorer.com).
 - **Device missing from the selection:** the integration only lists devices that are paired with the BB-Display and currently reported by it. Pair the device with the display (or select it as battery computer), check the range, then open **Configure** again.
-- **⇄ symbol missing on the display:** check server IP, port, user/password; is the Mosquitto app running?
+- **⇄ symbol missing on the display:** check server IP, port, user/password; is the Mosquitto app running? If the MQTT user was just created and login fails, **restart the Mosquitto app** once.
 - **HACS: "Failed to download … refs/heads/<identifier>.zip" (404):** a commit identifier was selected instead of a version. **HACS → BlueBattery → ⋮ → Redownload** and choose the latest version `v…`.
 - **Old BlueBattery devices remain after switching off built-in discovery:** some devices (seen with BB-Tank and BlueLevel) do not delete their discovery entries in the broker. Fix: in [MQTT Explorer](https://mqtt-explorer.com) delete the device's entries under `homeassistant/…` – the devices then disappear from Home Assistant.
 - **Duplicate entities:** the "Home Assistant" switch on the display is still on (see [Migrating](#migrating-from-the-displays-built-in-home-assistant-support)).
