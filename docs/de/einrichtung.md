@@ -4,6 +4,8 @@
 
 Diese Anleitung führt dich vom BB-Display bis zur fertigen Integration. Die Knöpfe öffnen die richtige Seite direkt in deinem Home Assistant – klappt ein Knopf nicht, steht darunter immer der Weg von Hand.
 
+> **Beim ersten Knopf** fragt [my.home-assistant.io](https://my.home-assistant.io) einmalig nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123` oder `http://192.168.1.10:8123`) → eintragen → **Save**. Danach führen alle Knöpfe direkt ans Ziel. Mehr dazu: [Wenn die Knöpfe nicht funktionieren](#wenn-die-knöpfe-nicht-funktionieren).
+
 **Inhalt**
 - [Bevor du startest](#bevor-du-startest)
 - [Schritt 1 – Geräte im BB-Display koppeln](#schritt-1--geräte-im-bb-display-koppeln)

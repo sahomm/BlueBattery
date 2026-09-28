@@ -47,6 +47,8 @@ All examples: **[Practical examples](https://github.com/sahomm/BlueBattery/blob/
 
 The buttons open the right page directly in your Home Assistant. If a button does not work, the manual way is written below it. In full detail: **[Step-by-step setup](https://github.com/sahomm/BlueBattery/blob/main/docs/en/setup.md)**.
 
+> **On the first button** [my.home-assistant.io](https://my.home-assistant.io) asks once for the address of your Home Assistant (e.g. `http://homeassistant.local:8123` or `http://192.168.1.10:8123`) → enter it → **Save**. After that, all buttons lead straight to their target. If it doesn't work, simply use the manual way below it.
+
 **1. Pair devices with the BB-Display** – select the battery computer, pair and name tank and temperature sensors, set up the TIN adapter. Home Assistant only sees what the display knows.
 
 **2. Install the Mosquitto broker**
@@ -82,8 +84,6 @@ The buttons open the right page directly in your Home Assistant. If a button doe
 *Manually:* Settings → Devices & services → under "Discovered" **BlueBattery – BB-Display** → Configure → select devices → Done.
 
 **Done!** Later you simply pair new devices on the display – Home Assistant then offers them for adding.
-
-> **Buttons not working?** On the first click, [my.home-assistant.io](https://my.home-assistant.io) asks for the address of your Home Assistant (e.g. `http://homeassistant.local:8123`). Open the button in a browser (not in the app) and on a network where your Home Assistant is reachable. Otherwise just use the manual way.
 
 ## Supported devices
 

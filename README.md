@@ -47,6 +47,8 @@ Alle Beispiele: **[Praxisbeispiele](https://github.com/sahomm/BlueBattery/blob/m
 
 Die Knöpfe öffnen die richtige Seite direkt in deinem Home Assistant. Klappt ein Knopf nicht, steht darunter der Weg von Hand. Ausführlich mit allen Details: **[Einrichtung Schritt für Schritt](https://github.com/sahomm/BlueBattery/blob/main/docs/de/einrichtung.md)**.
 
+> **Beim ersten Knopf** fragt [my.home-assistant.io](https://my.home-assistant.io) einmalig nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123` oder `http://192.168.1.10:8123`) → eintragen → **Save**. Danach führen alle Knöpfe direkt ans Ziel. Klappt es nicht, nimm einfach den Weg von Hand darunter.
+
 **1. Geräte im BB-Display koppeln** – Batteriecomputer auswählen, Tanksensoren und Temperatursensoren koppeln und benennen, TIN-Adapter einrichten. Home Assistant sieht nur, was das Display kennt.
 
 **2. Mosquitto-Broker installieren**
@@ -82,8 +84,6 @@ Die Knöpfe öffnen die richtige Seite direkt in deinem Home Assistant. Klappt e
 *Von Hand:* Einstellungen → Geräte & Dienste → unter „Entdeckt“ **BlueBattery – BB-Display** → Konfigurieren → Geräte auswählen → Fertig.
 
 **Geschafft!** Neue Geräte koppelst du später einfach im Display – Home Assistant meldet sie dann zum Hinzufügen.
-
-> **Knöpfe funktionieren nicht?** Beim ersten Klick fragt [my.home-assistant.io](https://my.home-assistant.io) nach der Adresse deines Home Assistant (z. B. `http://homeassistant.local:8123`). Öffne den Knopf im Browser (nicht in der App) und in einem Netz, in dem dein Home Assistant erreichbar ist. Sonst einfach den Weg von Hand nehmen.
 
 ## Unterstützte Geräte
 
