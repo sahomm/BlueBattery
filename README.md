@@ -78,7 +78,7 @@ Einstellungen → Geräte & Dienste → unter „Entdeckt“ **MQTT** → Konfig
 **5. BB-Display mit Home Assistant verbinden** – das Display bekommt die Adresse von Home Assistant und den Zugang aus Schritt 3.
 
 1. Die Einstellungsseite des Displays im Browser öffnen. Die Adresse des Displays findest du in der Geräteliste deines Routers bzw. wie in der [Anleitung des Displays](https://www.blue-battery.com/product-page/bb-display) beschrieben.
-2. Einstellungen → MQTT: **Server** = IP-Adresse deines Home Assistant (steht in Home Assistant unter Einstellungen → System → Netzwerk), **Port** `1883`, **Benutzer/Passwort** aus Schritt 3, **Topic** nicht ändern, Schalter **„Home Assistant“ aus** → Speichern.
+2. **Einstellungen → Fernzugriff → MQTT**: **Server** = IP-Adresse deines Home Assistant (steht in Home Assistant unter Einstellungen → System → Netzwerk), **Port** `1883`, **Benutzer/Passwort** aus Schritt 3, **Topic** nicht ändern, Schalter **„Home Assistant“ aus** → Speichern.
 
 ✅ Oben im Display erscheint das Symbol ⇄.
 

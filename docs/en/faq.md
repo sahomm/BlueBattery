@@ -73,7 +73,7 @@ Settings → Devices & services → BlueBattery → **BB-Display**. The device p
 
 ### The ⇄ symbol is missing on the display
 
-The display is not connected to the broker. In the display's web interface under Remote access → MQTT, check:
+The display is not connected to the broker. In the display's web interface under **Settings → Remote access → MQTT**, check:
 - **Server** = IP address of your Home Assistant, **port** `1883`,
 - **user and password** as created in [step 3](setup.md#step-3--create-a-user-for-the-display),
 - is the **Mosquitto app** running (Settings → Apps → Mosquitto broker)?
@@ -96,7 +96,7 @@ The display is not sending data right now – e.g. because it is switched off or
 
 ### I see all values twice
 
-The display's built-in Home Assistant support is still switched on. On the display, under MQTT, switch **"Home Assistant"** off – see [Migration](migration.md).
+The display's built-in Home Assistant support is still switched on. On the display, under **Settings → Remote access → MQTT**, switch **"Home Assistant"** off – see [Migration](migration.md).
 
 ### Old devices remain after switching off the built-in support
 

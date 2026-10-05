@@ -73,7 +73,7 @@ Einstellungen → Geräte & Dienste → BlueBattery → **BB-Display**. Auf der 
 
 ### Oben im Display fehlt das Symbol ⇄
 
-Das Display ist nicht mit dem Broker verbunden. Prüfe in der Web-Oberfläche des Displays unter Fernzugriff → MQTT:
+Das Display ist nicht mit dem Broker verbunden. Prüfe in der Web-Oberfläche des Displays unter **Einstellungen → Fernzugriff → MQTT**:
 - **Server** = IP-Adresse deines Home Assistant, **Port** `1883`,
 - **Benutzer und Passwort** wie in [Schritt 3](einrichtung.md#schritt-3--benutzer-für-das-display-anlegen) angelegt,
 - läuft die **Mosquitto-App** (Einstellungen → Apps → Mosquitto broker)?
@@ -96,7 +96,7 @@ Das Display sendet gerade keine Daten – z. B. weil es ausgeschaltet oder auße
 
 ### Ich sehe alle Werte doppelt
 
-Die eingebaute Home-Assistant-Anbindung des Displays ist noch eingeschaltet. Schalte im Display unter MQTT den Schalter **„Home Assistant“** aus – siehe [Umstieg](umstieg.md).
+Die eingebaute Home-Assistant-Anbindung des Displays ist noch eingeschaltet. Schalte im Display unter **Einstellungen → Fernzugriff → MQTT** den Schalter **„Home Assistant“** aus – siehe [Umstieg](umstieg.md).
 
 ### Nach dem Ausschalten der eingebauten Anbindung bleiben alte Geräte stehen
 

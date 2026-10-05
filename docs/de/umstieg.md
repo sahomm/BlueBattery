@@ -2,13 +2,13 @@
 
 🇩🇪 Deutsch | [🇬🇧 English](../en/migration.md) · [← zurück zur Übersicht](../../README.md)
 
-Das BB-Display bringt eine eigene, einfache Anbindung an Home Assistant mit (Schalter **„Home Assistant“** in den MQTT-Einstellungen des Displays). Diese Integration ersetzt sie. **Beides gleichzeitig führt zu doppelten Werten** – schalte die eingebaute Anbindung deshalb aus.
+Das BB-Display bringt eine eigene, einfache Anbindung an Home Assistant mit (Schalter **„Home Assistant“** im Display unter Einstellungen → Fernzugriff → MQTT). Diese Integration ersetzt sie. **Beides gleichzeitig führt zu doppelten Werten** – schalte die eingebaute Anbindung deshalb aus.
 
 ## Neu einsteigen (empfohlen)
 
 Wenn der bisherige Verlauf keine Rolle spielt:
 
-1. Im Display unter MQTT den Schalter **„Home Assistant“ ausschalten** – die alten Einträge verschwinden aus Home Assistant.
+1. Im Display unter **Einstellungen → Fernzugriff → MQTT** den Schalter **„Home Assistant“ ausschalten** – die alten Einträge verschwinden aus Home Assistant.
 2. Die Integration nach der [Einrichtung](einrichtung.md) installieren.
 
 ## Verlauf behalten
@@ -17,7 +17,7 @@ Die Integration kann die bisherigen Entitäts-IDs übernehmen – Dashboards, Au
 
 1. Integration einrichten (die Werte erscheinen vorübergehend doppelt).
 2. **Einstellungen → Geräte & Dienste → BlueBattery → Konfigurieren → Umstieg: vorbereiten** – die Liste prüfen und speichern.
-3. Im Display unter MQTT **„Home Assistant“ ausschalten**, eine Minute warten.
+3. Im Display unter **Einstellungen → Fernzugriff → MQTT** den Schalter **„Home Assistant“** ausschalten, eine Minute warten.
 4. **Konfigurieren → Umstieg: abschließen.**
 
 Werte, die es in der Integration als andere Art gibt (z. B. „Booster-Limit“ jetzt als Sensor statt als Ein/Aus-Wert), werden nicht übernommen.
