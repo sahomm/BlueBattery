@@ -22,3 +22,6 @@ local/
 
 # Arbeitsanweisungen für Claude (enthält lokale Pfade)
 CLAUDE.md
+
+# Private Merkliste - nie veröffentlichen
+MERKLISTE.md
