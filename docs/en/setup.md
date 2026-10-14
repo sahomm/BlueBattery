@@ -65,16 +65,17 @@ Mosquitto is the "post office": the BB-Display drops off its values there and Ho
 
 ## Step 3 – Create a user for the display
 
-The BB-Display logs in to the broker with its own user.
+The BB-Display logs in to the broker with its own access. In Home Assistant this is a **user**, not a person: a person is someone in your household, the device access is just an access.
 
-**In the menu:** Settings → **People**. · [Open directly ↗](https://my.home-assistant.io/redirect/people/)
+**In the menu:** Settings → **People** → the **Users** tab at the top → **Add user** at the bottom right. · [Open directly ↗](https://my.home-assistant.io/redirect/people/)
 
-1. **Add person**.
-2. Enter a name (e.g. `BB-Display`) and switch on **"Allow login"**.
-3. Set a **username** (e.g. `mqtt_user`) and a **strong password** – note both, you need them in step 5.
-4. Switch on **"Local access only"**, **not an administrator** → **Create**.
+1. Enter a **display name** and a **username** (e.g. `mqtt_user`).
+2. Set a **strong password** and confirm it – note username and password, you need both in step 5.
+3. **Leave "Local access only" switched off** and **not an administrator** → **Create**.
 
-✅ The new person appears in the list.
+✅ The new user appears in the list under Settings → People → Users.
+
+> ⚠️ **"Local access only" must be off:** if it is on, the BB-Display cannot log in with this access.
 
 > The usernames `homeassistant` and `addons` are reserved by the Mosquitto broker and will not work. Don't use your own Home Assistant login either.
 

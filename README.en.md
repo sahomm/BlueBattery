@@ -63,11 +63,11 @@ Settings → Apps → App store → "Mosquitto broker" → Install → enable "S
 
 **3. Create a user for the display** – so the display is allowed to drop off values at Mosquitto.
 
-Settings → People → Add person → "Allow login" → set username and a strong password → "Local access only", not an administrator → Create. [Open directly ↗](https://my.home-assistant.io/redirect/people/)
+Settings → People → "Users" tab → Add user → set username and a strong password → leave "Local access only" **off** (otherwise the display cannot log in), not an administrator → Create. [Open directly ↗](https://my.home-assistant.io/redirect/people/)
 
 📝 Write down username and password – you need both in step 5.
 
-✅ The new person appears in the list.
+✅ The new user appears in the list.
 
 **4. Set up the MQTT integration** – MQTT is the "language" in which the display, Mosquitto and Home Assistant talk to each other.
 

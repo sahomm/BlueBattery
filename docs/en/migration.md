@@ -2,7 +2,7 @@
 
 [🇩🇪 Deutsch](../de/umstieg.md) | 🇬🇧 English · [← back to overview](../../README.en.md)
 
-The BB-Display comes with its own simple Home Assistant support (switch **"Home Assistant"** on the display under Settings → Remote access → MQTT). This integration replaces it. **Running both results in duplicate values** – so switch the built-in support off.
+The BB-Display comes with its own simple Home Assistant connection (switch **"Home Assistant"** on the display under Settings → Remote access → MQTT). Both ways are good: the built-in connection is ready to use at once, this integration adds ready-made templates (blueprints). **Use only one way per device, otherwise the values appear twice.** If you want to switch to the integration, turn the built-in connection off.
 
 ## Fresh start (recommended)
 

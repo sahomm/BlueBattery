@@ -2,7 +2,7 @@
 
 🇩🇪 Deutsch | [🇬🇧 English](../en/migration.md) · [← zurück zur Übersicht](../../README.md)
 
-Das BB-Display bringt eine eigene, einfache Anbindung an Home Assistant mit (Schalter **„Home Assistant“** im Display unter Einstellungen → Fernzugriff → MQTT). Diese Integration ersetzt sie. **Beides gleichzeitig führt zu doppelten Werten** – schalte die eingebaute Anbindung deshalb aus.
+Das BB-Display bringt eine eigene, einfache Anbindung an Home Assistant mit (Schalter **„Home Assistant“** im Display unter Einstellungen → Fernzugriff → MQTT). Beide Wege sind gut: die eingebaute Anbindung ist sofort einsatzbereit, diese Integration bringt zusätzlich fertige Vorlagen (Blueprints) mit. **Pro Gerät sollte nur ein Weg aktiv sein, sonst erscheinen die Werte doppelt.** Wenn du zur Integration wechseln möchtest, schalte die eingebaute Anbindung deshalb aus.
 
 ## Neu einsteigen (empfohlen)
 
