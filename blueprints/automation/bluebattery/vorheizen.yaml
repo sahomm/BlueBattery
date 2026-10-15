@@ -3,14 +3,14 @@ blueprint:
   description: >
     Heizt vor: zu einem Datum und einer Uhrzeit, auf Wunsch zusätzlich per Knopf oder
     nach einem wöchentlichen Zeitplan. Die Heizung geht auf die Zieltemperatur und bleibt
-    dort. Mit einem Nachlauf in Stunden schaltet sie nach Erreichen der Zieltemperatur
-    nach dieser Zeit wieder aus. Liegt der Zeitpunkt in der Vergangenheit oder weniger als
+    dort. Mit einem Nachlauf in Stunden senkt sie nach Erreichen der Zieltemperatur
+    und Ablauf dieser Zeit auf die Zieltemperatur minus 2 K. Liegt der Zeitpunkt in der Vergangenheit oder weniger als
     15 Minuten voraus, erscheint beim Speichern eine Meldung in Home Assistant.
     Es sind keine Helfer nötig.
 
     Pre-heats at a date and time (optionally also by button or weekly schedule). The heater
-    goes to the target temperature and stays there; with an after-run in hours it switches off
-    that long after the target is reached. No helpers needed.
+    goes to the target temperature and stays there; with an after-run in hours it lowers to the
+    target minus 2 K once that time has passed after the target is reached. No helpers needed.
   domain: automation
   author: sahomm
   source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/vorheizen.yaml
@@ -36,6 +36,7 @@ blueprint:
               unit_of_measurement: °C
         afterrun_hours:
           name: Nachlauf nach Erreichen der Zieltemperatur
+          description: 0 = unendlich. Nach Ablauf der Zeit wird die Heizung auf Zieltemperatur minus 2 K gesetzt.
           default: 0
           selector:
             number:
@@ -180,6 +181,9 @@ actions:
             continue_on_timeout: false
           - delay:
               seconds: "{{ (afterrun_hours | float(0) * 3600) | int(0) }}"
-          - action: climate.turn_off
+          - action: climate.set_temperature
             target:
               entity_id: "{{ climate_entity }}"
+            data:
+              temperature: "{{ target_temperature | float(0) - 2 }}"
+              hvac_mode: heat

@@ -122,7 +122,7 @@ The time for "Value stuck after" should be longer than 2 minutes (default: 3 hou
 
 ## Pre-heating
 
-**Benefit:** The vehicle is warm when you arrive. You set date, time and target temperature – the heater starts up and stays at that temperature. If you like, it switches off again after an after-run.
+**Benefit:** The vehicle is warm when you arrive. You set date, time and target temperature – the heater starts up and stays at that temperature. If you like, it lowers to the target temperature minus 2 K after an after-run.
 
 **You need:** BB-Display + TIN adapter. You do **not** need to create any helpers.
 
@@ -132,7 +132,7 @@ The time for "Value stuck after" should be longer than 2 minutes (default: 3 hou
 |---|---|---|
 | Heater | Truma heater | |
 | Target temperature | 20 °C | 10 to 25 °C |
-| After-run after reaching the target temperature | 0 hours | 0 = the heater stays on permanently; otherwise it switches off that many hours after the target temperature is reached (up to 24 h) |
+| After-run after reaching the target temperature | 0 hours | 0 = unlimited: the heater stays at the target temperature permanently; otherwise it is set to the target temperature minus 2 K that many hours after the target is reached (up to 24 h) |
 | Heating level | `eco` | for Truma `eco` or `high`; empty = last used level |
 | Start at | tomorrow, 1 pm | date and time |
 | "Pre-heat now" button | – | optional, "Button" helper |

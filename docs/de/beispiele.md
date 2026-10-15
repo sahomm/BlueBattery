@@ -120,7 +120,7 @@ Die Zeit bei „Wert hängt nach“ sollte länger als 2 Minuten sein (Standard:
 
 ## Vorheizen
 
-**Nutzen:** Das Fahrzeug ist warm, wenn du ankommst. Du legst Datum, Uhrzeit und Zieltemperatur fest – die Heizung heizt los und bleibt auf dieser Temperatur. Wenn du möchtest, schaltet sie nach einem Nachlauf wieder aus.
+**Nutzen:** Das Fahrzeug ist warm, wenn du ankommst. Du legst Datum, Uhrzeit und Zieltemperatur fest – die Heizung heizt los und bleibt auf dieser Temperatur. Wenn du möchtest, senkt sie nach einem Nachlauf auf Zieltemperatur minus 2 K.
 
 **Du brauchst:** BB-Display + TIN-Adapter. Helfer musst du **nicht** anlegen.
 
@@ -130,7 +130,7 @@ Die Zeit bei „Wert hängt nach“ sollte länger als 2 Minuten sein (Standard:
 |---|---|---|
 | Heizung | Truma Heizung | |
 | Zieltemperatur | 20 °C | 10 bis 25 °C |
-| Nachlauf nach Erreichen der Zieltemperatur | 0 Stunden | 0 = die Heizung bleibt dauerhaft an; sonst schaltet sie so viele Stunden nach Erreichen der Zieltemperatur aus (bis 24 h) |
+| Nachlauf nach Erreichen der Zieltemperatur | 0 Stunden | 0 = unendlich: die Heizung bleibt dauerhaft auf der Zieltemperatur; sonst wird sie so viele Stunden nach Erreichen der Zieltemperatur auf Zieltemperatur minus 2 K gesetzt (bis 24 h) |
 | Heizstufe | `eco` | bei Truma `eco` oder `high`; leer = zuletzt genutzte Stufe |
 | Starten am | morgen, 13:00 | Datum und Uhrzeit |
 | Knopf „Jetzt vorheizen“ | – | optional, Helfer „Taste“ |
