@@ -122,7 +122,7 @@ The time for "Value stuck after" should be longer than 2 minutes (default: 3 hou
 
 ## Pre-heating
 
-**Benefit:** The vehicle is warm when you arrive. You set date, time and target temperature – the heater starts up and stays at that temperature. If you like, it lowers to the target temperature minus 2 K after an after-run.
+**Benefit:** The vehicle is warm when you arrive. Instantly via "Run" or at a date and time: the heater starts up and stays at the target temperature. With a run time it lowers to the target temperature minus 2 K once that time has passed.
 
 **You need:** BB-Display + TIN adapter. You do **not** need to create any helpers.
 
@@ -132,16 +132,14 @@ The time for "Value stuck after" should be longer than 2 minutes (default: 3 hou
 |---|---|---|
 | Heater | Truma heater | |
 | Target temperature | 20 °C | 10 to 25 °C |
-| After-run after reaching the target temperature | 0 hours | 0 = unlimited: the heater stays at the target temperature permanently; otherwise it is set to the target temperature minus 2 K that many hours after the target is reached (up to 24 h) |
+| Run time | 0 hours | in hours from the start, 0 = unlimited; afterwards it is set to the target temperature minus 2 K (up to 72 h) |
 | Heating level | `eco` | for Truma `eco` or `high`; empty = last used level |
-| Start at | tomorrow, 1 pm | date and time |
-| "Pre-heat now" button | – | optional, "Button" helper |
-| Weekly schedule | – | optional, "Schedule" helper; starts pre-heating at the beginning of every time window |
+| Start at | tomorrow, 1 pm | date and time; leave empty if you only heat instantly |
 
 **Good to know:**
 - Each automation is one job. For a new time, open the automation and change "Start at" – or create another one from the template.
 - If the time is in the past or less than 15 minutes ahead, a notice appears after saving in the bell (Home Assistant sidebar).
-- Pre-heat right now: choose "Run" in the automation – or use the optional button.
+- Pre-heat right now: choose "Run" in the automation. A button card in the dashboard (action `automation.trigger`) does the same with one tap while on the way.
 - Pre-heating runs through the "Pre-heating" blueprint. Keep [frost protection](#frost-protection) active as well.
 
 ---

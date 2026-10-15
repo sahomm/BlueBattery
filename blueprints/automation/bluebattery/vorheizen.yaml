@@ -1,16 +1,15 @@
 blueprint:
   name: BlueBattery – Vorheizen
   description: >
-    Heizt vor: zu einem Datum und einer Uhrzeit, auf Wunsch zusätzlich per Knopf oder
-    nach einem wöchentlichen Zeitplan. Die Heizung geht auf die Zieltemperatur und bleibt
-    dort. Mit einem Nachlauf in Stunden senkt sie nach Erreichen der Zieltemperatur
-    und Ablauf dieser Zeit auf die Zieltemperatur minus 2 K. Liegt der Zeitpunkt in der Vergangenheit oder weniger als
-    15 Minuten voraus, erscheint beim Speichern eine Meldung in Home Assistant.
+    Heizt vor: sofort über „Ausführen“ oder zu einem Datum und einer Uhrzeit. Die Heizung geht
+    auf die Zieltemperatur und bleibt dort. Mit einer Laufzeit in Stunden wird nach deren Ablauf
+    auf die Zieltemperatur minus 2 K gesetzt. Liegt der Zeitpunkt in der Vergangenheit oder weniger
+    als 15 Minuten voraus, erscheint nach dem Speichern eine Meldung in Home Assistant.
     Es sind keine Helfer nötig.
 
-    Pre-heats at a date and time (optionally also by button or weekly schedule). The heater
-    goes to the target temperature and stays there; with an after-run in hours it lowers to the
-    target minus 2 K once that time has passed after the target is reached. No helpers needed.
+    Pre-heats immediately via "Run" or at a date and time. The heater goes to the target
+    temperature and stays there; with a run time in hours it is set to the target minus 2 K once
+    that time has passed. No helpers needed.
   domain: automation
   author: sahomm
   source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/vorheizen.yaml
@@ -34,16 +33,6 @@ blueprint:
               max: 25
               step: 1
               unit_of_measurement: °C
-        afterrun_hours:
-          name: Nachlauf nach Erreichen der Zieltemperatur
-          description: 0 = unendlich. Nach Ablauf der Zeit wird die Heizung auf Zieltemperatur minus 2 K gesetzt.
-          default: 0
-          selector:
-            number:
-              min: 0
-              max: 24
-              step: 0.5
-              unit_of_measurement: h
         preset:
           name: Heizstufe (optional)
           description: z. B. `eco` oder `high` (Truma). Leer lassen für die zuletzt genutzte Stufe.
@@ -53,28 +42,25 @@ blueprint:
     start:
       name: Wann vorheizen?
       icon: mdi:clock-start
+      description: >
+        Sofort vorheizen: oben rechts in der Automation „Ausführen“ wählen.
       input:
         start_at:
           name: Starten am
+          description: Datum und Uhrzeit des Beginns. Leer lassen, wenn nur sofort über „Ausführen“ geheizt wird.
           default: ""
           selector:
             datetime: {}
-        button_entity:
-          name: Knopf „Jetzt vorheizen“ (optional)
-          default: []
+        runtime_hours:
+          name: Laufzeit
+          description: Laufzeit in Stunden ab Start, 0 = unendlich. Danach wird auf Zieltemperatur minus 2 K gesetzt.
+          default: 0
           selector:
-            entity:
-              multiple: true
-              filter:
-                - domain: input_button
-        schedule_entity:
-          name: Wöchentlicher Zeitplan (optional)
-          default: []
-          selector:
-            entity:
-              multiple: true
-              filter:
-                - domain: schedule
+            number:
+              min: 0
+              max: 72
+              step: 0.5
+              unit_of_measurement: h
 
 mode: restart
 
@@ -84,7 +70,7 @@ trigger_variables:
 variables:
   climate_entity: !input climate_entity
   target_temperature: !input target_temperature
-  afterrun_hours: !input afterrun_hours
+  runtime_hours: !input runtime_hours
   preset: !input preset
   start_ts: "{{ as_timestamp(start_at) if start_at | string != '' else 0 }}"
 
@@ -92,16 +78,6 @@ triggers:
   - trigger: template
     value_template: "{{ start_at | string != '' and now().timestamp() >= as_timestamp(start_at) }}"
     id: timed
-  - trigger: state
-    entity_id: !input button_entity
-    not_to:
-      - unavailable
-      - unknown
-    id: button
-  - trigger: state
-    entity_id: !input schedule_entity
-    to: "on"
-    id: schedule
   - trigger: event
     event_type: automation_reloaded
     id: check
@@ -171,16 +147,10 @@ actions:
                   preset_mode: "{{ preset }}"
       - if:
           - condition: template
-            value_template: "{{ afterrun_hours | float(0) > 0 }}"
+            value_template: "{{ runtime_hours | float(0) > 0 }}"
         then:
-          - wait_template: >-
-              {{ state_attr(climate_entity, 'current_temperature') | float(0)
-                 >= target_temperature | float(0) }}
-            timeout:
-              hours: 12
-            continue_on_timeout: false
           - delay:
-              seconds: "{{ (afterrun_hours | float(0) * 3600) | int(0) }}"
+              seconds: "{{ (runtime_hours | float(0) * 3600) | int(0) }}"
           - action: climate.set_temperature
             target:
               entity_id: "{{ climate_entity }}"

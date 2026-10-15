@@ -120,7 +120,7 @@ Die Zeit bei „Wert hängt nach“ sollte länger als 2 Minuten sein (Standard:
 
 ## Vorheizen
 
-**Nutzen:** Das Fahrzeug ist warm, wenn du ankommst. Du legst Datum, Uhrzeit und Zieltemperatur fest – die Heizung heizt los und bleibt auf dieser Temperatur. Wenn du möchtest, senkt sie nach einem Nachlauf auf Zieltemperatur minus 2 K.
+**Nutzen:** Das Fahrzeug ist warm, wenn du ankommst. Sofort per „Ausführen“ oder zu Datum und Uhrzeit: Die Heizung heizt los und bleibt auf der Zieltemperatur. Mit einer Laufzeit senkt sie nach deren Ablauf auf Zieltemperatur minus 2 K.
 
 **Du brauchst:** BB-Display + TIN-Adapter. Helfer musst du **nicht** anlegen.
 
@@ -130,16 +130,14 @@ Die Zeit bei „Wert hängt nach“ sollte länger als 2 Minuten sein (Standard:
 |---|---|---|
 | Heizung | Truma Heizung | |
 | Zieltemperatur | 20 °C | 10 bis 25 °C |
-| Nachlauf nach Erreichen der Zieltemperatur | 0 Stunden | 0 = unendlich: die Heizung bleibt dauerhaft auf der Zieltemperatur; sonst wird sie so viele Stunden nach Erreichen der Zieltemperatur auf Zieltemperatur minus 2 K gesetzt (bis 24 h) |
+| Laufzeit | 0 Stunden | in Stunden ab Start, 0 = unendlich; danach wird auf Zieltemperatur minus 2 K gesetzt (bis 72 h) |
 | Heizstufe | `eco` | bei Truma `eco` oder `high`; leer = zuletzt genutzte Stufe |
-| Starten am | morgen, 13:00 | Datum und Uhrzeit |
-| Knopf „Jetzt vorheizen“ | – | optional, Helfer „Taste“ |
-| Wöchentlicher Zeitplan | – | optional, Helfer „Zeitplan“; startet das Vorheizen zu Beginn jedes Zeitfensters |
+| Starten am | morgen, 13:00 | Datum und Uhrzeit; leer lassen, wenn du nur sofort heizt |
 
 **Gut zu wissen:**
 - Jede Automation ist ein Auftrag. Für einen neuen Zeitpunkt öffnest du die Automation und änderst „Starten am“ – oder legst eine weitere aus der Vorlage an.
 - Liegt der Zeitpunkt in der Vergangenheit oder weniger als 15 Minuten voraus, erscheint nach dem Speichern eine Meldung in der Glocke (Seitenleiste von Home Assistant).
-- Sofort vorheizen: In der Automation „Ausführen“ wählen – oder den optionalen Knopf nutzen.
+- Sofort vorheizen: In der Automation „Ausführen“ wählen. Mit einer Button-Karte im Dashboard (Aktion `automation.trigger`) geht das auch mit einem Fingertipp von unterwegs.
 - Das Vorheizen läuft über das Blueprint „Vorheizen“. Zusätzlich sollte der [Frostschutz](#frostschutz) aktiv bleiben.
 
 ---
