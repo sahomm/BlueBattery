@@ -77,17 +77,19 @@ blueprint:
 
 mode: restart
 
+trigger_variables:
+  start_at: !input start_at
+
 variables:
   climate_entity: !input climate_entity
   target_temperature: !input target_temperature
   afterrun_hours: !input afterrun_hours
   preset: !input preset
-  start_at: !input start_at
   start_ts: "{{ as_timestamp(start_at) if start_at | string != '' else 0 }}"
 
 triggers:
   - trigger: template
-    value_template: "{{ start_ts | float(0) > 0 and now().timestamp() >= start_ts | float(0) }}"
+    value_template: "{{ start_at | string != '' and now().timestamp() >= as_timestamp(start_at) }}"
     id: timed
   - trigger: state
     entity_id: !input button_entity
