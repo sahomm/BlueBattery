@@ -110,6 +110,8 @@ Eine Störung wird am Bedienteil der Heizung zurückgesetzt (z. B. CP plus) – 
 
 **Ausfallsicherung:** Der Hauptsensor zählt, solange er eine Zahl liefert, verbunden ist (falls angegeben) und sich der Wert innerhalb der eingestellten Zeit geändert hat. Sonst gilt der Ersatzsensor, die Frostwarnung bleibt also aktiv. Fällt der Hauptsensor länger als die eingestellte Zeit aus, kommt eine Meldung („Frostschutz eingeschränkt“), kehrt er zurück, eine Entwarnung. Ohne Ersatzsensor verhält sich die Vorlage wie bisher.
 
+Die Zeit bei „Wert hängt nach“ sollte länger als 2 Minuten sein (Standard: 3 Stunden), sonst kommt keine Entwarnung.
+
 > Das BB-Display ist die Schaltzentrale: Der TIN-Adapter und die Truma hängen daran. Fällt das Display aus, sind beide Temperaturen weg und der Frostschutz kann nicht greifen. Dann hilft nur eine Meldung („BB-Display offline“, siehe Heizungsstörung), und du musst selbst eingreifen.
 
 > Die Heizung arbeitet nach dem automatischen Einschalten ohne Rückfrage. Achte auf ausreichend Gas bzw. Strom.

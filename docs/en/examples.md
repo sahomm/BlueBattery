@@ -112,6 +112,8 @@ A fault is reset on the heater's control panel (e.g. CP plus) – as intended by
 
 **Fail-safe:** The main sensor counts while it delivers a number, is connected (if set) and its value changed within the set time. Otherwise the fallback sensor is used, so the frost warning stays active. If the main sensor is out for longer than the set time you get a message ("Frost protection limited"), and an all-clear when it is back. Without a fallback sensor the template behaves as before.
 
+The time for "Value stuck after" should be longer than 2 minutes (default: 3 hours), otherwise no all-clear is sent.
+
 > The BB-Display is the hub: the TIN adapter and the heater hang off it. If the display fails, both temperatures are gone and frost protection cannot act. Only a message ("BB-Display offline", see heater fault) tells you to step in yourself.
 
 > After switching on automatically, the heater runs without asking. Make sure there is enough gas or power.
