@@ -98,11 +98,19 @@ Eine Störung wird am Bedienteil der Heizung zurückgesetzt (z. B. CP plus) – 
 
 | Einstellung | Beispiel | Hinweis |
 |---|---|---|
-| Innentemperatur | BB-Display … Innentemperatur | oder ein anderer Temperatursensor |
+| Innentemperatur (Hauptsensor) | Truma Raumtemperatur | oder BB-Display … Innentemperatur oder ein anderer Temperatursensor |
 | Frostgrenze | 5 °C | |
 | Unterschritten für | 10 Minuten | |
+| Ersatzsensor (optional) | BB-Display … Innentemperatur | gilt, wenn der Hauptsensor nicht nutzbar ist |
+| Verbindung des Hauptsensors (optional) | Truma Heizung verbunden | ist sie nicht an, gilt der Ersatzsensor |
+| Wert hängt nach | 3 Stunden | ändert sich der Wert so lange nicht, gilt er als hängend; 0 = nicht prüfen |
+| Ausfall melden nach | 10 Minuten | kurze Aussetzer (z. B. ein Router-Neustart) bleiben ohne Meldung |
 | Heizung einschalten | an | schaltet nur ein, wenn die Heizung aus ist |
 | Heizung / Zieltemperatur | Truma Heizung / 12 °C | |
+
+**Ausfallsicherung:** Der Hauptsensor zählt, solange er eine Zahl liefert, verbunden ist (falls angegeben) und sich der Wert innerhalb der eingestellten Zeit geändert hat. Sonst gilt der Ersatzsensor, die Frostwarnung bleibt also aktiv. Fällt der Hauptsensor länger als die eingestellte Zeit aus, kommt eine Meldung („Frostschutz eingeschränkt“), kehrt er zurück, eine Entwarnung. Ohne Ersatzsensor verhält sich die Vorlage wie bisher.
+
+> Das BB-Display ist die Schaltzentrale: Der TIN-Adapter und die Truma hängen daran. Fällt das Display aus, sind beide Temperaturen weg und der Frostschutz kann nicht greifen. Dann hilft nur eine Meldung („BB-Display offline“, siehe Heizungsstörung), und du musst selbst eingreifen.
 
 > Die Heizung arbeitet nach dem automatischen Einschalten ohne Rückfrage. Achte auf ausreichend Gas bzw. Strom.
 

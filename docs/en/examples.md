@@ -100,11 +100,19 @@ A fault is reset on the heater's control panel (e.g. CP plus) – as intended by
 
 | Setting | Example | Note |
 |---|---|---|
-| Indoor temperature | BB-Display … indoor temperature | or another temperature sensor |
+| Indoor temperature (main sensor) | Truma room temperature | or BB-Display … indoor temperature or another temperature sensor |
 | Frost limit | 5 °C | |
 | Below for | 10 minutes | |
+| Fallback sensor (optional) | BB-Display … indoor temperature | used when the main sensor is not usable |
+| Connection of the main sensor (optional) | Truma heater connected | if it is not on, the fallback sensor is used |
+| Value stuck after | 3 hours | if the value does not change for this long it counts as stuck; 0 = do not check |
+| Report outage after | 10 minutes | short dropouts (e.g. a router restart) stay silent |
 | Switch heater on | on | only switches on if the heater is off |
 | Heater / target temperature | Truma heater / 12 °C | |
+
+**Fail-safe:** The main sensor counts while it delivers a number, is connected (if set) and its value changed within the set time. Otherwise the fallback sensor is used, so the frost warning stays active. If the main sensor is out for longer than the set time you get a message ("Frost protection limited"), and an all-clear when it is back. Without a fallback sensor the template behaves as before.
+
+> The BB-Display is the hub: the TIN adapter and the heater hang off it. If the display fails, both temperatures are gone and frost protection cannot act. Only a message ("BB-Display offline", see heater fault) tells you to step in yourself.
 
 > After switching on automatically, the heater runs without asking. Make sure there is enough gas or power.
 

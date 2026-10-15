@@ -4,8 +4,14 @@ blueprint:
     Meldet, wenn die Innentemperatur unter eine Grenze fällt, und schaltet auf
     Wunsch die Heizung automatisch ein (nur wenn sie aus ist).
 
+    Optional mit Ausfallsicherung: Liefert der Hauptsensor (z. B. die Truma-Raumtemperatur)
+    nichts, ist nicht verbunden oder hängt, gilt der Ersatzsensor (z. B. die
+    Innentemperatur des BB-Displays). Fällt der Hauptsensor länger aus, kommt eine
+    Meldung, danach eine Entwarnung.
+
     Notifies when the indoor temperature drops below a limit and can switch the
-    heater on automatically (only if it is off).
+    heater on automatically (only if it is off). Optionally falls back to a second
+    sensor and reports when the main sensor fails and when it recovers.
   domain: automation
   author: sahomm
   source_url: https://github.com/sahomm/BlueBattery/blob/main/blueprints/automation/bluebattery/frostschutz.yaml
@@ -15,8 +21,8 @@ blueprint:
       icon: mdi:snowflake-thermometer
       input:
         temperature_sensor:
-          name: Innentemperatur
-          description: z. B. die Innentemperatur des BB-Displays
+          name: Innentemperatur (Hauptsensor)
+          description: z. B. die Raumtemperatur der Truma oder die Innentemperatur des BB-Displays
           selector:
             entity:
               filter:
@@ -33,6 +39,41 @@ blueprint:
               unit_of_measurement: °C
         duration:
           name: Unterschritten für
+          default:
+            minutes: 10
+          selector:
+            duration: {}
+    fallback:
+      name: Ausfallsicherung (optional)
+      icon: mdi:shield-check
+      input:
+        fallback_sensor:
+          name: Ersatzsensor
+          description: Gilt, wenn der Hauptsensor nicht nutzbar ist, z. B. die Innentemperatur des BB-Displays. Leer lassen, wenn es keinen gibt.
+          default: ""
+          selector:
+            entity:
+              filter:
+                - domain: sensor
+                  device_class: temperature
+        primary_connected:
+          name: Verbindung des Hauptsensors
+          description: Optional, z. B. „Truma Heizung verbunden“. Ist sie nicht an, gilt der Ersatzsensor.
+          default: ""
+          selector:
+            entity:
+              filter:
+                - domain: binary_sensor
+        max_age:
+          name: Wert hängt nach
+          description: Hat sich der Wert des Hauptsensors so lange nicht geändert, gilt er als hängend und der Ersatzsensor übernimmt. 0 = nicht prüfen.
+          default:
+            hours: 3
+          selector:
+            duration: {}
+        outage_delay:
+          name: Ausfall melden nach
+          description: So lange muss der Hauptsensor ausgefallen sein und der Ersatzsensor gelten, bevor eine Meldung kommt. Kurze Aussetzer, z. B. ein Router-Neustart, bleiben so ohne Meldung.
           default:
             minutes: 10
           selector:
@@ -79,43 +120,103 @@ blueprint:
           selector:
             text: {}
 
-mode: single
+mode: parallel
+max: 10
+
+trigger_variables:
+  tv_primary: !input temperature_sensor
+  tv_fallback: !input fallback_sensor
+  tv_connected: !input primary_connected
+  tv_max_age: !input max_age
+  tv_threshold: !input threshold
 
 variables:
   notify_action: !input notify_action
   vehicle_name: !input vehicle_name
   temperature_sensor: !input temperature_sensor
+  fallback_sensor: !input fallback_sensor
+  primary_connected: !input primary_connected
+  max_age: !input max_age
   auto_heat: !input auto_heat
   climate_entity: !input climate_entity
   heat_target: !input heat_target
   will_heat: "{{ auto_heat and climate_entity != '' and is_state(climate_entity, 'off') }}"
+  max_seconds: "{{ max_age.get('days', 0) * 86400 + max_age.get('hours', 0) * 3600 + max_age.get('minutes', 0) * 60 + max_age.get('seconds', 0) }}"
+  primary_ok: >-
+    {{ is_number(states(temperature_sensor))
+       and (primary_connected == '' or is_state(primary_connected, 'on'))
+       and (max_seconds == 0 or (now() - states[temperature_sensor].last_changed).total_seconds() < max_seconds) }}
+  used_sensor: >-
+    {{ temperature_sensor if primary_ok
+       else (fallback_sensor if fallback_sensor != '' and is_number(states(fallback_sensor)) else temperature_sensor) }}
 
 triggers:
-  - trigger: numeric_state
-    entity_id: !input temperature_sensor
-    below: !input threshold
+  - trigger: template
+    id: frost
+    value_template: >-
+      {% set p = states(tv_primary) %}
+      {% set f = states(tv_fallback) if tv_fallback != '' else '' %}
+      {% set s = tv_max_age.get('days', 0) * 86400 + tv_max_age.get('hours', 0) * 3600 + tv_max_age.get('minutes', 0) * 60 + tv_max_age.get('seconds', 0) %}
+      {% set ok = is_number(p) and (tv_connected == '' or is_state(tv_connected, 'on')) and (s == 0 or (now() - states[tv_primary].last_changed).total_seconds() < s) %}
+      {% set v = p if ok else (f if is_number(f) else (p if is_number(p) else none)) %}
+      {{ v is not none and v | float(0) < tv_threshold | float(0) }}
     for: !input duration
-
-conditions:
-  - condition: template
-    value_template: "{{ trigger.from_state.state not in ['unavailable', 'unknown'] }}"
+  - trigger: template
+    id: degraded
+    value_template: >-
+      {% set p = states(tv_primary) %}
+      {% set f = states(tv_fallback) if tv_fallback != '' else '' %}
+      {% set s = tv_max_age.get('days', 0) * 86400 + tv_max_age.get('hours', 0) * 3600 + tv_max_age.get('minutes', 0) * 60 + tv_max_age.get('seconds', 0) %}
+      {% set ok = is_number(p) and (tv_connected == '' or is_state(tv_connected, 'on')) and (s == 0 or (now() - states[tv_primary].last_changed).total_seconds() < s) %}
+      {{ tv_fallback != '' and is_number(f) and not ok }}
+    for: !input outage_delay
 
 actions:
-  - if:
-      - condition: template
-        value_template: "{{ will_heat }}"
-    then:
-      - action: climate.set_temperature
-        target:
-          entity_id: "{{ climate_entity }}"
-        data:
-          temperature: "{{ heat_target }}"
-          hvac_mode: heat
-  - action: "{{ notify_action }}"
-    data:
-      title: "{{ vehicle_name }} – Frostgefahr"
-      message: >-
-        Innen nur noch {{ states(temperature_sensor) }} °C.
-        {%- if will_heat %} Die Heizung wurde auf {{ heat_target }} °C eingeschaltet.
-        {%- elif auto_heat and climate_entity != '' %} Heizung nicht eingeschaltet, Zustand: {{ states(climate_entity) }} – bitte prüfen.
-        {%- endif %}
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: frost
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ will_heat }}"
+            then:
+              - action: climate.set_temperature
+                target:
+                  entity_id: "{{ climate_entity }}"
+                data:
+                  temperature: "{{ heat_target }}"
+                  hvac_mode: heat
+          - action: "{{ notify_action }}"
+            data:
+              title: "{{ vehicle_name }} – Frostgefahr"
+              message: >-
+                Innen nur noch {{ states(used_sensor) }} °C.
+                {%- if used_sensor != temperature_sensor %} Gemessen mit dem Ersatzsensor, der Hauptsensor ist nicht nutzbar.
+                {%- endif %}
+                {%- if will_heat %} Die Heizung wurde auf {{ heat_target }} °C eingeschaltet.
+                {%- elif auto_heat and climate_entity != '' %} Heizung nicht eingeschaltet, Zustand: {{ states(climate_entity) }} – bitte prüfen.
+                {%- endif %}
+      - conditions:
+          - condition: trigger
+            id: degraded
+        sequence:
+          - action: "{{ notify_action }}"
+            data:
+              title: "{{ vehicle_name }} – Frostschutz eingeschränkt"
+              message: >-
+                Der Hauptsensor ist ausgefallen oder liefert keine neuen Werte, es gilt der Ersatzsensor: {{ states(fallback_sensor) }} °C.
+                {%- if climate_entity != '' %} Heizung: {{ states(climate_entity) }}. Eine nicht verbundene Heizung lässt sich nicht einschalten – bitte prüfen.
+                {%- endif %}
+          - wait_for_trigger:
+              - trigger: template
+                value_template: >-
+                  {{ is_number(states(temperature_sensor))
+                     and (primary_connected == '' or is_state(primary_connected, 'on'))
+                     and (max_seconds == 0 or (now() - states[temperature_sensor].last_changed).total_seconds() < max_seconds) }}
+                for:
+                  minutes: 2
+          - action: "{{ notify_action }}"
+            data:
+              title: "{{ vehicle_name }} – Frostschutz wieder normal"
+              message: "Der Hauptsensor liefert wieder Werte: {{ states(temperature_sensor) }} °C."
