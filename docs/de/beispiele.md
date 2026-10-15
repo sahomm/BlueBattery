@@ -120,29 +120,27 @@ Die Zeit bei „Wert hängt nach“ sollte länger als 2 Minuten sein (Standard:
 
 ## Vorheizen
 
-**Nutzen:** Das Fahrzeug ist warm, wenn du ankommst. Einmalig zu einer Uhrzeit (z. B. „morgen ab 13 Uhr“), sofort per Knopf von unterwegs oder jede Woche nach Zeitplan.
+**Nutzen:** Das Fahrzeug ist warm, wenn du ankommst. Du legst Datum, Uhrzeit und Zieltemperatur fest – die Heizung heizt los und bleibt auf dieser Temperatur. Wenn du möchtest, schaltet sie nach einem Nachlauf wieder aus.
 
-**Du brauchst:** BB-Display + TIN-Adapter
-
-**Vorab einmalig zwei Helfer anlegen:**
-
-**Im Menü:** Einstellungen → Geräte & Dienste → Helfer → Helfer erstellen · [Direkt öffnen ↗](https://my.home-assistant.io/redirect/helpers/)
-1. **Datum und/oder Uhrzeit** → Name „Vorheizen ab“ → „Datum und Uhrzeit“ auswählen.
-2. **Taste** → Name „Jetzt vorheizen“.
+**Du brauchst:** BB-Display + TIN-Adapter. Helfer musst du **nicht** anlegen.
 
 [![Vorlage importieren](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fsahomm%2FBlueBattery%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fbluebattery%2Fvorheizen.yaml)
 
 | Einstellung | Beispiel | Hinweis |
 |---|---|---|
 | Heizung | Truma Heizung | |
-| Zieltemperatur | 20 °C | |
+| Zieltemperatur | 20 °C | 10 bis 25 °C |
+| Nachlauf nach Erreichen der Zieltemperatur | 0 Stunden | 0 = die Heizung bleibt dauerhaft an; sonst schaltet sie so viele Stunden nach Erreichen der Zieltemperatur aus (bis 24 h) |
 | Heizstufe | `eco` | bei Truma `eco` oder `high`; leer = zuletzt genutzte Stufe |
-| Heizdauer | 2 Stunden | danach schaltet die Heizung wieder aus; 0 = bleibt an |
-| Einmalig zu Datum und Uhrzeit | Vorheizen ab | |
-| Knopf „Jetzt vorheizen“ | Jetzt vorheizen | |
-| Wöchentlicher Zeitplan | – | optional, Helfer „Zeitplan“ |
+| Starten am | morgen, 13:00 | Datum und Uhrzeit |
+| Knopf „Jetzt vorheizen“ | – | optional, Helfer „Taste“ |
+| Wöchentlicher Zeitplan | – | optional, Helfer „Zeitplan“; startet das Vorheizen zu Beginn jedes Zeitfensters |
 
-**Tipp:** Lege „Vorheizen ab“ und „Jetzt vorheizen“ auf dein Dashboard – dann stellst du die Startzeit mit zwei Fingertipps ein, auch unterwegs in der Home-Assistant-App.
+**Gut zu wissen:**
+- Jede Automation ist ein Auftrag. Für einen neuen Zeitpunkt öffnest du die Automation und änderst „Starten am“ – oder legst eine weitere aus der Vorlage an.
+- Liegt der Zeitpunkt in der Vergangenheit oder weniger als 15 Minuten voraus, erscheint nach dem Speichern eine Meldung in der Glocke (Seitenleiste von Home Assistant).
+- Sofort vorheizen: In der Automation „Ausführen“ wählen – oder den optionalen Knopf nutzen.
+- Das Vorheizen läuft über das Blueprint „Vorheizen“. Zusätzlich sollte der [Frostschutz](#frostschutz) aktiv bleiben.
 
 ---
 

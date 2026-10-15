@@ -122,29 +122,27 @@ The time for "Value stuck after" should be longer than 2 minutes (default: 3 hou
 
 ## Pre-heating
 
-**Benefit:** The vehicle is warm when you arrive. Once at a set time (e.g. "tomorrow from 1 pm"), instantly with a button while on the way, or weekly on a schedule.
+**Benefit:** The vehicle is warm when you arrive. You set date, time and target temperature – the heater starts up and stays at that temperature. If you like, it switches off again after an after-run.
 
-**You need:** BB-Display + TIN adapter
-
-**Create two helpers once beforehand:**
-
-**In the menu:** Settings → Devices & services → Helpers → Create helper · [Open directly ↗](https://my.home-assistant.io/redirect/helpers/)
-1. **Date and/or time** → name "Pre-heat from" → select "Date and time".
-2. **Button** → name "Pre-heat now".
+**You need:** BB-Display + TIN adapter. You do **not** need to create any helpers.
 
 [![Import template](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fsahomm%2FBlueBattery%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fbluebattery%2Fvorheizen.yaml)
 
 | Setting | Example | Note |
 |---|---|---|
 | Heater | Truma heater | |
-| Target temperature | 20 °C | |
+| Target temperature | 20 °C | 10 to 25 °C |
+| After-run after reaching the target temperature | 0 hours | 0 = the heater stays on permanently; otherwise it switches off that many hours after the target temperature is reached (up to 24 h) |
 | Heating level | `eco` | for Truma `eco` or `high`; empty = last used level |
-| Heating duration | 2 hours | then the heater switches off again; 0 = stays on |
-| Once at date and time | Pre-heat from | |
-| "Pre-heat now" button | Pre-heat now | |
-| Weekly schedule | – | optional, "Schedule" helper |
+| Start at | tomorrow, 1 pm | date and time |
+| "Pre-heat now" button | – | optional, "Button" helper |
+| Weekly schedule | – | optional, "Schedule" helper; starts pre-heating at the beginning of every time window |
 
-**Tip:** Put "Pre-heat from" and "Pre-heat now" on your dashboard – then you set the start time with two taps, even on the way in the Home Assistant app.
+**Good to know:**
+- Each automation is one job. For a new time, open the automation and change "Start at" – or create another one from the template.
+- If the time is in the past or less than 15 minutes ahead, a notice appears after saving in the bell (Home Assistant sidebar).
+- Pre-heat right now: choose "Run" in the automation – or use the optional button.
+- Pre-heating runs through the "Pre-heating" blueprint. Keep [frost protection](#frost-protection) active as well.
 
 ---
 
