@@ -70,9 +70,9 @@ Enter it in each template in the **"Benachrichtigungsdienst"** (notification ser
 
 ## Heater fault notification
 
-**Benefit:** If the heater fails – e.g. because the gas bottle is empty – you immediately get a message with error code and error text. The template also reports when the BB-Display itself stops sending data, because then the heater is no longer monitored.
+**Benefit:** If the heater fails – e.g. because the gas bottle is empty – you immediately get a message with error code and plain-language text. The template also reports when the BB-Display itself stops sending data, because then the heater is no longer monitored.
 
-> From practice: gas valve closed, heater switched on – one minute later the message arrived: *"WoMo – Heizungsstörung: Die Heizung meldet eine Störung … (Code 2212). Zurücksetzen am Bedienteil der Heizung."*
+> Example: when the gas runs out, the message reads *"WoMo – Heizungsstörung: Die Heizung meldet eine Störung: E202H: Flame/gas fault – check cylinder, valves, regulator and flue (Code 2202). Zurücksetzen am Bedienteil der Heizung."*
 
 **You need:** BB-Display + [TIN adapter](https://www.blue-battery.com/product-page/tin-adapter) on Truma or Alde
 

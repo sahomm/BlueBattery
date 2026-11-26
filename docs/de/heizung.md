@@ -14,7 +14,7 @@ Combi mit CP plus iNet ready, über den TIN-Adapter:
 
 - **Thermostat:** aus / heizen, Stufe **eco** oder **high**, Raum-Soll 5–30 °C
 - **Boiler:** Aus / Eco (40 °C) / High (55 °C) / Boost (60 °C)
-- **Anzeige:** Raum- und Wassertemperatur, Lüfterstufe, Fehlercode und -text, Verbindung
+- **Anzeige:** Raum- und Wassertemperatur, Lüfterstufe, Fehlercode, Fehler im Klartext, letzte Störung, Verbindung
 - **Energieart** (Gas / Mix / Elektro) bei **Combi E** – in den Optionen der Integration unter „Erweitert“ einschalten
 - Weitere Heizstufen (VarioHeat, Boost) lassen sich ebenfalls unter „Erweitert“ einschalten
 
@@ -28,5 +28,7 @@ Du hast eine Alde mit TIN-Adapter? Ein [Diagnose-Export](faq.md#wie-melde-ich-ei
 
 - **Befehle mit Kontrolle:** Die Integration prüft jeden Befehl am nächsten Status des BB-Displays und zeigt an, solange er unterwegs ist. Je nach Heizung ist er nach wenigen Sekunden bis etwa 30 Sekunden übernommen – mit der Truma Combi im Test nach rund 6 Sekunden.
 - **Boiler-Boost erkannt:** Beim Truma-Boiler-Boost stellt die Truma die Raumheizung kurz zurück, damit das Wasser schneller heiß wird. Die Integration zeigt das als *„Raumheizung pausiert“*.
-- **Störungen sofort im Blick:** Eine Störung (z. B. E212H bei fehlendem Gas) meldet die Integration innerhalb von Sekunden mit Fehlercode und -text – ideal für [Benachrichtigungen](beispiele.md#heizungsstörung-melden). Die Heizung bleibt dabei als *verbunden* angezeigt. Zurückgesetzt wird die Störung, wie von der Heizung vorgesehen, direkt am Bedienteil (z. B. CP plus); danach läuft die Heizung mit den bisherigen Einstellungen weiter.
+- **Störungen sofort im Blick:** Eine Störung meldet die Integration innerhalb von Sekunden mit Fehlercode und Klartext, z. B. *„E202H: Flamme/Gas gestört – Gasflasche, Ventile, Regler und Kamin prüfen“* – ideal für [Benachrichtigungen](beispiele.md#heizungsstörung-melden). Die Heizung bleibt dabei als *verbunden* angezeigt. Zurückgesetzt wird die Störung, wie von der Heizung vorgesehen, direkt am Bedienteil (z. B. CP plus); danach läuft die Heizung mit den bisherigen Einstellungen weiter.
+- **„Keine Störung gemeldet“** heißt: Die Heizung meldet gerade keinen Fehler. Nach dem Zurücksetzen kann er beim nächsten Startversuch wiederkommen, wenn die Ursache noch besteht. Der Sensor **Letzte Störung** hält die Meldung fest, mit Beginn und Ende.
+- **Klartexte:** Sie gelten für die Truma Combi mit Gas; beim Diesel haben einige Codes eine andere Bedeutung. Maßgeblich ist die Anleitung der Heizung. Bei Alde zeigt die Integration den Text der Heizung.
 - **Nach einem Neustart des Displays** gibt die Integration der Heizung 1–2 Minuten Zeit, die Verbindung aufzubauen, bevor sie eine Störung meldet – so entstehen keine Fehlalarme.

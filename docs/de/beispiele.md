@@ -68,9 +68,9 @@ In jeder Vorlage trägst du ihn im Feld **„Benachrichtigungsdienst“** ein.
 
 ## Heizungsstörung melden
 
-**Nutzen:** Fällt die Heizung aus – z. B. weil die Gasflasche leer ist –, bekommst du sofort eine Nachricht mit Fehlercode und Fehlertext. Zusätzlich meldet die Vorlage, wenn das BB-Display selbst keine Daten mehr sendet, denn dann ist die Heizung nicht mehr überwacht.
+**Nutzen:** Fällt die Heizung aus – z. B. weil die Gasflasche leer ist –, bekommst du sofort eine Nachricht mit Fehlercode und Klartext. Zusätzlich meldet die Vorlage, wenn das BB-Display selbst keine Daten mehr sendet, denn dann ist die Heizung nicht mehr überwacht.
 
-> Aus der Praxis: Gashahn zugedreht, Heizung eingeschaltet – eine Minute später kam die Nachricht *„WoMo – Heizungsstörung: Die Heizung meldet eine Störung … (Code 2212). Zurücksetzen am Bedienteil der Heizung.“*
+> Beispiel: Ist das Gas leer, lautet die Nachricht *„WoMo – Heizungsstörung: Die Heizung meldet eine Störung: E202H: Flamme/Gas gestört – Gasflasche, Ventile, Regler und Kamin prüfen (Code 2202). Zurücksetzen am Bedienteil der Heizung.“*
 
 **Du brauchst:** BB-Display + [TIN-Adapter](https://www.blue-battery.com/product-page/tin-adapter) an Truma oder Alde
 

@@ -257,6 +257,9 @@
       "error_text": {
         "name": "Error text"
       },
+      "last_fault": {
+        "name": "Last fault"
+      },
       "supply_voltage": {
         "name": "Supply voltage"
       },

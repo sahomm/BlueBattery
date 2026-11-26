@@ -25,10 +25,12 @@ from homeassistant.const import (
     UnitOfTime,
     UnitOfVolume,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.restore_state import ExtraStoredData, RestoredExtraData, RestoreEntity
+from homeassistant.util import dt as dt_util
 
-from . import BlueBatteryConfigEntry
+from . import BlueBatteryConfigEntry, truma_errors
 from .const import ALIVE_STATES, KEY_DISPLAY, TRUMA_ENERGY_MODES
 from .data import BlueBatteryDevice, SubDevice, to_number
 from .entity import BlueBatteryEntity
@@ -93,15 +95,21 @@ def _tilt(field: str) -> Callable[[dict[str, Any], BlueBatteryDevice], float | N
     return get
 
 
-def _error_text(block: dict[str, Any], _device: BlueBatteryDevice) -> str | None:
-    """Fehlertext; ohne Störung meldet die Firmware „0“ – dann „OK“."""
+def _error_code(block: dict[str, Any]) -> int | None:
+    code = to_number(block.get("error"))
+    return None if code is None else int(code)
+
+
+def _error_text(block: dict[str, Any], device: BlueBatteryDevice) -> str | None:
+    """Klartext zum Fehlercode; ohne Code (Alde) der Text der Firmware."""
+    lang = truma_errors.language(device.hass.config.language)
+    if (code := _error_code(block)) is not None:
+        return truma_errors.describe(code, lang)
     text = block.get("error_txt")
     if text is None:
         return None
     text = str(text).strip()
-    if text in ("", "0") and not to_number(block.get("error")):
-        return "OK"
-    return text or None
+    return truma_errors.NO_FAULT[lang] if text in ("", "0") else text
 
 
 def _is_liters(block: dict[str, Any]) -> bool:
@@ -308,6 +316,11 @@ SENSORS: tuple[BlueBatterySensorDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     BlueBatterySensorDescription(
+        key="last_fault", translation_key="last_fault", kinds=("truma",),
+        value_fn=lambda _block, _device: None,  # eigener Zustand, siehe BlueBatteryLastFaultSensor
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    BlueBatterySensorDescription(
         key="supply_voltage", translation_key="supply_voltage", kinds=("truma",), value_fn=_num("voltage"),
         entity_category=EntityCategory.DIAGNOSTIC, **VOLT,
     ),
@@ -351,7 +364,8 @@ async def async_setup_entry(
         block = device.block(sub.key)
         for description in SENSORS:
             if sub.kind in description.kinds and description.exists_fn(block):
-                entities.append(BlueBatterySensor(device, sub, description))
+                cls = BlueBatteryLastFaultSensor if description.key == "last_fault" else BlueBatterySensor
+                entities.append(cls(device, sub, description))
     async_add_entities(entities)
 
 
@@ -401,8 +415,69 @@ class BlueBatterySensor(BlueBatteryEntity, SensorEntity):
         block = self.block
         if block is None:
             return None
+        if self.entity_description.key == "error_text" and (code := _error_code(block)) is not None:
+            return {
+                "panel_code": truma_errors.panel_code(code) if code else None,
+                "firmware_text": block.get("error_txt"),
+            }
         if self.sub.kind == "tank" and self.entity_description.key == "level":
             return {"tank_name": block.get("name"), "age_s": block.get("age_s")}
         if self.sub.kind == "ble" and self.entity_description.key == "temperature":
             return {"sensor_type": BLE_TYPES.get(int(to_number(block.get("type")) or 0))}
         return None
+
+
+class BlueBatteryLastFaultSensor(BlueBatterySensor, RestoreEntity):
+    """Letzte gemeldete Störung – bleibt nach dem Zurücksetzen und über Neustarts erhalten."""
+
+    _fault: dict[str, Any] | None = None
+
+    async def async_added_to_hass(self) -> None:
+        """Gespeicherte Störung laden und mit dem aktuellen Status abgleichen."""
+        await super().async_added_to_hass()
+        if (data := await self.async_get_last_extra_data()) is not None:
+            stored = data.as_dict()
+            if isinstance(stored.get("code"), int):
+                self._fault = stored
+        self._track()
+
+    @property
+    def extra_restore_state_data(self) -> ExtraStoredData | None:
+        """Störung speichern."""
+        return None if self._fault is None else RestoredExtraData(self._fault)
+
+    def _track(self) -> None:
+        block = self.block
+        if not self.device.online or block is None or (code := _error_code(block)) is None:
+            return
+        now = dt_util.utcnow().isoformat()
+        fault = self._fault
+        if code:
+            if fault is None or fault["code"] != code or fault.get("cleared"):
+                self._fault = {"code": code, "since": now, "cleared": None}
+        elif fault is not None and not fault.get("cleared"):
+            self._fault = {**fault, "cleared": now}
+
+    @callback
+    def _handle_update(self) -> None:
+        self._track()
+        super()._handle_update()
+
+    @property
+    def available(self) -> bool:
+        """Immer lesbar, auch wenn das Display nicht sendet."""
+        return True
+
+    @property
+    def native_value(self) -> str | None:
+        """Klartext der letzten Störung."""
+        if self._fault is None:
+            return None
+        return truma_errors.describe(self._fault["code"], truma_errors.language(self.hass.config.language))
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Code, Beginn und Ende der Störung."""
+        if self._fault is None:
+            return None
+        return {**self._fault, "panel_code": truma_errors.panel_code(self._fault["code"])}

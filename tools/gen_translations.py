@@ -66,6 +66,7 @@ SENSOR = {
     "vent_mode": (T("Fan", "Lüfter"), VENT),
     "error_code": (T("Error code", "Fehlercode"), None),
     "error_text": (T("Error text", "Fehlertext"), None),
+    "last_fault": (T("Last fault", "Letzte Störung"), None),
     "supply_voltage": (T("Supply voltage", "Versorgungsspannung"), None),
     "energy_mode": (T("Energy source", "Energieart"), ENERGY),
     "heater_connection": (T("Connection status", "Verbindungsstatus"), ALIVE),

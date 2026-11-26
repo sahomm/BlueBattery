@@ -257,6 +257,9 @@
       "error_text": {
         "name": "Fehlertext"
       },
+      "last_fault": {
+        "name": "Letzte Störung"
+      },
       "supply_voltage": {
         "name": "Versorgungsspannung"
       },

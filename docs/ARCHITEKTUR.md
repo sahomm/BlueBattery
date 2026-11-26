@@ -134,7 +134,8 @@ Zusätzliche Entitäten am Display: `binary_sensor` **Verbindung** (Konnektivit�
 | `select` Boiler | Aus / Eco / High / Boost ↔ 0/40/55/60 |
 | `select` Energieart | nur mit Option „Combi E“ (keine Fähigkeitserkennung in der Firmware) |
 | `sensor` Lüfter | Enum 0 aus, 1–10 Stufe n, 11 eco, 13 high – nur lesend |
-| `sensor` Wasser-Ist, Raum-Ist, Spannung, Fehlercode, Fehlertext | |
+| `sensor` Wasser-Ist, Raum-Ist, Spannung, Fehlercode | |
+| `sensor` Fehlertext, Letzte Störung | Klartext aus eigener Tabelle (`truma_errors.py`, Combi Gas; Nummer = `error` modulo 1000); `error` 0 = „Keine Störung gemeldet“. „Letzte Störung“ wird wiederhergestellt und trägt `code`, `panel_code`, `since`, `cleared` |
 | `binary_sensor` Problem | `error ≠ 0` oder `alive == 3` (bzw. `alive ≠ 2` nach Schonfrist) – Grundlage für Frost-/Ausfall-Automationen |
 | Klimaanlage | vorbereitet, aktiv sobald Werte bekannt (offene Frage an BlueBattery: F4) |
 

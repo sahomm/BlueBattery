@@ -7,16 +7,18 @@ from typing import Any
 
 import pytest
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, State
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import issue_registry as ir
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
     async_fire_mqtt_message,
+    mock_restore_cache_with_extra_data,
 )
 
 import custom_components.bluebattery as integration
+from custom_components.bluebattery import truma_errors
 from custom_components.bluebattery.const import DOMAIN
 
 from .conftest import NODE, PREFIX
@@ -289,15 +291,58 @@ async def test_tilt_rounded_and_channel_tilt_disabled(hass: HomeAssistant, mqtt_
     assert hass.states.get(_eid(hass, "sensor", "tank:F1E2D3C4B5A7:0", "roll")).state == "0.7"
 
 
-async def test_error_text_ok_without_fault(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
-    """Ohne Störung meldet die Firmware „0“ – angezeigt wird „OK“; bei Störung der Text."""
+async def test_error_text_and_last_fault(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Klartext zum Code; die letzte Störung bleibt nach dem Zurücksetzen stehen."""
+    hass.config.language = "de"
     await _setup(hass, mqtt_mock, entry_data, info, status)
     text = _eid(hass, "sensor", "truma", "error_text")
-    assert hass.states.get(text).state == "OK"
-    status["truma"].update(error=2212, error_txt="E2212-unbekannter Fehler")
+    last = _eid(hass, "sensor", "truma", "last_fault")
+    assert hass.states.get(text).state == "Keine Störung gemeldet"
+    assert hass.states.get(last).state == STATE_UNKNOWN
+    status["truma"].update(error=2202, error_txt="E2202-unbekannter Fehler")
     async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status))
     await hass.async_block_till_done()
-    assert hass.states.get(text).state == "E2212-unbekannter Fehler"
+    expected = "E202H: Flamme/Gas gestört – Gasflasche, Ventile, Regler und Kamin prüfen"
+    assert hass.states.get(text).state == expected
+    assert hass.states.get(text).attributes["panel_code"] == "E202H"
+    assert hass.states.get(text).attributes["firmware_text"] == "E2202-unbekannter Fehler"
+    since = hass.states.get(last).attributes["since"]
+    assert hass.states.get(last).attributes["cleared"] is None
+    status["truma"].update(error=0, error_txt="0")
+    async_fire_mqtt_message(hass, f"{PREFIX}/status", json.dumps(status))
+    await hass.async_block_till_done()
+    state = hass.states.get(last)
+    assert hass.states.get(text).state == "Keine Störung gemeldet"
+    assert state.state == expected
+    assert state.attributes["code"] == 2202
+    assert state.attributes["since"] == since
+    assert state.attributes["cleared"] is not None
+
+
+async def test_last_fault_survives_restart(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
+    """Gespeicherte Störung wird nach einem Neustart wiederhergestellt."""
+    entity_id = "sensor.truma_last_fault"
+    stored = {"code": 2212, "since": "2026-09-28T00:45:00+00:00", "cleared": "2026-09-28T00:50:00+00:00"}
+    mock_restore_cache_with_extra_data(hass, ((State(entity_id, "x"), stored),))
+    await _setup(hass, mqtt_mock, entry_data, info, status)
+    assert _eid(hass, "sensor", "truma", "last_fault") == entity_id
+    state = hass.states.get(entity_id)
+    assert state.state.startswith("E212H: ")
+    assert state.attributes["cleared"] == stored["cleared"]
+
+
+@pytest.mark.parametrize(
+    ("error", "lang", "expected"),
+    [
+        (0, "en", "No fault reported"),
+        (2212, "en", "E212H: Flame/gas fault – check cylinder, valves, regulator and flue"),
+        (255, "de", "W255H: Keine 12 V oder keine Verbindung zum Bedienteil"),
+        (2999, "de", "Unbekannter Fehler 2999 – siehe Truma-Anleitung"),
+    ],
+)
+def test_truma_describe(error: int, lang: str, expected: str) -> None:
+    """Code -> Klartext."""
+    assert truma_errors.describe(error, lang) == expected
 
 
 async def test_options_advanced_section(hass: HomeAssistant, mqtt_mock, entry_data, info, status) -> None:
